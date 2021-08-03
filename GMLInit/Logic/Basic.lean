@@ -1,6 +1,4 @@
 
-namespace Logic
-
 -- Stable Propositions --
 
 class inductive Stable (a : Prop) : Prop
@@ -84,46 +82,38 @@ instance (a : Prop) : [Complemented a] → Stable a
 
 -- Decidable Propositions --
 
-protected abbrev Decidable (a : Prop) : Type := _root_.Decidable a
-
-@[matchPattern] protected abbrev Decidable.isTrue {a : Prop} : a → Logic.Decidable a := _root_.Decidable.isTrue
-@[matchPattern] protected abbrev Decidable.isFalse {a : Prop} : ¬a → Logic.Decidable a := _root_.Decidable.isFalse
-
-protected abbrev DecidablePred {α} (a : α → Prop) := _root_.DecidablePred a
-
 class inductive DecidableList : List Prop → Type
 | nil : DecidableList []
-| cons {a as} : Logic.Decidable a → DecidableList as → DecidableList (a :: as)
+| cons {a as} : Decidable a → DecidableList as → DecidableList (a :: as)
 
 namespace DecidableList
 
 instance : DecidableList [] := DecidableList.nil
 
-instance (a as) [Logic.Decidable a] [DecidableList as] : DecidableList (a :: as) :=
+instance (a as) [Decidable a] [DecidableList as] : DecidableList (a :: as) :=
   DecidableList.cons inferInstance inferInstance
 
-protected def head (a as) : [DecidableList (a :: as)] → Logic.Decidable a
+protected def head (a as) : [DecidableList (a :: as)] → Decidable a
 | DecidableList.cons inst _ => inst
 
 protected def tail (a as) : [DecidableList (a :: as)] → DecidableList as
 | DecidableList.cons _ inst => inst
 
-instance instMap {α} (a : α → Prop) [Logic.DecidablePred a] : (xs : List α) → DecidableList (xs.map a)
+instance instMap {α} (a : α → Prop) [DecidablePred a] : (xs : List α) → DecidableList (xs.map a)
 | [] => DecidableList.nil
 | x::xs => DecidableList.cons inferInstance (instMap a xs)
 
 end DecidableList
 
-instance (a : Prop) : [Logic.Decidable a] → Complemented a
+instance (a : Prop) : [Decidable a] → Complemented a
 | Decidable.isTrue h => Complemented.isTrue h
 | Decidable.isFalse h => Complemented.isFalse h
 
 -- Weakly Complemented Propositions --
 
-abbrev WeaklyComplemented (a : Prop) : Prop := Complemented (¬a)
-
-@[matchPattern] protected abbrev WeaklyComplemented.isFalse {a : Prop} : ¬a → WeaklyComplemented a := Complemented.isTrue
-@[matchPattern] protected abbrev WeaklyComplemented.isIrrefutable {a : Prop} : ¬¬a → WeaklyComplemented a := Complemented.isFalse
+class inductive WeaklyComplemented (a : Prop) : Prop
+| protected isFalse : ¬a → WeaklyComplemented a
+| protected isIrrefutable : ¬¬a → WeaklyComplemented a
 
 /-- weak excluded middle (WEM) -/
 theorem WeaklyComplemented.wem (a : Prop) : [WeaklyComplemented a] → ¬¬a ∨ ¬a
@@ -163,12 +153,15 @@ instance (a : Prop) : [Complemented a] → WeaklyComplemented a
 | Complemented.isTrue h => WeaklyComplemented.isIrrefutable (absurd h)
 | Complemented.isFalse h => WeaklyComplemented.isFalse h
 
+instance (a : Prop) : [WeaklyComplemented a] → Complemented (¬a)
+| WeaklyComplemented.isFalse h => Complemented.isTrue h
+| WeaklyComplemented.isIrrefutable h => Complemented.isFalse h
+
 -- Weakly Decidable Propositions --
 
-abbrev WeaklyDecidable (a : Prop) : Type := _root_.Decidable (¬a)
-
-@[matchPattern] protected abbrev WeaklyDecidable.isFalse {a : Prop} : ¬a → WeaklyDecidable a := Decidable.isTrue
-@[matchPattern] protected abbrev WeaklyDecidable.isIrrefutable {a : Prop} : ¬¬a → WeaklyDecidable a := Decidable.isFalse
+class inductive WeaklyDecidable (a : Prop) : Type
+| protected isFalse : ¬a → WeaklyDecidable a
+| protected isIrrefutable : ¬¬a → WeaklyDecidable a
 
 abbrev WeaklyDecidablePred {α} (a : α → Prop) := (x : α) → WeaklyDecidable (a x)
 
@@ -195,12 +188,14 @@ instance instMap {α} (a : α → Prop) [WeaklyDecidablePred a] : (xs : List α)
 
 end WeaklyDecidableList
 
-def decidableOfStableOfWeaklyDecidable (a : Prop) [Stable a] : [WeaklyDecidable a] → Logic.Decidable a
+def decidableOfStableOfWeaklyDecidable (a : Prop) [Stable a] : [WeaklyDecidable a] → Decidable a
 | WeaklyDecidable.isFalse h => Decidable.isFalse h
 | WeaklyDecidable.isIrrefutable h => Decidable.isTrue (Stable.by_contradiction h)
 
-instance (a : Prop) : [Logic.Decidable a] → WeaklyDecidable a
+instance (a : Prop) : [Decidable a] → WeaklyDecidable a
 | Decidable.isTrue h => WeaklyDecidable.isIrrefutable (absurd h)
 | Decidable.isFalse h => WeaklyDecidable.isFalse h
 
-end Logic
+instance (a : Prop) : [WeaklyDecidable a] → Decidable (¬a)
+| WeaklyDecidable.isFalse h => Decidable.isTrue h
+| WeaklyDecidable.isIrrefutable h => Decidable.isFalse h

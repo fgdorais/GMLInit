@@ -1,11 +1,5 @@
 import GMLInit.Logic.Basic
 
-open Logic renaming
-  Decidable → Dec,
-  WeaklyDecidable → WDec,
-  Complemented → Compl,
-  WeaklyComplemented → WCompl
-
 variable {a b : Prop}
 
 abbrev Implies (a b : Prop) : Prop := a → b
@@ -85,14 +79,14 @@ protected def Or.elim {motive : Prop} : a ∨ b → (inl : a → motive) → (in
 
   In order to eliminate into sorts other than `Prop`, we must assume that the propositions are decidable.
 -/
-protected def Or.recLarge.{u} {motive : a ∨ b → Sort u} : [Dec a] → [Dec b] → 
+protected def Or.recLarge.{u} {motive : a ∨ b → Sort u} : [Decidable a] → [Decidable b] → 
   (inl : (h : a) → motive (Or.inl h)) → (inr : (h : b) → motive (Or.inr h)) → (t : a ∨ b) → motive t
-| Dec.isTrue ha, _, h, _, _ => h ha
-| _, Dec.isTrue hb, _, h, _ => h hb
-| Dec.isFalse ha, Dec.isFalse hb, _, _, t => 
+| Decidable.isTrue ha, _, h, _, _ => h ha
+| _, Decidable.isTrue hb, _, h, _ => h hb
+| Decidable.isFalse ha, Decidable.isFalse hb, _, _, t => 
   absurd t λ | Or.inl h => ha h | Or.inr h => hb h
 
-protected def Or.recLargeOn.{u} {motive : a ∨ b → Sort u} (t : a ∨ b) [Dec a] [Dec b] := Or.recLarge (motive:=motive)
+protected def Or.recLargeOn.{u} {motive : a ∨ b → Sort u} (t : a ∨ b) [Decidable a] [Decidable b] := Or.recLarge (motive:=motive)
 
 protected def Or.casesLargeOn.{u} {motive : a ∨ b → Sort u} := Or.recLargeOn (motive:=motive)
 
@@ -185,14 +179,14 @@ protected def NAnd.inr : ¬b → NAnd a b
   Can only eliminate intro `Prop`, see `NAnd.recLarge` to eliminate into other sorts.
   This is a fake recursor -- `NAnd` is not an inductive type.
 -/
-protected def NAnd.rec {motive : NAnd a b → Prop} : [WCompl a] → [WCompl b] →
+protected def NAnd.rec {motive : NAnd a b → Prop} : [WeaklyComplemented a] → [WeaklyComplemented b] →
   (inl : (h : ¬a) → motive (NAnd.inl h)) → (inr : (h : ¬b) → motive (NAnd.inr h)) → (t : NAnd a b) → motive t
-| WCompl.isFalse ha, _, h, _, _ => h ha
-| _, WCompl.isFalse hb, _, h, _ => h hb
-| WCompl.isIrrefutable ha, WCompl.isIrrefutable hb, _, _, t => 
+| WeaklyComplemented.isFalse ha, _, h, _, _ => h ha
+| _, WeaklyComplemented.isFalse hb, _, h, _ => h hb
+| WeaklyComplemented.isIrrefutable ha, WeaklyComplemented.isIrrefutable hb, _, _, t => 
   absurd t λ h => ha λ ha => hb λ hb => h (And.intro ha hb)
 
-protected def NAnd.recOn {motive : NAnd a b → Prop} (t : NAnd a b) [WCompl a] [WCompl b] := NAnd.rec (motive:=motive) (t:=t)
+protected def NAnd.recOn {motive : NAnd a b → Prop} (t : NAnd a b) [WeaklyComplemented a] [WeaklyComplemented b] := NAnd.rec (motive:=motive) (t:=t)
 
 protected def NAnd.casesOn {motive : NAnd a b → Prop} := NAnd.recOn (motive:=motive)
 
@@ -208,14 +202,14 @@ protected def NAnd.elim {motive : Prop} := NAnd.recOn (motive := λ _ : NAnd a b
   In order to eliminate into sorts other than `Prop`, we must assume that the propositions are weakly decidable.
   This is a fake recursor -- `NAnd` is not an inductive type.
 -/
-protected def NAnd.recLarge.{u} {motive : NAnd a b → Sort u} : [WDec a] → [WDec b] →
+protected def NAnd.recLarge.{u} {motive : NAnd a b → Sort u} : [WeaklyDecidable a] → [WeaklyDecidable b] →
   (inl : (h : ¬a) → motive (NAnd.inl h)) → (inr : (h : ¬b) → motive (NAnd.inr h)) → (t : NAnd a b) → motive t
-| WDec.isFalse ha, _, h, _, _ => h ha
-| _, WDec.isFalse hb, _, h, _ => h hb
-| WDec.isIrrefutable ha, WDec.isIrrefutable hb, _, _, t => 
+| WeaklyDecidable.isFalse ha, _, h, _, _ => h ha
+| _, WeaklyDecidable.isFalse hb, _, h, _ => h hb
+| WeaklyDecidable.isIrrefutable ha, WeaklyDecidable.isIrrefutable hb, _, _, t => 
   absurd t λ h => ha λ ha => hb λ hb => h (And.intro ha hb)
 
-protected def NAnd.recLargeOn.{u} {motive : NAnd a b → Sort u} (t : NAnd a b) [WDec a] [WDec b] := NAnd.recLarge (motive:=motive) (t:=t)
+protected def NAnd.recLargeOn.{u} {motive : NAnd a b → Sort u} (t : NAnd a b) [WeaklyDecidable a] [WeaklyDecidable b] := NAnd.recLarge (motive:=motive) (t:=t)
 
 protected def NAnd.casesLargeOn.{u} {motive : NAnd a b → Sort u} := NAnd.recLargeOn (motive:=motive)
 
@@ -230,17 +224,17 @@ theorem nand_of_not_or_not : ¬a ∨ ¬b → ¬(a ∧ b)
 | Or.inl h => NAnd.inl h
 | Or.inr h => NAnd.inr h
 
-theorem not_or_not_of_nand [WCompl a] [WCompl b] : ¬(a ∧ b) → ¬a ∨ ¬b :=
+theorem not_or_not_of_nand [WeaklyComplemented a] [WeaklyComplemented b] : ¬(a ∧ b) → ¬a ∨ ¬b :=
   λ h => NAnd.elim h Or.inl Or.inr
 
-theorem nand_iff_not_or_not (a b : Prop) [WCompl a] [WCompl b] : ¬(a ∧ b) ↔ ¬a ∨ ¬b :=
+theorem nand_iff_not_or_not (a b : Prop) [WeaklyComplemented a] [WeaklyComplemented b] : ¬(a ∧ b) ↔ ¬a ∨ ¬b :=
   Iff.intro not_or_not_of_nand nand_of_not_or_not
 
-theorem NAnd.eq_not_or_not (a b : Prop) [WCompl a] [WCompl b] : NAnd a b = (¬a ∨ ¬b) :=
+theorem NAnd.eq_not_or_not (a b : Prop) [WeaklyComplemented a] [WeaklyComplemented b] : NAnd a b = (¬a ∨ ¬b) :=
   propext (nand_iff_not_or_not a b)
 
 /-- de Morgan's law for `Or` 
 
   Only valid for weakly complemented propositions.
 -/
-protected theorem And.deMorgan [WCompl a] [WCompl b] : ¬(a ∧ b) ↔ ¬a ∨ ¬b := nand_iff_not_or_not a b
+protected theorem And.deMorgan [WeaklyComplemented a] [WeaklyComplemented b] : ¬(a ∧ b) ↔ ¬a ∨ ¬b := nand_iff_not_or_not a b

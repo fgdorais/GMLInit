@@ -3,9 +3,6 @@ import GMLInit.Logic.Basic
 import GMLInit.Meta.Basic
 
 open Meta (termList)
-open Logic renaming
-  WeaklyComplemented → WCmp,
-  WeaklyComplementedList → WCmpList
 
 inductive All : List Prop → Prop
 | protected nil : All []
@@ -94,14 +91,14 @@ theorem not_all_of_any_not : {as : List Prop} → Any (as.map (¬.)) → ¬All a
 | a::as, Any.head na, All.cons ha _ => na ha
 | a::as, Any.tail nas, All.cons _ has => not_all_of_any_not nas has
 
-theorem any_not_of_not_all : {as : List Prop} → [WCmpList as] → ¬All as → Any (as.map (¬.))
+theorem any_not_of_not_all : {as : List Prop} → [WeaklyComplementedList as] → ¬All as → Any (as.map (¬.))
 | [], _, h => absurd All.nil h
-| a::as, WCmpList.cons ia ias, h => match ia with
-  | WCmp.isFalse na => Any.head na
-  | WCmp.isIrrefutable ha => let nas : ¬All as := λ has => ha λ ha => h (All.cons ha has)
+| a::as, WeaklyComplementedList.cons ia ias, h => match ia with
+  | WeaklyComplemented.isFalse na => Any.head na
+  | WeaklyComplemented.isIrrefutable ha => let nas : ¬All as := λ has => ha λ ha => h (All.cons ha has)
     Any.tail (@any_not_of_not_all as ias nas)
 
-theorem not_all_iff_any_not (as : List Prop) [WCmpList as] : ¬All as ↔ Any (as.map (¬.)) :=
+theorem not_all_iff_any_not (as : List Prop) [WeaklyComplementedList as] : ¬All as ↔ Any (as.map (¬.)) :=
   Iff.intro any_not_of_not_all not_all_of_any_not
 
-theorem All.deMorgan {as : List Prop} [WCmpList as] : ¬All as ↔ Any (as.map (¬.)) := not_all_iff_any_not as 
+theorem All.deMorgan {as : List Prop} [WeaklyComplementedList as] : ¬All as ↔ Any (as.map (¬.)) := not_all_iff_any_not as 
