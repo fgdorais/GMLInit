@@ -7,6 +7,8 @@ open Lean.Parser.Tactic (location simpLemma)
 
 namespace Meta
 
+syntax termList := "[" (term <|> hole <|> syntheticHole),* ("|" (term <|> hole <|> syntheticHole))? "]"
+
 macro mods:declModifiers "lemma" n:declId sig:declSig val:declVal : command => `($mods:declModifiers theorem $n $sig $val)
 
 syntax "clean" (location)? : tactic
