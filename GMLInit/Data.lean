@@ -4,3 +4,4 @@ import GMLInit.Data.HList
 import GMLInit.Data.HVal
 import GMLInit.Data.Index
 import GMLInit.Data.Option
+import GMLInit.Data.Prod
