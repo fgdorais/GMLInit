@@ -7,4 +7,5 @@ import GMLInit.Data.List
 import GMLInit.Data.Option
 import GMLInit.Data.Pi
 import GMLInit.Data.Prod
+import GMLInit.Data.Sigma
 import GMLInit.Data.Sum
