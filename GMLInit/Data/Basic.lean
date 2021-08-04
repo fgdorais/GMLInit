@@ -4,10 +4,6 @@ structure Equiv.{u,v} (α : Sort u) (β : Sort v) : Sort (max 1 (max u v)) where
   rev : β → α
   spec (x y) : fwd x = y ↔ rev y = x
 
-inductive HList.{u} : List (Sort u) → Type u
-| nil : HList []
-| cons {α αs} : α → HList αs → HList (α :: αs)
-
 inductive Index.{u} {α : Type u} : List α → Type u where
 | head {a : α} {as : List α} : Index (a :: as)
 | tail {a : α} {as : List α} : Index as → Index (a :: as)
