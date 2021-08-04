@@ -1,5 +1,6 @@
-import GMLInit.Meta.Basic
+import GMLInit.Data.Basic
 import GMLInit.Data.Equiv
+import GMLInit.Meta.Basic
 
 namespace Prod
 
