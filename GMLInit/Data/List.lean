@@ -1,8 +1,33 @@
 import GMLInit.Data.Basic
 import GMLInit.Data.Equiv
+import GMLInit.Logic.ListConnectives
 import GMLInit.Meta.Basic
 
 namespace List
+
+protected def extAux {α} : (as₁ as₂ : List α) → List Prop
+| [], [] => []
+| [], a₂::as₂ => [False]
+| a₁::as₁, [] => [False]
+| a₁::as₁, a₂::as₂ => (a₁ = a₂) :: List.extAux as₁ as₂
+
+protected theorem ext {α} : (as₁ as₂ : List α) → All (List.extAux as₁ as₂) → as₁ = as₂
+| [], [], _ => rfl
+| [], a₂::as₂, All.cons h _ => False.elim h
+| a₁::as₁, [], All.cons h _ => False.elim h
+| a₁::as₁, a₂::as₂, All.cons h hs => h ▸ List.ext as₁ as₂ hs ▸ rfl
+
+protected theorem extIff {α} (as₁ as₂ : List α) : All (List.extAux as₁ as₂) ↔ as₁ = as₂ := by
+  split
+  exact List.ext as₁ as₂
+  intro h
+  cases h
+  induction as₁ with
+  | nil => exact All.nil
+  | cons _ _ H => exact All.cons rfl H
+
+protected theorem extEq {α} (as₁ as₂ : List α) : All (List.extAux as₁ as₂) = (as₁ = as₂) :=
+  propext (List.extIff as₁ as₂)
 
 @[simp] lemma nil_map {α β} (f : α → β) : [].map f = [] := rfl
 
