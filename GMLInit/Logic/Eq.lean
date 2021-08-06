@@ -1,55 +1,78 @@
 import GMLInit.Meta.Basic
 
-lemma heq_of_eq {α} : {a a' : α} → a = a' → a ≅ a'
-| _, _, rfl => HEq.refl _
+def Eq.toHEq {α} : {a a' : α} → a = a' → a ≅ a'
+| _, _, rfl => HEq.rfl
 
-lemma eq_of_heq {α} : {a a' : α} → a ≅ a' → a = a'
-| _, _, HEq.refl _ => rfl
+def HEq.toEq {α} : {a a' : α} → a ≅ a' → a = a'
+| _, _, HEq.rfl => Eq.refl _
 
-lemma cast_eq_of_eq_of_heq {α β} : (h : α = β) → {a : α} → {b : β} → a ≅ b → h ▸ a = b
-| rfl, _, _, HEq.refl _ => rfl
+def HEq.eqSort : {α β : Sort _} → {a : α} → {b : β} → a ≅ b → α = β
+| _, _, _, _, HEq.rfl => Eq.refl _
 
-lemma eq_cast_of_eq_of_heq {α β} : (h : α = β) → {a : α} → {b : β} → a ≅ b → a = h ▸ b
-| rfl, _, _, HEq.refl _ => rfl
+def Eq.congr.{u,v} {α : Sort u} {β : Sort v} : {f₁ f₂ : α → β} → {a₁ a₂ : α} → f₁ = f₂ → a₁ = a₂ → f₁ a₁ = f₂ a₂
+| _, _, _, _, rfl, rfl => rfl
 
-@[simp] lemma cast_refl {α} {h : α = α} (a : α) : h ▸ a = a :=
-  match h with | rfl => rfl
+def Eq.dcongr.{u,v} {α : Sort u} {β : α → Sort v} : {f₁ f₂ : (a : α) → β a} → {a₁ a₂ : α} → f₁ = f₂ → a₁ = a₂ → f₁ a₁ ≅ f₂ a₂
+| _, _, _, _, rfl, rfl => HEq.rfl
 
-@[simp] lemma cast_trans {α β γ} {h : α = β} {h' : β = γ} (a : α) : h' ▸ h ▸ a = (Eq.trans h h' ▸ a : γ) :=
-  match h, h' with | rfl, rfl => rfl
+def HEq.congr.{u,v} {φ : Sort u → Sort v} : {f₁ f₂ : {α : Sort u} → α → φ α} → {α₁ α₂ : Sort u} → {a₁ : α₁} → {a₂ : α₂} → @f₁ = @f₂ → a₁ ≅ a₂ → f₁ a₁ ≅ f₂ a₂
+| _, _, _, _, _, _, _root_.rfl, HEq.rfl => HEq.rfl
 
-@[simp] lemma cast_inj {α β} {h h' : α = β} (a a' : α) : (h ▸ a : β) = (h' ▸ a' : β) ↔ a = a' :=
-  match h, h' with | rfl, rfl => Iff.rfl
+def HEq.dcongr.{u,v} {φ : {α : Sort u} → α → Sort v} : {f₁ f₂ : {α : Sort u} → (a : α) → φ a} → {α₁ α₂ : Sort u} → {a₁ : α₁} → {a₂ : α₂} → @f₁ = @f₂ → a₁ ≅ a₂ → f₁ a₁ ≅ f₂ a₂
+| _, _, _, _, _, _, _root_.rfl, HEq.rfl => HEq.rfl
 
-section
-variable {α} {β : α → Sort _}
+def Eq.congrArg.{u,v} {α : Sort u} {β : Sort v} (f : α → β) : {a₁ a₂ : α} → a₁ = a₂ → f a₁ = f a₂
+| _, _, rfl => rfl
 
-lemma eqRec_eq_of_heq {x y : α} {t : β x} {u : β y} (h : x = y) : t ≅ u → h ▸ t = u := by
-  cases h; intro h; cases h; rfl
+def Eq.dcongrArg.{u,v} {α : Sort u} {β : α → Sort v} (f : (a : α) → β a) : {a₁ a₂ : α} → a₁ = a₂ → f a₁ ≅ f a₂
+| _, _, rfl => HEq.rfl
 
-lemma eq_eqRec_of_heq {x y : α} {t : β x} {u : β y} (h : y = x) : t ≅ u → t = h ▸ u := by
-  cases h; intro h; cases h; rfl
+def HEq.congrArg.{u,v} {φ : Sort u → Sort v} (f : {α : Sort u} → α → φ α) : {α₁ α₂ : Sort u} → {a₁ : α₁} → {a₂ : α₂} → a₁ ≅ a₂ → f a₁ ≅ f a₂
+| _, _, _, _, HEq.rfl => HEq.rfl
 
-@[simp] lemma eqRec_refl {x : α} {h : x = x} (t : β x) : h ▸ t = t := by
-  cases h; rfl
+def HEq.dcongrArg.{u,v} {φ : {α : Sort u} → α → Sort v} (f : {α : Sort u} → (a : α) → φ a) : {α₁ α₂ : Sort u} → {a₁ : α₁} → {a₂ : α₂} → (ha : a₁ ≅ a₂) → f a₁ ≅ f a₂
+| _, _, _, _, HEq.rfl => HEq.rfl
 
-@[simp] lemma eqRec_trans {x y z : α} {hyz : y = z} {hxy : x = y} (t : β x) :
-  (hyz ▸ hxy ▸ t : β z) = Eq.trans hxy hyz ▸ t := by
-  cases hxy; cases hyz; rfl
+theorem cast_eq_of_heq {α β} : {a : α} → {b : β} → (heq : a ≅ b) → (h : α = β := heq.eqSort) → (h ▸ a : β) = b
+| _, _, HEq.rfl, rfl => rfl
 
-@[simp] lemma eqRec_inj {x y : α} {h₁ h₂ : x = y} {t₁ t₂ : β x} : (h₁ ▸ t₁ : β y) = h₂ ▸ t₂ ↔ t₁ = t₂ := by
-  cases h₁; cases h₂; split <;> (intro; assumption)
+theorem eq_cast_of_heq {α β} : {a : α} → {b : β} → (heq : a ≅ b) → (h : α = β := heq.eqSort) → a = (h ▸ b : α)
+| _, _, HEq.rfl, rfl => rfl
 
-lemma heq_of_eqRec_eq {x y : α} {h : x = y} (t : β x) (u : β y) : h ▸ t = u → t ≅ u := by
-  cases h; exact heq_of_eq
+theorem cast_heq_of_heq_of_eq {α β γ} : {a : α} → {b : β} → (heq : a ≅ b) → (h : α = γ) → (h ▸ a : γ) ≅ b
+| _, _, HEq.rfl, rfl => HEq.rfl
 
-lemma heq_of_eq_eqRec {x y : α} {h : x = y} (t : β y) (u : β x) : t = h ▸ u → t ≅ u := by
-  cases h; exact heq_of_eq
+theorem heq_cast_of_heq_of_eq {α β γ} : {a : α} → {b : β} → (heq : a ≅ b) → (h : β = γ) → a ≅ (h ▸ b : γ)
+| _, _, HEq.rfl, rfl => HEq.rfl
 
-lemma heq_eqRec_self {x y : α} {h : x = y} (t : β x) : t ≅ (h ▸ t : β y) := by
-  cases h; exact HEq.refl t
+theorem cast_irrel {α β} (h₁ h₂ : α = β) (a : α) : (h₁ ▸ a : β) = (h₂ ▸ a : β) := rfl
 
-lemma eqRec_heq_self {x y : α} {h : x = y} (t : β x) : (h ▸ t : β y) ≅ t := by
-  cases h; exact HEq.refl t
+@[simp] theorem cast_refl {α} {h : α = α} (a : α) : h ▸ a = a := rfl
 
-end
+@[simp] theorem cast_trans {α β γ} {h₁ : α = β} {h₂ : β = γ} (a : α) : (h₂ ▸ (h₁ ▸ a : β) : γ) = (Eq.trans h₁ h₂ ▸ a : γ) :=
+  match h₁, h₂ with | rfl, rfl => rfl
+
+@[simp] theorem cast_congr {α β} {h₁ h₂ : α = β} (a₁ a₂ : α) : (h₁ ▸ a₁ : β) = (h₂ ▸ a₂ : β) ↔ a₁ = a₂ :=
+  match h₁, h₂ with | rfl, rfl => Iff.rfl
+
+theorem dcast_eq_of_heq_of_eq {α} {β : α → Sort _} : {a₁ a₂ : α} → {b₁ : β a₁} → {b₂ : β a₂} → b₁ ≅ b₂ → (h : a₁ = a₂) → (h ▸ b₁ : β a₂) = b₂
+| _, _, _, _, HEq.rfl, rfl => rfl
+
+theorem eq_dcast_of_heq_of_eq {α} {β : α → Sort _} : {a₁ a₂ : α} → {b₁ : β a₁} → {b₂ : β a₂} → b₁ ≅ b₂ → (h : a₁ = a₂) → b₁ = (h ▸ b₂ : β a₁)
+| _, _, _, _, HEq.rfl, rfl => rfl
+
+theorem dcast_heq_of_heq_of_eq_of_eq {α} {β : α → Sort _} : {a₁ a₂ a₃ : α} → {b₁ : β a₁} → {b₂ : β a₂} → b₁ ≅ b₂ → a₁ = a₂ → (h : a₁ = a₃) → (h ▸ b₁ : β a₃) ≅ b₂
+| _, _, _, _, _, HEq.rfl, rfl, rfl => HEq.rfl
+
+theorem heq_dcast_of_heq_of_eq_of_eq {α} {β : α → Sort _} : {a₁ a₂ a₃ : α} → {b₁ : β a₁} → {b₂ : β a₂} → b₁ ≅ b₂ → a₁ = a₂ → (h : a₂ = a₃) → b₁ ≅ (h ▸ b₂ : β a₃)
+| _, _, _, _, _, HEq.rfl, rfl, rfl => HEq.rfl
+
+theorem dcast_irrel {α} {β : α → Sort _} {a a' : α} (h₁ h₂ : a = a') (b : β a) : (h₁ ▸ b : β a') = (h₂ ▸ b : β a') := rfl
+
+@[simp] theorem dcast_refl {α} {β : α → Sort _} (a : α) {h : a = a} (b : β a) : (h ▸ b) = b := rfl
+
+@[simp] theorem dcast_trans {α} {β : α → Sort _} {a a' a'' : α} {h₁ : a = a'} {h₂ : a' = a''} (b : β a) : (h₂ ▸ (h₁ ▸ b : β a') : β a'') = (Eq.trans h₁ h₂ ▸ b : β a'') :=
+  match h₁, h₂ with | rfl, rfl => rfl
+
+@[simp] theorem dcast_congr {α} {β : α → Sort _} {a a' : α} (h₁ h₂ : a = a') (b₁ b₂ : β a) : (h₁ ▸ b₁ : β a') = (h₂ ▸ b₂ : β a') ↔ b₁ = b₂ :=
+  match h₁, h₂ with | rfl, rfl => Iff.rfl
