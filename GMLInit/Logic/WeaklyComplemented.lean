@@ -21,12 +21,12 @@ instance instWeaklyComplementedArrow : [WeaklyComplemented a] → [WeaklyComplem
 | WeaklyComplemented.isIrrefutable ha, WeaklyComplemented.isFalse hb => WeaklyComplemented.isFalse λ h => ha λ ha => hb (h ha)
 
 instance instWeaklyComplementedIff [WeaklyComplemented a] [WeaklyComplemented b] : WeaklyComplemented (a ↔ b) :=
-  iff_eq_implies_and_implies a b ▸ inferInstance
+  Iff.eq_implies_and_implies a b ▸ inferInstance
 
 instance instWeaklyComplementedAll : (as : List Prop) → [WeaklyComplementedList as] → WeaklyComplemented (All as)
 | [], _ => WeaklyComplemented.isIrrefutable (absurd All.nil)
 | a::as, inst => match inst.head, @instWeaklyComplementedAll as inst.tail with
-  | WeaklyComplemented.isFalse hh, _ => WeaklyComplemented.isFalse λ h => absurd h.head hh 
+  | WeaklyComplemented.isFalse hh, _ => WeaklyComplemented.isFalse λ h => absurd h.head hh
   | _, WeaklyComplemented.isFalse ht => WeaklyComplemented.isFalse λ h => absurd h.tail ht
   | WeaklyComplemented.isIrrefutable hh, WeaklyComplemented.isIrrefutable ht => WeaklyComplemented.isIrrefutable λ h => hh λ hh => ht λ ht => h (All.cons hh ht)
 

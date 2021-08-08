@@ -4,15 +4,15 @@ variable {a b : Prop}
 
 abbrev Implies (a b : Prop) : Prop := a → b
 
-/-- constructor for `Implies` 
+/-- constructor for `Implies`
 
   This is a fake constructor -- `Implies` is not an inductive type. Cannot be used for pattern matching.
 -/
 protected def Implies.intro : (a → b) → Implies a b := id
 
-/-- recursor for `Implies` 
+/-- recursor for `Implies`
 
-  This is a fake recursor -- `Implies` is not an inductive type.  
+  This is a fake recursor -- `Implies` is not an inductive type.
 -/
 protected def Implies.rec.{u} {motive : (a → b) → Sort u} : (a → (h : b) → motive (λ _ => h)) → (t : a → b) → a → motive t :=
   λ h t ha => h ha (t ha)
@@ -36,7 +36,7 @@ protected abbrev Implies.mt : Implies a b → ¬b → ¬a := mt
 -/
 protected def Not.intro : (a → False) → ¬a := id
 
-/-- recursor for `Not` 
+/-- recursor for `Not`
 
   This is a fake recursor -- `Not` is not an inductive type.
 -/
@@ -59,31 +59,28 @@ protected def And.elim.{u} {motive : Sort u} := And.casesOn (motive := λ _ : a 
 /-- eliminator for `Iff` -/
 protected def Iff.elim.{u} {motive : Sort u} := Iff.casesOn (motive := λ _ : a ↔ b => motive)
 
-theorem iff_iff_implies_and_implies (a b : Prop) : (a ↔ b) ↔ ((a → b) ∧ (b → a)) :=
-  Iff.intro (λ h => Iff.elim h And.intro) (λ h => And.elim h Iff.intro)
-
-theorem iff_eq_implies_and_implies (a b : Prop) : (a ↔ b) = ((a → b) ∧ (b → a)) :=
+theorem Iff.eq_implies_and_implies (a b : Prop) : (a ↔ b) = ((a → b) ∧ (b → a)) :=
   propext (iff_iff_implies_and_implies a b)
 
 protected def Iff.mt : (a ↔ b) → (¬b ↔ ¬a)
 | Iff.intro hab hba => Iff.intro (mt hab) (mt hba)
 
-/-- eliminator for `Or` 
+/-- eliminator for `Or`
 
   Can only eliminate into `Prop`. See `Or.elimLarge` to eliminate into other sorts.
 -/
 protected def Or.elim {motive : Prop} : a ∨ b → (inl : a → motive) → (inr : b → motive) → motive :=
   Or.casesOn (motive := λ _ => motive)
 
-/-- large recursor for `Or` 
+/-- large recursor for `Or`
 
   In order to eliminate into sorts other than `Prop`, we must assume that the propositions are decidable.
 -/
-protected def Or.recLarge.{u} {motive : a ∨ b → Sort u} : [Decidable a] → [Decidable b] → 
+protected def Or.recLarge.{u} {motive : a ∨ b → Sort u} : [Decidable a] → [Decidable b] →
   (inl : (h : a) → motive (Or.inl h)) → (inr : (h : b) → motive (Or.inr h)) → (t : a ∨ b) → motive t
 | Decidable.isTrue ha, _, h, _, _ => h ha
 | _, Decidable.isTrue hb, _, h, _ => h hb
-| Decidable.isFalse ha, Decidable.isFalse hb, _, _, t => 
+| Decidable.isFalse ha, Decidable.isFalse hb, _, _, t =>
   absurd t λ | Or.inl h => ha h | Or.inr h => hb h
 
 protected def Or.recLargeOn.{u} {motive : a ∨ b → Sort u} (t : a ∨ b) [Decidable a] [Decidable b] := Or.recLarge (motive:=motive)
@@ -109,7 +106,7 @@ abbrev NOr (a b : Prop) : Prop := ¬(a ∨ b)
 
 protected def NOr.eq_def (a b : Prop) : NOr a b = ¬(a ∨ b) := rfl
 
-/-- constructor for `NOr` 
+/-- constructor for `NOr`
 
   This is a fake constructor -- `NOr` is not an inductive type.
 -/
@@ -124,7 +121,7 @@ protected def NOr.recOn.{u} {motive : NOr a b → Sort u} (t : NOr a b) := NOr.r
 
 protected def NOr.casesOn.{u} {motive : NOr a b → Sort u} := NOr.recOn (motive:=motive)
 
-/-- eliminator for `NOr` 
+/-- eliminator for `NOr`
 
   This is a fake eliminator -- `NOr` is not an inductive type.
 -/
@@ -159,21 +156,21 @@ abbrev NAnd (a b : Prop) : Prop := ¬(a ∧ b)
 
 protected def NAnd.eq_def (a b : Prop) : NAnd a b = ¬(a ∧ b) := rfl
 
-/-- left constructor for `NAnd` 
+/-- left constructor for `NAnd`
 
   This is a fake constructor -- `NAnd` is not an inductive type. Cannot be used for pattern matching.
 -/
 protected def NAnd.inl : ¬a → NAnd a b
 | hn, And.intro h _ => hn h
 
-/-- right constructor for `NAnd` 
+/-- right constructor for `NAnd`
 
   This is a fake constructor -- `NAnd` is not an inductive type. Cannot be used for pattern matching.
 -/
 protected def NAnd.inr : ¬b → NAnd a b
 | hn, And.intro _ h => hn h
 
-/-- recursor for `NAnd` 
+/-- recursor for `NAnd`
 
   Only valid for weakly complemented propositions.
   Can only eliminate intro `Prop`, see `NAnd.recLarge` to eliminate into other sorts.
@@ -183,21 +180,21 @@ protected def NAnd.rec {motive : NAnd a b → Prop} : [WeaklyComplemented a] →
   (inl : (h : ¬a) → motive (NAnd.inl h)) → (inr : (h : ¬b) → motive (NAnd.inr h)) → (t : NAnd a b) → motive t
 | WeaklyComplemented.isFalse ha, _, h, _, _ => h ha
 | _, WeaklyComplemented.isFalse hb, _, h, _ => h hb
-| WeaklyComplemented.isIrrefutable ha, WeaklyComplemented.isIrrefutable hb, _, _, t => 
+| WeaklyComplemented.isIrrefutable ha, WeaklyComplemented.isIrrefutable hb, _, _, t =>
   absurd t λ h => ha λ ha => hb λ hb => h (And.intro ha hb)
 
 protected def NAnd.recOn {motive : NAnd a b → Prop} (t : NAnd a b) [WeaklyComplemented a] [WeaklyComplemented b] := NAnd.rec (motive:=motive) (t:=t)
 
 protected def NAnd.casesOn {motive : NAnd a b → Prop} := NAnd.recOn (motive:=motive)
 
-/-- eliminator for `NAnd` 
+/-- eliminator for `NAnd`
 
   Can only eliminate intro `Prop`, see `NAnd.elimLarge` to eliminate into other sorts.
   This is a fake eliminator -- `NAnd` is not an inductive type.
 -/
 protected def NAnd.elim {motive : Prop} := NAnd.recOn (motive := λ _ : NAnd a b => motive)
 
-/-- large recursor for `NAnd` 
+/-- large recursor for `NAnd`
 
   In order to eliminate into sorts other than `Prop`, we must assume that the propositions are weakly decidable.
   This is a fake recursor -- `NAnd` is not an inductive type.
@@ -206,14 +203,14 @@ protected def NAnd.recLarge.{u} {motive : NAnd a b → Sort u} : [WeaklyDecidabl
   (inl : (h : ¬a) → motive (NAnd.inl h)) → (inr : (h : ¬b) → motive (NAnd.inr h)) → (t : NAnd a b) → motive t
 | WeaklyDecidable.isFalse ha, _, h, _, _ => h ha
 | _, WeaklyDecidable.isFalse hb, _, h, _ => h hb
-| WeaklyDecidable.isIrrefutable ha, WeaklyDecidable.isIrrefutable hb, _, _, t => 
+| WeaklyDecidable.isIrrefutable ha, WeaklyDecidable.isIrrefutable hb, _, _, t =>
   absurd t λ h => ha λ ha => hb λ hb => h (And.intro ha hb)
 
 protected def NAnd.recLargeOn.{u} {motive : NAnd a b → Sort u} (t : NAnd a b) [WeaklyDecidable a] [WeaklyDecidable b] := NAnd.recLarge (motive:=motive) (t:=t)
 
 protected def NAnd.casesLargeOn.{u} {motive : NAnd a b → Sort u} := NAnd.recLargeOn (motive:=motive)
 
-/-- large eliminator for `NAnd` 
+/-- large eliminator for `NAnd`
 
   In order to eliminate into sorts other than `Prop`, we must assume that the propositions are weakly decidable.
   This is a fake eliminator -- `NAnd` is not an inductive type.
@@ -233,7 +230,7 @@ theorem nand_iff_not_or_not (a b : Prop) [WeaklyComplemented a] [WeaklyComplemen
 theorem NAnd.eq_not_or_not (a b : Prop) [WeaklyComplemented a] [WeaklyComplemented b] : NAnd a b = (¬a ∨ ¬b) :=
   propext (nand_iff_not_or_not a b)
 
-/-- de Morgan's law for `Or` 
+/-- de Morgan's law for `Or`
 
   Only valid for weakly complemented propositions.
 -/

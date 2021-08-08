@@ -22,12 +22,12 @@ instance : [WeaklyComplemented a] → [Complemented b] → Complemented (a → b
 instance [WeaklyComplemented a] : Complemented (¬a) := inferInstance
 
 instance [Complemented a] [Complemented b] : Complemented (a ↔ b) :=
-  iff_eq_implies_and_implies a b ▸ inferInstance
+  Iff.eq_implies_and_implies a b ▸ inferInstance
 
 instance instComplementedAll : (as : List Prop) → [ComplementedList as] → Complemented (All as)
 | [], _ => Complemented.isTrue All.nil
 | a::as, inst => match inst.head, @instComplementedAll as inst.tail with
-  | Complemented.isFalse hh, _ => Complemented.isFalse λ h => absurd h.head hh 
+  | Complemented.isFalse hh, _ => Complemented.isFalse λ h => absurd h.head hh
   | _, Complemented.isFalse ht => Complemented.isFalse λ h => absurd h.tail ht
   | Complemented.isTrue hh, Complemented.isTrue ht => Complemented.isTrue (All.cons hh ht)
 

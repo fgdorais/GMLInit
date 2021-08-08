@@ -4,8 +4,8 @@ import GMLInit.Logic.ListConnectives
 
 protected def Decidable.casesTFOn {motive : Prop → Sort _} (a : Prop) :
   [Decidable a] → (T : motive True) → (F : motive False) → motive a
-| Decidable.isTrue ha, ht, _ => eqTrue ha ▸ ht 
-| Decidable.isFalse na, _, hf => eqFalse na ▸ hf
+| Decidable.isTrue ha, ht, _ => eq_true ha ▸ ht
+| Decidable.isFalse na, _, hf => eq_false na ▸ hf
 
 instance instDecidableAll : (as : List Prop) → [DecidableList as] → Decidable (All as)
 | [], _ => Decidable.isTrue All.nil

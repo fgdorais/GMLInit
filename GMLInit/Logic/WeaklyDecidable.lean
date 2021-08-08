@@ -26,12 +26,12 @@ instance : [WeaklyDecidable a] → [Decidable b] → Decidable (a → b)
 | WeaklyDecidable.isIrrefutable ha, Decidable.isFalse hb => Decidable.isFalse λ h => ha λ ha => absurd (h ha) hb
 
 instance [WeaklyDecidable a] [WeaklyDecidable b] : WeaklyDecidable (a ↔ b) :=
-  iff_eq_implies_and_implies a b ▸ inferInstance
+  Iff.eq_implies_and_implies a b ▸ inferInstance
 
 instance instWeaklyDecidableAll : (as : List Prop) → [WeaklyDecidableList as] → WeaklyDecidable (All as)
 | [], _ => WeaklyDecidable.isIrrefutable (absurd All.nil)
 | a::as, inst => match inst.head, @instWeaklyDecidableAll as inst.tail with
-  | WeaklyDecidable.isFalse hh, _ => WeaklyDecidable.isFalse λ h => absurd h.head hh 
+  | WeaklyDecidable.isFalse hh, _ => WeaklyDecidable.isFalse λ h => absurd h.head hh
   | _, WeaklyDecidable.isFalse ht => WeaklyDecidable.isFalse λ h => absurd h.tail ht
   | WeaklyDecidable.isIrrefutable hh, WeaklyDecidable.isIrrefutable ht => WeaklyDecidable.isIrrefutable λ h => hh λ hh => ht λ ht => h (All.cons hh ht)
 
