@@ -2,7 +2,7 @@ import GMLInit.Data.Basic
 import GMLInit.Logic.Basic
 import GMLInit.Meta.Basic
 
-open Meta (termList)
+open Meta (termList termOrHole)
 
 inductive All : List Prop → Prop
 | protected nil : All []
@@ -30,7 +30,7 @@ macro_rules
 | `(All.intro [$h, $hs,* |$t]) => `(All.cons $h (All.intro [$hs,* |$t]))
 | `(All.intro [$hs,*]) => `(All.intro [$hs,*|All.nil])
 
-syntax "All.pr." noWs num (term <|> hole <|> syntheticHole) : term
+syntax "All.pr." noWs num termOrHole : term
 macro_rules
 | `(All.pr.$n $h) => match n.isNatLit? with
   | some 0 => `(All.head $h)
@@ -63,7 +63,7 @@ syntax "Any.elim" term:max termList : term
 macro_rules
 | `(Any.elim $h $args:termList) => `(Any.elimAll $h (All.intro $args))
 
-syntax "Any.in." noWs num (term <|> hole <|> syntheticHole) : term
+syntax "Any.in." noWs num termOrHole : term
 macro_rules
 | `(Any.in.$n $h) => match n.isNatLit? with
   | some 0 => `(Any.head $h)

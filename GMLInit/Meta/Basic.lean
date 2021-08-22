@@ -7,7 +7,9 @@ open Lean.Parser.Tactic (location simpLemma)
 
 namespace Meta
 
-syntax termList := "[" (term <|> hole <|> syntheticHole),* ("|" (term <|> hole <|> syntheticHole))? "]"
+syntax termOrHole := term <|> hole <|> syntheticHole
+
+syntax termList := "[" termOrHole,* ("|" termOrHole)? "]"
 
 macro mods:declModifiers "lemma" n:declId sig:declSig val:declVal : command => `($mods:declModifiers theorem $n $sig $val)
 
@@ -15,9 +17,9 @@ syntax "clean" (location)? : tactic
 macro_rules
 | `(tactic|clean $[$loc]?) => `(tactic|simp only [] $[$loc]?)
 
-syntax "unfold" simpLemma,+ (location)? : tactic
+syntax "unfold" withPosition((colGe ident)+) (location)? : tactic
 macro_rules
-| `(tactic|unfold $ts,* $[$loc]?) => `(tactic|simp only [$ts,*] $[$loc]?)
+| `(tactic|unfold $ids* $[$loc]?) => `(tactic|simp only [$[$ids:ident],*] $[$loc]?)
 
 macro "exfalso" : tactic => `(tactic|apply False.elim)
 
