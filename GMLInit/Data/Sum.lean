@@ -46,9 +46,26 @@ def assocEquiv (α β γ) : Equiv (Sum (Sum α β) γ) (Sum α (Sum β γ)) wher
       injection h with h
       injection h with h
       rw [h]
-  | inl (inl a), inr (inl b') => by split <;> (intro; contradiction)
-  | inl (inl a), inr (inr c') => by split <;> (intro; contradiction)
-  | inl (inr b), inl a' => by split <;> (intro; contradiction)
+  | inl (inl a), inr (inl b') => by
+    split
+    · intro
+      contradiction
+    · intro h
+      injection h with h
+      contradiction
+  | inl (inl a), inr (inr c') => by
+    split
+    · intro
+      contradiction
+    · intro
+      contradiction
+  | inl (inr b), inl a' => by
+    split
+    · intro h
+      contradiction
+    · intro h
+      injection h with h
+      contradiction
   | inl (inr b), inr (inl b') => by
     split
     · intro h
@@ -59,9 +76,26 @@ def assocEquiv (α β γ) : Equiv (Sum (Sum α β) γ) (Sum α (Sum β γ)) wher
       injection h with h
       injection h with h
       rw [h]
-  | inl (inr b), inr (inr c') => by split <;> (intro; contradiction)
-  | inr c, inl a' => by split <;> (intro; contradiction)
-  | inr c, inr (inl b') => by split <;> (intro; contradiction)
+  | inl (inr b), inr (inr c') => by
+    split
+    · intro h
+      injection h with h
+      contradiction
+    · intro
+      contradiction
+  | inr c, inl a' => by
+    split
+    · intro
+      contradiction
+    · intro
+      contradiction
+  | inr c, inr (inl b') => by
+    split
+    · intro h
+      injection h with h
+      contradiction
+    · intro
+      contradiction
   | inr c, inr (inr c') => by
     split
     · intro h

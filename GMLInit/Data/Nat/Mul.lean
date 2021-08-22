@@ -73,6 +73,40 @@ protected theorem sub_mul (x y z : Nat) : (x - y) * z = x * z - y * z := by
     _ = (x * z + z) - (y * z + z) := by rw [Nat.add_sub_add]
     _ = (x + 1) * z - (y + 1) * z := by rw [Nat.succ_mul, Nat.succ_mul]
 
+protected theorem le_mul_of_pos_left (x : Nat) {y : Nat} : y > 0 → x ≤ y * x := by
+  cases y using Nat.casesAuxOn with
+  | zero => intro; contradiction
+  | succ y => intro; rw [Nat.succ_mul]; apply Nat.le_add_left
+
+protected theorem le_mul_of_pos_right (x : Nat) {y : Nat} : y > 0 → x ≤ x * y := by
+  induction y using Nat.recAuxOn with
+  | zero => intro; contradiction
+  | succ y H => intro; rw [Nat.mul_succ]; apply Nat.le_add_left
+
+protected theorem lt_mul_of_gt_one_of_pos_left {x y : Nat} : x > 0 → y > 1 → x < y * x := by
+  intro hx hy
+  cases y using Nat.casesAuxOn with
+  | zero => contradiction
+  | succ y =>
+    rw [Nat.succ_mul]
+    apply Nat.lt_add_of_pos_left
+    apply Nat.mul_pos
+    · apply Nat.lt_of_succ_lt_succ
+      exact hy
+    · exact hx
+
+protected theorem lt_mul_of_gt_one_of_pos_right {x y : Nat} : x > 0 → y > 1 → x < x * y := by
+  intro hx hy
+  cases y using Nat.casesAuxOn with
+  | zero => contradiction
+  | succ y =>
+    rw [Nat.mul_succ]
+    apply Nat.lt_add_of_pos_left
+    apply Nat.mul_pos
+    · exact hx
+    · apply Nat.lt_of_succ_lt_succ
+      exact hy
+
 -- assert theorem mul_le_mul {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ ≤ y₂ → x₁ * y₁ ≤ x₂ * y₂
 
 -- assert theorem mul_le_mul_left {x y : Nat} (z : Nat) : x ≤ y → z * x ≤ z * y
@@ -148,7 +182,7 @@ protected theorem lt_of_mul_lt_mul_left (x : Nat) {y z : Nat} : x * y < x * z �
     apply Nat.mul_le_mul_left
     exact ht
   | isFalse h =>
-    apply Nat.le_of_not_gt
+    apply Nat.lt_of_not_ge
     exact h
 
 protected theorem lt_of_mul_lt_mul_right (x : Nat) {y z : Nat} : y * x < z * x → y < z := by
@@ -160,7 +194,7 @@ protected theorem lt_of_mul_lt_mul_right (x : Nat) {y z : Nat} : y * x < z * x �
     apply Nat.mul_le_mul_right
     exact ht
   | isFalse h =>
-    apply Nat.le_of_not_gt
+    apply Nat.lt_of_not_ge
     exact h
 
 end Nat

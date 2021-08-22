@@ -72,13 +72,13 @@ protected def equiv {α₁ α₂} {β₁ : α₁ → Sort _} {β₂ : α₂ → 
       · intro h
         rw [←h]
         funext x
-        simp only [dcast_trans]
-        rw [dcast_refl]
+        simp only []
+        rw [dcast_trans' (h':=(e.fwd_rev x).symm) (h:=(e.fwd_rev x))]
       · intro h
         rw [←h]
         funext x
-        simp only [dcast_trans]
-        rw [dcast_refl]
+        simp only []
+        rw [dcast_trans' (h':=(e.fwd_rev x)) (h:=(e.fwd_rev x).symm)]
   }
 
 end Pi

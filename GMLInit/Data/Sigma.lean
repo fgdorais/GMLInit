@@ -71,13 +71,13 @@ protected def equiv (e : Equiv α₁ α₂) (f : (x : α₁) → Equiv (β₁ x)
         cases h
         apply Sigma.eq
         · reflexivity
-        · rw [dcast_trans, dcast_refl]
+        · rw [dcast_trans (h₁:=e.fwd_rev x₁)]
           reflexivity using (.≅.)
       · intro h
         cases h
         apply Sigma.eq
         · reflexivity
-        · rw [dcast_trans, dcast_refl]
+        · rw [dcast_trans (h₁:=(e.fwd_rev x₁).symm)]
           reflexivity using (.≅.)
   }
 

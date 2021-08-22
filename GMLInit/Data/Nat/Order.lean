@@ -56,7 +56,7 @@ protected theorem not_gt_of_le {x y : Nat} : x ≤ y → ¬ x > y := λ hle hgt 
 
 -- assert theorem not_le_of_gt {x y : Nat} : x > y → ¬ x ≤ y
 
-protected theorem not_lt_of_ge {x y : Nat} : x ≥ y → ¬ x < y := λ hge hlt => Nat.not_gt_of_le hlt hge
+protected theorem not_lt_of_ge {x y : Nat} : x ≥ y → ¬ x < y := λ hge hlt => Nat.not_gt_of_le hlt (Nat.succ_le_succ hge)
 
 protected theorem not_le_iff_gt (x y : Nat) : ¬ x ≤ y ↔ x > y :=
   ⟨Nat.gt_of_not_le, Nat.not_ge_of_lt⟩
@@ -72,5 +72,14 @@ protected theorem le_iff_not_gt (x y : Nat) : x ≤ y ↔ ¬ x > y :=
 
 protected theorem ne_iff_lt_or_gt (x y : Nat) : x ≠ y ↔ x < y ∨ x > y :=
   ⟨Nat.lt_connex, λ h => Or.elim h Nat.ne_of_lt λ h => (Nat.ne_of_lt h).symm⟩
+
+-- assert theorem zero_le (x : Nat) : 0 ≤ x
+
+-- assert theorem not_lt_zero (x : Nat) : ¬ x < 0
+
+-- assert theorem eq_zero_of_le_zero {x : Nat} : x ≤ 0 → x = 0
+
+protected theorem eq_zero_iff_le_zero (x : Nat) : x = 0 ↔ x ≤ 0 :=
+  ⟨Nat.le_of_eq, Nat.eq_zero_of_le_zero⟩
 
 end Nat

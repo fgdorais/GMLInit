@@ -47,12 +47,12 @@ theorem heq_cast_of_heq_of_eq {α β γ} : {a : α} → {b : β} → (heq : a �
 
 theorem cast_irrel {α β} (h₁ h₂ : α = β) (a : α) : (h₁ ▸ a : β) = (h₂ ▸ a : β) := rfl
 
-@[simp] theorem cast_refl {α} {h : α = α} (a : α) : h ▸ a = a := rfl
+theorem cast_refl {α} {h : α = α} (a : α) : h ▸ a = a := rfl
 
-@[simp] theorem cast_trans {α β γ} {h₁ : α = β} {h₂ : β = γ} (a : α) : (h₂ ▸ (h₁ ▸ a : β) : γ) = (Eq.trans h₁ h₂ ▸ a : γ) :=
+theorem cast_trans {α β γ} {h₁ : α = β} {h₂ : β = γ} (a : α) : (h₂ ▸ (h₁ ▸ a : β) : γ) = (Eq.trans h₁ h₂ ▸ a : γ) :=
   match h₁, h₂ with | rfl, rfl => rfl
 
-@[simp] theorem cast_congr {α β} {h₁ h₂ : α = β} (a₁ a₂ : α) : (h₁ ▸ a₁ : β) = (h₂ ▸ a₂ : β) ↔ a₁ = a₂ :=
+theorem cast_congr {α β} {h₁ h₂ : α = β} (a₁ a₂ : α) : (h₁ ▸ a₁ : β) = (h₂ ▸ a₂ : β) ↔ a₁ = a₂ :=
   match h₁, h₂ with | rfl, rfl => Iff.rfl
 
 theorem dcast_eq_of_heq_of_eq {α} {β : α → Sort _} : {a₁ a₂ : α} → {b₁ : β a₁} → {b₂ : β a₂} → b₁ ≅ b₂ → (h : a₁ = a₂) → (h ▸ b₁ : β a₂) = b₂
@@ -67,12 +67,19 @@ theorem dcast_heq_of_heq_of_eq_of_eq {α} {β : α → Sort _} : {a₁ a₂ a₃
 theorem heq_dcast_of_heq_of_eq_of_eq {α} {β : α → Sort _} : {a₁ a₂ a₃ : α} → {b₁ : β a₁} → {b₂ : β a₂} → b₁ ≅ b₂ → a₁ = a₂ → (h : a₂ = a₃) → b₁ ≅ (h ▸ b₂ : β a₃)
 | _, _, _, _, _, HEq.rfl, rfl, rfl => HEq.rfl
 
+theorem dcast_def {α} {β : α → Sort _} {a a' : α} (h : a = a') (b : β a) : (h ▸ b : β a') = Eq.rec (motive := λ x _ => β x) b h := rfl
+
 theorem dcast_irrel {α} {β : α → Sort _} {a a' : α} (h₁ h₂ : a = a') (b : β a) : (h₁ ▸ b : β a') = (h₂ ▸ b : β a') := rfl
 
-@[simp] theorem dcast_refl {α} {β : α → Sort _} (a : α) {h : a = a} (b : β a) : (h ▸ b) = b := rfl
+theorem dcast_refl {α} {β : α → Sort _} (a : α) {h : a = a} (b : β a) : (h ▸ b) = b := rfl
 
-@[simp] theorem dcast_trans {α} {β : α → Sort _} {a a' a'' : α} {h₁ : a = a'} {h₂ : a' = a''} (b : β a) : (h₂ ▸ (h₁ ▸ b : β a') : β a'') = (Eq.trans h₁ h₂ ▸ b : β a'') :=
+theorem dcast_refl' {α} (a : α) {β : (a' : α) → a = a' → Sort _} {h : a = a} (b : β a h) : Eq.rec b h = b := rfl
+
+theorem dcast_trans {α} {β : α → Sort _} {a a' a'' : α} {h₁ : a = a'} {h₂ : a' = a''} (b : β a) : (h₂ ▸ (h₁ ▸ b : β a') : β a'') = (Eq.trans h₁ h₂ ▸ b : β a'') :=
   match h₁, h₂ with | rfl, rfl => rfl
 
-@[simp] theorem dcast_congr {α} {β : α → Sort _} {a a' : α} (h₁ h₂ : a = a') (b₁ b₂ : β a) : (h₁ ▸ b₁ : β a') = (h₂ ▸ b₂ : β a') ↔ b₁ = b₂ :=
+theorem dcast_trans' {α} (a a' a'' : α) {β : α → Sort _} {h : a = a'} {h' : a' = a''} (b : β a) : Eq.rec (motive := λ x _ => β x) (Eq.rec (motive := λ x _ => β x) b h) h' = Eq.rec (motive := λ x _ => β x) b (Eq.trans h h') := by
+  cases h; cases h'; rfl
+
+theorem dcast_congr {α} {β : α → Sort _} {a a' : α} (h₁ h₂ : a = a') (b₁ b₂ : β a) : (h₁ ▸ b₁ : β a') = (h₂ ▸ b₂ : β a') ↔ b₁ = b₂ :=
   match h₁, h₂ with | rfl, rfl => Iff.rfl

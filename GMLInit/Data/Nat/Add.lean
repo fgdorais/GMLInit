@@ -32,6 +32,32 @@ protected theorem add_cross_comm (x₁ x₂ y₁ y₂ : Nat) : (x₁ + x₂) + (
 
 -- assert theorem le_add_right (x y : Nat) : x ≤ x + y
 
+protected theorem lt_add_of_pos_left (x y : Nat) : y > 0 → x < y + x := by
+  intro hy
+  transitivity (0 + x) using Eq, LT.lt
+  · rw [Nat.zero_add]
+  · apply Nat.add_lt_add_right
+    exact hy
+
+protected theorem lt_add_of_pos_right (x y : Nat) : y > 0 → x < x + y := by
+  intro hy
+  transitivity (x + 0) using Eq, LT.lt
+  · rw [Nat.add_zero]
+  · apply Nat.add_lt_add_left
+    exact hy
+
+theorem pos_add_of_pos_left (x : Nat) {y : Nat} : y > 0 → y + x > 0 := by
+  intro hy
+  transitivity y using LT.lt, LE.le
+  · exact hy
+  · apply Nat.le_add_right
+
+theorem pos_add_of_pos_right (x : Nat) {y : Nat} : y > 0 → x + y > 0 := by
+  intro hy
+  transitivity y using LT.lt, LE.le
+  · exact hy
+  · apply Nat.le_add_left
+
 -- assert theorem add_le_add {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ ≤ y₂ → x₁ + y₁ ≤ x₂ + y₂
 
 -- assert theorem add_le_add_left {x y : Nat} (h : x ≤ y) (z : Nat) : z + x ≤ z + y

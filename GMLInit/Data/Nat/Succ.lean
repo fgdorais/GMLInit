@@ -51,11 +51,28 @@ protected theorem succ_lt_succ_iff_lt (x y : Nat) : x + 1 < y + 1 ↔ x < y :=
 
 protected theorem pred_le_iff_le_succ (x y : Nat) : x - 1 ≤ y ↔ x ≤ y + 1 := by
   cases x, y using Nat.casesDiagAuxOn with
-  | left x => cases x with
-    | zero => reflexivity
-    | succ x => split <;> exact Nat.succ_le_succ
-  | right y => split <;> (intro; apply Nat.zero_le)
-  | diag x y => split; exact Nat.succ_le_succ; exact Nat.le_of_succ_le_succ
+  | left x =>
+    cases x with
+    | zero =>
+      split
+      · intro
+        apply Nat.zero_le
+      · intro
+        apply Nat.zero_le
+    | succ x =>
+      split
+      · exact Nat.succ_le_succ
+      · exact Nat.le_of_succ_le_succ
+  | right y =>
+    split
+    · intro
+      apply Nat.zero_le
+    · intro
+      apply Nat.zero_le
+  | diag x y =>
+    split
+    · exact Nat.succ_le_succ
+    · exact Nat.le_of_succ_le_succ
 
 protected theorem succ_lt_iff_lt_pred (x y : Nat) : x + 1 < y ↔ x < y - 1 := by
   rw [Nat.lt_iff_not_ge, Nat.lt_iff_not_ge]
