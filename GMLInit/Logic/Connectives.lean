@@ -83,15 +83,17 @@ protected def Or.recLarge.{u} {motive : a ∨ b → Sort u} : [Decidable a] → 
 | Decidable.isFalse ha, Decidable.isFalse hb, _, _, t =>
   absurd t λ | Or.inl h => ha h | Or.inr h => hb h
 
-protected def Or.recLargeOn.{u} {motive : a ∨ b → Sort u} (t : a ∨ b) [Decidable a] [Decidable b] := Or.recLarge (motive:=motive)
+protected def Or.recLargeOn.{u} [Decidable a] [Decidable b] {motive : a ∨ b → Sort u} (t : a ∨ b) :=
+  Or.recLarge (motive:=motive) (t:=t)
 
-protected def Or.casesLargeOn.{u} {motive : a ∨ b → Sort u} := Or.recLargeOn (motive:=motive)
+protected def Or.casesLargeOn.{u} [Decidable a] [Decidable b] {motive : a ∨ b → Sort u} :=
+  Or.recLargeOn (motive:=motive)
 
 /-- large eliminator for `Or`
 
   In order to eliminate into sorts other than `Prop`, we must assume that the propositions are decidable.
 -/
-protected def Or.elimLarge.{u} {motive : Sort u} := Or.recLargeOn (motive := λ _ : a ∨ b => motive)
+protected def Or.elimLarge.{u} [Decidable a] [Decidable b] {motive : Sort u} := Or.recLargeOn (motive := λ _ : a ∨ b => motive)
 
 /-- modus tollendo ponens -/
 theorem Or.mtp : a ∨ b → ¬b → a :=
@@ -114,11 +116,23 @@ protected def NOr.intro : ¬a → ¬b → NOr a b
 | hn, _, Or.inl h => hn h
 | _, hn, Or.inr h => hn h
 
+/-- recursor for `NAnd`
+
+  This is a fake recursor -- `NOr` is not an inductive type.
+-/
 protected def NOr.rec.{u} {motive : NOr a b → Sort u} : (intro : (na : ¬a) → (nb : ¬b) → motive (NOr.intro na nb)) → (t : NOr a b) → motive t :=
   λ h t => h (λ ha => t (Or.inl ha)) (λ hb => t (Or.inr hb))
 
+/-- recursor for `NAnd`
+
+  See `NAnd.rec`.
+-/
 protected def NOr.recOn.{u} {motive : NOr a b → Sort u} (t : NOr a b) := NOr.rec (motive:=motive) (t:=t)
 
+/-- recursor for `NAnd`
+
+  This is a fake eliminator -- `NOr` is not an inductive type.
+-/
 protected def NOr.casesOn.{u} {motive : NOr a b → Sort u} := NOr.recOn (motive:=motive)
 
 /-- eliminator for `NOr`
@@ -183,8 +197,16 @@ protected def NAnd.rec {motive : NAnd a b → Prop} : [WeaklyComplemented a] →
 | WeaklyComplemented.isIrrefutable ha, WeaklyComplemented.isIrrefutable hb, _, _, t =>
   absurd t λ h => ha λ ha => hb λ hb => h (And.intro ha hb)
 
+/-- recursor for `NAnd`
+
+  See `NAnd.rec`.
+-/
 protected def NAnd.recOn {motive : NAnd a b → Prop} (t : NAnd a b) [WeaklyComplemented a] [WeaklyComplemented b] := NAnd.rec (motive:=motive) (t:=t)
 
+/-- recursor for `NAnd`
+
+  See `NAnd.rec`.
+-/
 protected def NAnd.casesOn {motive : NAnd a b → Prop} := NAnd.recOn (motive:=motive)
 
 /-- eliminator for `NAnd`
