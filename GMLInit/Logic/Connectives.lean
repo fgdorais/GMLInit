@@ -65,13 +65,6 @@ theorem Iff.eq_implies_and_implies (a b : Prop) : (a ↔ b) = ((a → b) ∧ (b 
 protected def Iff.mt : (a ↔ b) → (¬b ↔ ¬a)
 | Iff.intro hab hba => Iff.intro (mt hab) (mt hba)
 
-/-- eliminator for `Or`
-
-  Can only eliminate into `Prop`. See `Or.elimLarge` to eliminate into other sorts.
--/
-protected def Or.elim {motive : Prop} : a ∨ b → (inl : a → motive) → (inr : b → motive) → motive :=
-  Or.casesOn (motive := λ _ => motive)
-
 /-- large recursor for `Or`
 
   In order to eliminate into sorts other than `Prop`, we must assume that the propositions are decidable.

@@ -91,7 +91,7 @@ protected theorem pow_lt_pow_of_pos_right {x y : Nat} (h : x < y) {z : Nat} : z 
 
 protected theorem pow_lt_pow_of_gt_one_left {x y : Nat} (h : x < y) {z : Nat} : z > 1 → z ^ x < z ^ y := by
   induction x, y using Nat.recDiagAuxOn with
-  | left x => contradiction
+  | left x => intro; contradiction
   | right y =>
     intro hz
     transitivity z using LT.lt, LE.le
