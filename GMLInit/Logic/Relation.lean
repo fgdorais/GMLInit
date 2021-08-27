@@ -86,6 +86,9 @@ section Transitive
 class HTransitive {α β γ} (r : α → β → Prop) (s : β → γ → Prop) (t : outParam (α → γ → Prop)) : Prop where
   protected trans {x y z} : (left : r x y) → (right : s y z) → t x z
 
+instance {α β γ} (r : α → β → Prop) (s : β → γ → Prop) (t : α → γ → Prop) [HTransitive r s t] : Trans r s t where
+  trans := HTransitive.trans
+
 class Transitive {α} (r : α → α → Prop) : Prop where
   protected trans {x y z} : (left : r x y) → (right : r y z) → r x z
 

@@ -47,11 +47,9 @@ protected theorem mul_cross_comm (x₁ x₂ y₁ y₂ : Nat) : (x₁ * x₂) * (
   _ = x₁ * (y₁ * (x₂ * y₂)) := by rw [Nat.mul_left_comm x₂ y₁ y₂]
   _ = (x₁ * y₁) * (x₂ * y₂) := by rw [Nat.mul_assoc]
 
-protected theorem mul_add (x y z : Nat) : x * (y + z) = x * y + x * z :=
-  Nat.left_distrib x y z
+-- assert theorem mul_add (x y z : Nat) : x * (y + z) = x * y + x * z
 
-protected theorem add_mul (x y z : Nat) : (x + y) * z = x * z + y * z :=
-  Nat.right_distrib x y z
+-- assert theorem add_mul (x y z : Nat) : (x + y) * z = x * z + y * z
 
 protected theorem mul_sub (x y z : Nat) : x * (y - z) = x * y - x * z := by
   induction y, z using Nat.recDiagAuxOn with
