@@ -25,20 +25,20 @@ macro "exfalso" : tactic => `(tactic|apply False.elim)
 
 macro "absurd" h:term : tactic => `(tactic|first |apply absurd _ $h |apply absurd $h)
 
-def Tactic.split (mvarId : MVarId) : MetaM (List MVarId) := do
+def Tactic.constr (mvarId : MVarId) : MetaM (List MVarId) := do
   withMVarContext mvarId do
-    checkNotAssigned mvarId `split
+    checkNotAssigned mvarId `constr
     let target ← getMVarType' mvarId
     matchConstStruct target.getAppFn
-      (fun _ => throwTacticEx `split mvarId "target is not an inductive datatype with one constructor")
+      (fun _ => throwTacticEx `constr mvarId "target is not an inductive datatype with one constructor")
       fun ival us cval => do
         let ctor := mkAppN (Lean.mkConst cval.name us) target.getAppArgs[:cval.numParams]
         let ctorType ← inferType ctor
         let (mvars, _, _) ← forallMetaTelescopeReducing ctorType (some cval.numFields)
         apply mvarId <| mkAppN ctor mvars
 
-elab "split" : tactic => Tactic.withMainContext do
-  let gs ← Tactic.split (← Tactic.getMainGoal)
+elab "constr" : tactic => Tactic.withMainContext do
+  let gs ← Tactic.constr (← Tactic.getMainGoal)
   Term.synthesizeSyntheticMVarsNoPostponing
   Tactic.replaceMainGoal gs
 

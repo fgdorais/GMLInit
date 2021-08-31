@@ -32,7 +32,7 @@ protected theorem ext {e₁ e₂ : Equiv α β} : (∀ x, e₁.fwd x = e₂.fwd 
 protected def id : Equiv α α where
   fwd := id
   rev := id
-  spec _ _ := by split <;> (intro; symmetry; assumption)
+  spec _ _ := by constr <;> (intro; symmetry; assumption)
 
 @[scoped simp] lemma id_fwd (x : α) : Equiv.id.fwd x = x := rfl
 
@@ -43,7 +43,7 @@ protected def comp (f : Equiv β γ) (e : Equiv α β) : Equiv α γ where
   rev := e.rev ∘ f.rev 
   spec x y := by
     unfold Function.comp
-    split
+    constr
     · intro h
       rw [Equiv.spec] at h
       rw [←Equiv.spec]

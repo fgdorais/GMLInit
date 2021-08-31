@@ -9,7 +9,7 @@ def equiv {α₁ α₂ β₁ β₂} (e : Equiv α₁ α₂) (f : Equiv β₁ β�
   fwd h₁ := f.fwd ∘ h₁ ∘ e.rev
   rev h₂ := f.rev ∘ h₂ ∘ e.fwd
   spec h₁ h₂ := by
-    split
+    constr
     · intro H
       rw [←H]
       funext x₁
@@ -29,7 +29,7 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
   fwd f₁ x₂ := f₁ (e.rev x₂)
   rev f₂ x₁ := e.rev_fwd x₁ ▸ f₂ (e.fwd x₁)
   spec f₁ f₂ := by
-    split
+    constr
     · intro h
       cases h
       funext x₁
@@ -48,7 +48,7 @@ def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) 
   fwd f₁ x := (e x).fwd (f₁ x)
   rev f₂ x := (e x).rev (f₂ x)
   spec f₁ f₂ := by
-    split
+    constr
     · intro h
       cases h
       funext x
@@ -68,7 +68,7 @@ protected def equiv {α₁ α₂} {β₁ : α₁ → Sort _} {β₂ : α₂ → 
     rev := λ m x => (e.fwd_rev x).symm ▸ m x
     fwd := λ n x => (e.fwd_rev x) ▸ n x
     spec := λ m n => by
-      split
+      constr
       · intro h
         rw [←h]
         funext x

@@ -24,7 +24,7 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
   fwd | ⟨x₁, y₁⟩ => ⟨e.fwd x₁, (e.rev_fwd x₁).symm ▸ y₁⟩
   rev | ⟨x₂, y₂⟩ => ⟨e.rev x₂, y₂⟩
   spec | ⟨x₁, y₁⟩, ⟨x₂, y₂⟩ => by
-    split
+    constr
     · intro h
       cases h
       apply Sigma.eq
@@ -44,7 +44,7 @@ def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) 
   fwd | ⟨x, y₁⟩ => ⟨x, (e x).fwd y₁⟩
   rev | ⟨x, y₂⟩ => ⟨x, (e x).rev y₂⟩
   spec | ⟨x₁, y₁⟩, ⟨x₂, y₂⟩ => by
-    split
+    constr
     · intro h
       cases h
       apply Sigma.eq
@@ -66,7 +66,7 @@ protected def equiv (e : Equiv α₁ α₂) (f : (x : α₁) → Equiv (β₁ x)
     fwd := λ ⟨x₁, y₁⟩ => ⟨x₁, (e.fwd_rev x₁).symm ▸ y₁⟩
     rev := λ ⟨x₂, y₂⟩ => ⟨x₂, (e.fwd_rev x₂).symm ▸ y₂⟩
     spec := λ ⟨x₁, y₁⟩ ⟨x₂, y₂⟩ => by
-      split
+      constr
       · intro h
         cases h
         apply Sigma.eq
@@ -84,6 +84,6 @@ protected def equiv (e : Equiv α₁ α₂) (f : (x : α₁) → Equiv (β₁ x)
 protected def equivProd (α β): Equiv (α × β) (Sigma (λ _ : α => β)) where
   fwd | (x,y) => ⟨x,y⟩
   rev | ⟨x,y⟩ => (x,y)
-  spec | (x₁,y₁), ⟨x₂,y₂⟩ => by split <;> (intro h; cases h; rfl)
+  spec | (x₁,y₁), ⟨x₂,y₂⟩ => by constr <;> (intro h; cases h; rfl)
 
 end Sigma

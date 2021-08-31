@@ -143,7 +143,7 @@ protected theorem sub_lt_iff_lt_add_of_pos (x y z : Nat) (hz : z > 0) : x - y < 
     reflexivity
   | right y =>
     rw [Nat.zero_sub]
-    split
+    constr
     · intro
       transitivity z using LT.lt, LE.le
       · exact hz

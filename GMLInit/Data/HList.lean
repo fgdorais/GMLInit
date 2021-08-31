@@ -32,7 +32,7 @@ def equiv (αs : List (Sort _)) : Equiv (HList αs) ((i : Index αs) → i.val) 
   fwd := HList.eval
   rev := HList.mk
   spec as vs := by
-    split
+    constr
     · intro h
       cases h
       induction as with

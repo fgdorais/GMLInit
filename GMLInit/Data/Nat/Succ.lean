@@ -54,23 +54,23 @@ protected theorem pred_le_iff_le_succ (x y : Nat) : x - 1 ≤ y ↔ x ≤ y + 1 
   | left x =>
     cases x with
     | zero =>
-      split
+      constr
       · intro
         apply Nat.zero_le
       · intro
         apply Nat.zero_le
     | succ x =>
-      split
+      constr
       · exact Nat.succ_le_succ
       · exact Nat.le_of_succ_le_succ
   | right y =>
-    split
+    constr
     · intro
       apply Nat.zero_le
     · intro
       apply Nat.zero_le
   | diag x y =>
-    split
+    constr
     · exact Nat.succ_le_succ
     · exact Nat.le_of_succ_le_succ
 
@@ -82,7 +82,7 @@ protected theorem succ_lt_iff_lt_pred (x y : Nat) : x + 1 < y ↔ x < y - 1 := b
 protected theorem succ_le_or_eq_zero_iff_le_pred (x y : Nat) : x + 1 ≤ y ∨ x = 0 ↔ x ≤ y - 1 := by
   cases x, y using Nat.recDiagAuxOn with
   | left x =>
-    split
+    constr
     · intro
       | Or.inl h => absurd h; apply Nat.not_succ_le_zero
       | Or.inr h => rw [h]; reflexivity
@@ -92,11 +92,11 @@ protected theorem succ_le_or_eq_zero_iff_le_pred (x y : Nat) : x + 1 ≤ y ∨ x
       exact h
       exact Nat.zero_le x
   | right y =>
-    split
+    constr
     · intro; apply Nat.zero_le
     · intro; right; reflexivity
   | diag x y =>
-    split
+    constr
     · intro
       | Or.inl h => exact Nat.le_of_succ_le_succ h
       | Or.inr h => absurd h; apply Nat.succ_ne_zero
@@ -107,7 +107,7 @@ protected theorem succ_le_or_eq_zero_iff_le_pred (x y : Nat) : x + 1 ≤ y ∨ x
 protected theorem pred_lt_or_eq_zero_iff_lt_succ (x y : Nat) : x - 1 < y ∨ x = 0 ↔ x < y + 1 := by
   induction x, y using Nat.recDiagAuxOn with
   | left x =>
-    split
+    constr
     · intro
       | Or.inl h => absurd h; apply Nat.not_lt_zero
       | Or.inr h => rw [h]; apply Nat.zero_lt_one
@@ -117,14 +117,14 @@ protected theorem pred_lt_or_eq_zero_iff_lt_succ (x y : Nat) : x - 1 < y ∨ x =
       exact Nat.le_of_lt_succ h
       exact Nat.zero_le x
   | right y =>
-    split
+    constr
     · intro
       apply Nat.zero_lt_succ
     · intro
       right
       reflexivity
   | diag x y H =>
-    split
+    constr
     · intro
       | Or.inl h => exact Nat.succ_lt_succ h
       | Or.inr h => absurd h; apply Nat.succ_ne_zero

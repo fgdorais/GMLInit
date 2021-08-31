@@ -22,10 +22,10 @@ def commEquiv (α β) : Equiv (Sum α β) (Sum β α) where
   fwd := swap
   rev := swap
   spec
-  | inl _, inl _ => by split <;> (intro; contradiction)
-  | inl a, inr a' => by split <;> (intro h; injection h with h; rw [h]; rfl)
-  | inr b, inl b' => by split <;> (intro h; injection h with h; rw [h]; rfl)
-  | inr _, inr _ => by split <;> (intro; contradiction)
+  | inl _, inl _ => by constr <;> (intro; contradiction)
+  | inl a, inr a' => by constr <;> (intro h; injection h with h; rw [h]; rfl)
+  | inr b, inl b' => by constr <;> (intro h; injection h with h; rw [h]; rfl)
+  | inr _, inr _ => by constr <;> (intro; contradiction)
 
 def assocEquiv (α β γ) : Equiv (Sum (Sum α β) γ) (Sum α (Sum β γ)) where
   fwd
@@ -38,7 +38,7 @@ def assocEquiv (α β γ) : Equiv (Sum (Sum α β) γ) (Sum α (Sum β γ)) wher
   | inr (inr c) => inr c
   spec
   | inl (inl a), inl a' => by
-    split
+    constr
     · intro h
       injection h with h
       rw [h]
@@ -47,27 +47,27 @@ def assocEquiv (α β γ) : Equiv (Sum (Sum α β) γ) (Sum α (Sum β γ)) wher
       injection h with h
       rw [h]
   | inl (inl a), inr (inl b') => by
-    split
+    constr
     · intro
       contradiction
     · intro h
       injection h with h
       contradiction
   | inl (inl a), inr (inr c') => by
-    split
+    constr
     · intro
       contradiction
     · intro
       contradiction
   | inl (inr b), inl a' => by
-    split
+    constr
     · intro h
       contradiction
     · intro h
       injection h with h
       contradiction
   | inl (inr b), inr (inl b') => by
-    split
+    constr
     · intro h
       injection h with h
       injection h with h
@@ -77,27 +77,27 @@ def assocEquiv (α β γ) : Equiv (Sum (Sum α β) γ) (Sum α (Sum β γ)) wher
       injection h with h
       rw [h]
   | inl (inr b), inr (inr c') => by
-    split
+    constr
     · intro h
       injection h with h
       contradiction
     · intro
       contradiction
   | inr c, inl a' => by
-    split
+    constr
     · intro
       contradiction
     · intro
       contradiction
   | inr c, inr (inl b') => by
-    split
+    constr
     · intro h
       injection h with h
       contradiction
     · intro
       contradiction
   | inr c, inr (inr c') => by
-    split
+    constr
     · intro h
       injection h with h
       injection h with h
@@ -115,7 +115,7 @@ protected def equiv {α₁ α₂ β₁ β₂} (e : Equiv α₁ α₂) (f : Equiv
   | Sum.inr b₂ => Sum.inr (f.rev b₂)
   spec
   | Sum.inl a₁, Sum.inl a₂ => by
-    split
+    constr
     · intro h
       injection h
       apply congrArg Sum.inl
@@ -126,10 +126,10 @@ protected def equiv {α₁ α₂ β₁ β₂} (e : Equiv α₁ α₂) (f : Equiv
       apply congrArg Sum.inl
       rw [e.spec]
       assumption
-  | Sum.inl a₁, Sum.inr b₂ => by split <;> (intro; contradiction)
-  | Sum.inr b₁, Sum.inl a₂ => by split <;> (intro; contradiction)
+  | Sum.inl a₁, Sum.inr b₂ => by constr <;> (intro; contradiction)
+  | Sum.inr b₁, Sum.inl a₂ => by constr <;> (intro; contradiction)
   | Sum.inr b₁, Sum.inr b₂ => by
-    split
+    constr
     · intro h
       injection h
       apply congrArg Sum.inr

@@ -31,7 +31,7 @@ def equiv {α β} (e : Equiv α β) : Equiv (Option α) (Option β) where
   fwd := Option.map e.fwd
   rev := Option.map e.rev
   spec a b := by
-    split
+    constr
     · intro h
       cases h
       rw [comp_map, e.comp_rev_fwd, id_map]

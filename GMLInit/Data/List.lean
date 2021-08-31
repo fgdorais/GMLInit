@@ -18,7 +18,7 @@ protected theorem ext {α} : (as₁ as₂ : List α) → All (List.extAux as₁ 
 | a₁::as₁, a₂::as₂, All.cons h hs => h ▸ List.ext as₁ as₂ hs ▸ rfl
 
 protected theorem extIff {α} (as₁ as₂ : List α) : All (List.extAux as₁ as₂) ↔ as₁ = as₂ := by
-  split
+  constr
   exact List.ext as₁ as₂
   intro h
   cases h
@@ -70,7 +70,7 @@ def equiv {α β} (e : Equiv α β) : Equiv (List α) (List β) where
   fwd := List.map e.fwd
   rev := List.map e.rev
   spec xs ys := by
-    split
+    constr
     intro h; rw [←h, comp_map, e.comp_rev_fwd, id_map]
     intro h; rw [←h, comp_map, e.comp_fwd_rev, id_map]
 

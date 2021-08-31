@@ -32,15 +32,9 @@ protected theorem pred_mul (x y : Nat) : (x - 1) * y = x * y - y := by
 
 -- assert theorem mul_assoc (x y z : Nat) : (x * y) * z = x * (y * z)
 
-protected theorem mul_left_comm (x y z : Nat) : x * (y * z) = y * (x * z) := calc
-  _ = (x * y) * z := by rw [Nat.mul_assoc]
-  _ = (y * x) * z := by rw [Nat.mul_comm x y]
-  _ = y * (x * z) := by rw [Nat.mul_assoc]
+-- assert theorem mul_left_comm (x y z : Nat) : x * (y * z) = y * (x * z)
 
-protected theorem mul_right_comm (x y z : Nat) : (x * y) * z = (x * z) * y := calc
-  _ = x * (y * z) := by rw [Nat.mul_assoc]
-  _ = x * (z * y) := by rw [Nat.mul_comm y z]
-  _ = (x * z) * y := by rw [Nat.mul_assoc]
+-- assert theorem mul_right_comm (x y z : Nat) : (x * y) * z = (x * z) * y
 
 protected theorem mul_cross_comm (x₁ x₂ y₁ y₂ : Nat) : (x₁ * x₂) * (y₁ * y₂) = (x₁ * y₁) * (x₂ * y₂) := calc
   _ = x₁ * (x₂ * (y₁ * y₂)) := by rw [Nat.mul_assoc]
