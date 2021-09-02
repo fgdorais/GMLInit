@@ -37,12 +37,12 @@ def equiv (αs : List (Sort _)) : Equiv (HList αs) ((i : Index αs) → i.val) 
       cases h
       induction as with
       | nil => rfl
-      | cons a as H => simp only [HList.mk, HList.eval, H]; rfl
+      | cons a as H => simp only [HList.mk, HList.eval, H]
     · intro h
       cases h
       funext i
       induction i with
       | head => rfl
-      | tail i H => simp only [HList.eval, HList.mk, H]; rfl
+      | tail i H => simp only [HList.eval, HList.mk, H]
 
 end HList
