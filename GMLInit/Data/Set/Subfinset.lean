@@ -113,9 +113,9 @@ instance : Monad Subfinset where
   pure a := ⟨pure a, Set.IsSubfinite.pure a⟩
   map f s := ⟨f <$> s.toSet, Set.IsSubfinite.map f s.toSet⟩
   bind s f := ⟨s.toSet >>= λ x => (f x).toSet, Set.IsSubfinite.bind (λ x => (f x).toSet) s.toSet⟩
-  seq f s := ⟨f.toSet <*> s.toSet, Set.IsSubfinite.seq f.toSet s.toSet⟩
-  seqLeft s t := ⟨s.toSet <* t.toSet, Set.IsSubfinite.seqLeft s.toSet t.toSet⟩
-  seqRight s t := ⟨s.toSet *> t.toSet, Set.IsSubfinite.seqRight s.toSet t.toSet⟩
+  seq f s := ⟨f.toSet <*> (s ()).toSet, Set.IsSubfinite.seq f.toSet (s ()).toSet⟩
+  seqLeft s t := ⟨s.toSet <* (t ()).toSet, Set.IsSubfinite.seqLeft s.toSet (t ()).toSet⟩
+  seqRight s t := ⟨s.toSet *> (t ()).toSet, Set.IsSubfinite.seqRight s.toSet (t ()).toSet⟩
 
 instance : LawfulMonad Subfinset where
   id_map := by

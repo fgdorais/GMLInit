@@ -80,9 +80,9 @@ instance : Monad Finset where
   pure a := ⟨pure a, Set.IsFinite.pure a⟩
   map f s := ⟨f <$> s.toSet, Set.IsFinite.map f s.toSet⟩
   bind s f := ⟨s.toSet >>= λ x => (f x).toSet, Set.IsFinite.bind (λ x => (f x).toSet) s.toSet⟩
-  seq f s := ⟨f.toSet <*> s.toSet, Set.IsFinite.seq f.toSet s.toSet⟩
-  seqLeft s t := ⟨s.toSet <* t.toSet, Set.IsFinite.seqLeft s.toSet t.toSet⟩
-  seqRight s t := ⟨s.toSet *> t.toSet, Set.IsFinite.seqRight s.toSet t.toSet⟩
+  seq f s := ⟨f.toSet <*> (s ()).toSet, Set.IsFinite.seq f.toSet (s ()).toSet⟩
+  seqLeft s t := ⟨s.toSet <* (t ()).toSet, Set.IsFinite.seqLeft s.toSet (t ()).toSet⟩
+  seqRight s t := ⟨s.toSet *> (t ()).toSet, Set.IsFinite.seqRight s.toSet (t ()).toSet⟩
 
 instance : LawfulMonad Finset where
   id_map := by

@@ -286,9 +286,9 @@ instance : Monad Set where
   bind := Set.bind
   pure := Set.pure
   map := Set.map
-  seq := Set.seq
-  seqLeft := Set.seqLeft
-  seqRight := Set.seqRight
+  seq f s := Set.seq f (s ())
+  seqLeft s t := Set.seqLeft s (t ())
+  seqRight s t := Set.seqRight s (t ())
 
 instance : LawfulMonad Set where
   id_map := Set.id_map
