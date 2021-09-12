@@ -25,6 +25,12 @@ macro "exfalso" : tactic => `(tactic|apply False.elim)
 
 macro "absurd" h:term : tactic => `(tactic|first |apply absurd _ $h |apply absurd $h)
 
+syntax "whnf" (&"lhs" <|> &"rhs")? (&"at" ident)? : tactic
+macro_rules
+| `(tactic|whnf $[at $h:ident]?) => `(tactic|conv $[at $h]? => whnf)
+| `(tactic|whnf lhs $[at $h:ident]?) => `(tactic|conv $[at $h]? => lhs; whnf)
+| `(tactic|whnf rhs $[at $h:ident]?) => `(tactic|conv $[at $h]? => rhs; whnf)
+
 def Tactic.constr (mvarId : MVarId) : MetaM (List MVarId) := do
   withMVarContext mvarId do
     checkNotAssigned mvarId `constr
