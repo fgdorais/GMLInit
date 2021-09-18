@@ -2,4 +2,4 @@
 name = "GMLInit"
 version = "21.09"
 path = "."
-lean_version = "leanprover/lean4:nightly-2021-09-14"
+lean_version = "leanprover/lean4:nightly-2021-09-18"

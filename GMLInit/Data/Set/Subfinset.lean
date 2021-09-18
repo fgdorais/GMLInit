@@ -25,17 +25,17 @@ protected instance pure (x : α) : IsSubfinite (Set.pure x) := by
       | Or.inl ⟨h,_⟩ => cases h; rfl
       | Or.inr h => contradiction
   rw [this]
-  inferInstance
+  infer_instance
 
 protected instance union (s t : Set α) [hs : IsSubfinite s] [ht : IsSubfinite t] : IsSubfinite (Set.union s t) := by
   induction hs with
   | empty =>
     rw [empty_union]
-    inferInstance
+    infer_instance
   | insertIf s a p H =>
     let rec @[instance] inst : IsSubfinite (s ∪ t) := H
     rw [insertIf_union_left]
-    inferInstance
+    infer_instance
 
 protected instance inter_left (s t : Set α) [hs : IsSubfinite s] : IsSubfinite (Set.inter s t) := by
   induction hs with
@@ -45,55 +45,55 @@ protected instance inter_left (s t : Set α) [hs : IsSubfinite s] : IsSubfinite 
   | insertIf s a p H =>
     let rec @[instance] inst : IsSubfinite (s ∩ t) := H
     rw [insertIf_inter_left]
-    inferInstance
+    infer_instance
 
 protected instance inter_right (s t : Set α) [ht : IsSubfinite t] : IsSubfinite (Set.inter s t) := by
   induction ht with
   | empty =>
     rw [inter_empty]
-    inferInstance
+    infer_instance
   | insertIf t a p H =>
     let rec @[instance] inst : IsSubfinite (s ∩ t) := H
     rw [insertIf_inter_right]
-    inferInstance
+    infer_instance
 
 protected instance map (f : α → β) (s : Set α) [hs : IsSubfinite s] : IsSubfinite (s.map f) := by
   induction hs with
   | empty =>
     rw [empty_map]
-    inferInstance
+    infer_instance
   | insertIf s a p H =>
     let rec @[instance] inst : IsSubfinite (s.map f) := H
     rw [insertIf_map]
-    inferInstance
+    infer_instance
 
 protected instance bind (f : α → Set β) [hf : (x : α) → IsSubfinite (f x)] (s : Set α) [hs : IsSubfinite s] : IsSubfinite (s.bind f) := by
   induction hs with
   | empty =>
     rw [empty_bind]
-    inferInstance
+    infer_instance
   | insertIf s a p H =>
     let rec @[instance] inst : IsSubfinite (s.bind f) := H
     rw [insertIf_bind]
-    inferInstance
+    infer_instance
 
 protected instance seq (f : Set (α → β)) [hf : IsSubfinite f] (s : Set α) [hs : IsSubfinite s] : IsSubfinite (Set.seq f s) := by
   induction hs with
   | empty =>
     rw [empty_seq]
-    inferInstance
+    infer_instance
   | insertIf s a p H =>
     let rec @[instance] inst : IsSubfinite (Set.seq f s) := H
     rw [insertIf_seq]
-    inferInstance
+    infer_instance
 
 protected instance seqLeft (s : Set α) [hs : IsSubfinite s] (t : Set β) [ht : IsSubfinite t] : IsSubfinite (Set.seqLeft s t) := by
   unfold Set.seqLeft
-  inferInstance
+  infer_instance
 
 protected instance seqRight (s : Set α) [hs : IsSubfinite s] (t : Set β) [ht : IsSubfinite t] : IsSubfinite (Set.seqRight s t) := by
   unfold Set.seqRight
-  inferInstance
+  infer_instance
 
 end Set.IsSubfinite
 

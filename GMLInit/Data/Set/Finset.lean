@@ -12,55 +12,55 @@ open Set Set.Notation
 
 protected instance pure (a : α) : IsFinite (Set.pure a) := by
   rw [←union_empty (Set.pure a)]
-  inferInstance
+  infer_instance
 
 protected instance union (s t : Set α) [hs : IsFinite s] [ht : IsFinite t] : IsFinite (s ∪ t) := by
   induction hs with
   | empty =>
     rw [empty_union]
-    inferInstance
+    infer_instance
   | insert s a H =>
     let rec @[instance] inst : IsFinite (s ∪ t) := H
     rw [insert_union_left]
-    inferInstance
+    infer_instance
 
 protected instance map (f : α → β) (s : Set α) [hs : IsFinite s] : IsFinite (s.map f) := by
   induction hs with
   | empty =>
     rw [empty_map]
-    inferInstance
+    infer_instance
   | insert s a H =>
     let rec @[instance] inst : IsFinite (Set.map f s) := H
     rw [insert_map]
-    inferInstance
+    infer_instance
 
 protected instance bind (f : α → Set β) [hf : (x : α) → IsFinite (f x)] (s : Set α) [hs : IsFinite s] : IsFinite (s.bind f) := by
   induction hs with
   | empty =>
     rw [empty_bind]
-    inferInstance
+    infer_instance
   | insert s a H =>
     let rec @[instance] inst : IsFinite (Set.bind s f) := H
     rw [insert_bind]
-    inferInstance
+    infer_instance
 
 protected instance seq (f : Set (α → β)) [hf : IsFinite f] (s : Set α) [hs : IsFinite s] : IsFinite (Set.seq f s) := by
   induction hs with
   | empty =>
     rw [empty_seq]
-    inferInstance
+    infer_instance
   | insert s a H =>
     let rec @[instance] inst : IsFinite (Set.seq f s) := H
     rw [insert_seq]
-    inferInstance
+    infer_instance
 
 protected instance seqLeft (s : Set α) [hs : IsFinite s] (t : Set β) [ht : IsFinite t] : IsFinite (Set.seqLeft s t) := by
   unfold Set.seqLeft
-  inferInstance
+  infer_instance
 
 protected instance seqRight (s : Set α) [hs : IsFinite s] (t : Set β) [ht : IsFinite t] : IsFinite (Set.seqRight s t) := by
   unfold Set.seqRight
-  inferInstance
+  infer_instance
 
 end Set.IsFinite
 

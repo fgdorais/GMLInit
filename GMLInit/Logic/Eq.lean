@@ -1,5 +1,7 @@
 import GMLInit.Meta.Basic
 
+infix:50 " ≅ " => HEq
+
 def Eq.toHEq {α} : {a a' : α} → a = a' → a ≅ a'
 | _, _, rfl => HEq.rfl
 

@@ -1,3 +1,4 @@
+import GMLInit.Logic.Eq
 
 namespace Relation
 
