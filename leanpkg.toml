@@ -1,5 +1,0 @@
-[package]
-name = "GMLInit"
-version = "21.10"
-path = "."
-lean_version = "leanprover/lean4:nightly-2021-11-12"
