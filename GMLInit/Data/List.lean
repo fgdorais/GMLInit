@@ -48,7 +48,7 @@ protected theorem extEq {α} (as₁ as₂ : List α) : All (List.extAux as₁ as
 lemma comp_map {α β γ} (g : β → γ) (f : α → β) (as : List α) : (as.map f).map g = as.map (g ∘ f) := by
   induction as with
   | nil => rfl
-  | cons a as H => unfold map; rw [H]
+  | cons a as H => unfold map; rw [H, Function.comp_apply]
 
 @[simp] lemma nil_bind {α β} (f : α → List β) : [].bind f = [] := rfl
 

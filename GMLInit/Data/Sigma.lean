@@ -58,6 +58,7 @@ def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) 
       · rw [(e x₁).fwd_rev]
         reflexivity using (.≅.)
 
+set_option pp.notation false
 protected def equiv (e : Equiv α₁ α₂) (f : (x : α₁) → Equiv (β₁ x) (β₂ (e.fwd x))) : Equiv ((x : α₁) × β₁ x) ((x : α₂) × β₂ x) :=
   Equiv.comp h3 (Equiv.comp h2 h1) where
   h1 := equivFst β₁ e
@@ -71,13 +72,13 @@ protected def equiv (e : Equiv α₁ α₂) (f : (x : α₁) → Equiv (β₁ x)
         cases h
         apply Sigma.eq
         · reflexivity
-        · rw [dcast_trans (h₁:=e.fwd_rev x₁)]
+        · rw [dcast_trans y₁]
           reflexivity using (.≅.)
       · intro h
         cases h
         apply Sigma.eq
         · reflexivity
-        · rw [dcast_trans (h₁:=(e.fwd_rev x₁).symm)]
+        · rw [dcast_trans y₂]
           reflexivity using (.≅.)
   }
 

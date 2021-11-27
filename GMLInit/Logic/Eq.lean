@@ -80,7 +80,7 @@ theorem dcast_refl' {α} (a : α) {β : (a' : α) → a = a' → Sort _} {h : a 
 theorem dcast_trans {α} {β : α → Sort _} {a a' a'' : α} {h₁ : a = a'} {h₂ : a' = a''} (b : β a) : (h₂ ▸ (h₁ ▸ b : β a') : β a'') = (Eq.trans h₁ h₂ ▸ b : β a'') :=
   match h₁, h₂ with | rfl, rfl => rfl
 
-theorem dcast_trans' {α} (a a' a'' : α) {β : α → Sort _} {h : a = a'} {h' : a' = a''} (b : β a) : Eq.rec (motive := λ x _ => β x) (Eq.rec (motive := λ x _ => β x) b h) h' = Eq.rec (motive := λ x _ => β x) b (Eq.trans h h') := by
+theorem dcast_trans' {α} {a a' a'' : α} {β : α → Sort _} {h : a = a'} {h' : a' = a''} (b : β a) : Eq.rec (motive := λ x _ => β x) (Eq.rec (motive := λ x _ => β x) b h) h' = Eq.rec (motive := λ x _ => β x) b (Eq.trans h h') := by
   cases h; cases h'; rfl
 
 theorem dcast_congr {α} {β : α → Sort _} {a a' : α} (h₁ h₂ : a = a') (b₁ b₂ : β a) : (h₁ ▸ b₁ : β a') = (h₂ ▸ b₂ : β a') ↔ b₁ = b₂ :=

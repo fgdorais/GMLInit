@@ -95,7 +95,7 @@ protected theorem comp_map (f : α → β) (g : β → γ) (s : Set α) : s.map 
     exists x
     constr
     · exact hx
-    · rw [←hyz, ←hxy]
+    · rw [←hyz, ←hxy, Function.comp_apply]
 
 protected theorem map_pure (f : α → β) (a : α) : (Set.pure a).map f = Set.pure (f a) := by
   apply Set.ext
@@ -203,7 +203,7 @@ protected theorem bind_comm (f : α → β → Set γ) (s : Set α) (t : Set β)
       · exact hy
       · exact hz
 
-protected theorem bind_pure_comp (f : α → β) (s : Set α) : s.bind (Set.pure ∘ f) = s.map f := by
+protected theorem bind_pure_comp (f : α → β) (s : Set α) : s.bind (λ x => Set.pure (f x)) = s.map f := by
   apply Set.ext
   intro y
   constr
