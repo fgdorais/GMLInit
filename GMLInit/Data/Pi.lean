@@ -67,4 +67,6 @@ protected def equiv {α₁ α₂} {β₁ : α₁ → Sort _} {β₂ : α₂ → 
       constr <;> (intro | rfl => funext x; rw [eqNdrec_symm])
   }
 
+protected def equivFun (α β): Equiv (α → β) ((x : α) → (λ _ : α => β) x) := Equiv.id
+
 end Pi
