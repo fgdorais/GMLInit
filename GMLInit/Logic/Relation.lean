@@ -107,4 +107,30 @@ instance : Transitive (.↔.) := ⟨Iff.trans⟩
 
 end Transitive
 
+section Total
+
+class HTotal {α β} (r : α → β → Prop) (s : β → α → Prop) : Prop where
+  protected total (x y) : (r x y) ∨ (s y x)
+
+class Total {α} (r : α → α → Prop) : Prop where
+  protected total (x y) : (r x y) ∨ (r y x)
+
+@[defaultInstance]
+instance {α} (r : α → α → Prop) [Total r] : HTotal r r := ⟨Total.total⟩
+
+end Total
+
+section Connex
+
+class HConnex {α} (r : α → α → Prop) (s : α → α → Prop) : Prop where
+  protected connex {x y} : s x y → (r x y) ∨ (r y x)
+
+class Connex {α} (r : α → α → Prop) : Prop where
+  protected connex {x y} : x ≠ y → (r x y) ∨ (r y x)
+
+@[defaultInstance]
+instance {α} (r : α → α → Prop) [Connex r] : HConnex r (.≠.) := ⟨Connex.connex⟩
+
+end Connex
+
 end Relation
