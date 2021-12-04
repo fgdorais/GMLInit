@@ -1,4 +1,5 @@
 import GMLInit.Data.Basic
+import GMLInit.Logic.Relation
 
 instance : LE Bool := leOfOrd
 instance : LT Bool := ltOfOrd
@@ -13,10 +14,11 @@ infixl:30 " ^^ " => xor
 namespace Bool
 variable (x y z : Bool)
 
-syntax "bool_tt" term:max* : tactic
+syntax "bool_tt" (&"using" tactic)? term:max* : tactic
 macro_rules
 | `(tactic|bool_tt) => `(tactic|rfl)
-| `(tactic|bool_tt $x:term $xs:term*) => `(tactic|cases ($x : Bool) <;> bool_tt $xs*)
+| `(tactic|bool_tt using $tac) => `(tactic|$tac)
+| `(tactic|bool_tt $[using $tac]? $x:term $xs:term*) => `(tactic|cases ($x : Bool) <;> bool_tt $[using $tac]? $xs*)
 
 theorem not_not : !(!x) = x := by bool_tt x
 theorem not_and : !(x && y) = (!x || !y) := by bool_tt x y
@@ -79,5 +81,29 @@ theorem bge_eq_decide_ge : Bool.bge x y = decide (x ≥ y) := by bool_tt x y
 theorem bgt_eq_decide_gt : Bool.bgt x y = decide (x > y) := by bool_tt x y
 theorem ble_eq_decide_le : Bool.ble x y = decide (x ≤ y) := by bool_tt x y
 theorem blt_eq_decide_lt : Bool.blt x y = decide (x < y) := by bool_tt x y
+
+protected theorem le_refl : x ≤ x := by bool_tt x
+protected theorem le_trans {x y z : Bool} : x ≤ y → y ≤ z → x ≤ z := by bool_tt using simp x y z
+protected theorem le_antisymm {x y : Bool} : x ≤ y → y ≤ x → x = y := by bool_tt using simp x y
+protected theorem lt_irrefl : ¬ x < x := by bool_tt using simp x
+protected theorem lt_asymm {x y : Bool} : x < y → ¬ y < x := by bool_tt using simp x y
+protected theorem lt_trans {x y z : Bool} : x < y → y < z → x < z := by bool_tt using simp x y z
+protected theorem lt_of_le_of_lt {x y z : Bool} : x ≤ y → y < z → x < z := by bool_tt using simp x y z
+protected theorem lt_of_lt_of_le {x y z : Bool} : x < y → y ≤ z → x < z := by bool_tt using simp x y z
+
+protected theorem le_of_lt : x < y → x ≤ y := by bool_tt using simp x y z
+protected theorem le_of_eq : x = y → x ≤ y := by bool_tt using simp x y z
+protected theorem ne_of_lt : x < y → x ≠ y := by bool_tt using simp x y z
+protected theorem lt_of_le_of_ne : x ≤ y → x ≠ y → x < y := by bool_tt using simp x y z
+protected theorem le_of_lt_or_eq : x < y ∨ x = y → x ≤ y := by bool_tt using simp x y z
+
+instance : Relation.Reflexive (α:=Bool) (.≤.) := ⟨Bool.le_refl⟩
+instance : Relation.Irreflexive (α:=Bool) (.<.) := ⟨Bool.lt_irrefl⟩
+instance : Relation.Antisymmetric (α:=Bool) (.≤.) := ⟨Bool.le_antisymm⟩
+instance : Relation.Asymmetric (α:=Bool) (.<.) := ⟨Bool.lt_asymm⟩
+instance : Relation.Transitive (α:=Bool) (.≤.) := ⟨Bool.le_trans⟩
+instance : Relation.Transitive (α:=Bool) (.<.) := ⟨Bool.lt_trans⟩
+instance : Relation.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.<.) (.≤.) (.<.) := ⟨Bool.lt_of_lt_of_le⟩
+instance : Relation.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.≤.) (.<.) (.<.) := ⟨Bool.lt_of_le_of_lt⟩
 
 end Bool
