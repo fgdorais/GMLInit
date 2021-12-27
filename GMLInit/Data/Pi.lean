@@ -8,7 +8,8 @@ namespace Function
 def equiv {α₁ α₂ β₁ β₂} (e : Equiv α₁ α₂) (f : Equiv β₁ β₂) : Equiv (α₁ → β₁) (α₂ → β₂) where
   fwd h₁ := f.fwd ∘ h₁ ∘ e.rev
   rev h₂ := f.rev ∘ h₂ ∘ e.fwd
-  spec h₁ h₂ := by
+  spec := by
+    intros
     constr
     · intro H
       rw [←H]
@@ -28,7 +29,8 @@ namespace Pi
 def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equiv ((x₁ : α₁) → β x₁) ((x₂ : α₂) → β (e.rev x₂)) where
   fwd f₁ x₂ := f₁ (e.rev x₂)
   rev f₂ x₁ := e.rev_fwd x₁ ▸ f₂ (e.fwd x₁)
-  spec f₁ f₂ := by
+  spec := by
+    intros
     constr
     · intro h
       cases h
@@ -47,7 +49,8 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
 def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) → Equiv (β₁ x) (β₂ x)) : Equiv ((x : α) → β₁ x) ((x : α) → β₂ x) where
   fwd f₁ x := (e x).fwd (f₁ x)
   rev f₂ x := (e x).rev (f₂ x)
-  spec f₁ f₂ := by
+  spec := by
+    intros
     constr
     · intro h
       cases h
@@ -67,17 +70,18 @@ protected def equiv {α₁ α₂} {β₁ : α₁ → Sort _} {β₂ : α₂ → 
   h3 := {
     rev := λ m x => (e.fwd_rev x).symm ▸ m x
     fwd := λ n x => (e.fwd_rev x) ▸ n x
-    spec := λ m n => by
+    spec := by
+      intros
       constr
       · intro h
         rw [←h]
         funext x
-        simp only []
+        clean
         rw [dcast_trans' (h':=(e.fwd_rev x).symm) (h:=(e.fwd_rev x))]
       · intro h
         rw [←h]
         funext x
-        simp only []
+        clean
         rw [dcast_trans' (h':=(e.fwd_rev x)) (h:=(e.fwd_rev x).symm)]
   }
 

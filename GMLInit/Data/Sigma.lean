@@ -66,20 +66,22 @@ protected def equiv (e : Equiv α₁ α₂) (f : (x : α₁) → Equiv (β₁ x)
   h3 := {
     fwd := λ ⟨x₁, y₁⟩ => ⟨x₁, (e.fwd_rev x₁).symm ▸ y₁⟩
     rev := λ ⟨x₂, y₂⟩ => ⟨x₂, (e.fwd_rev x₂).symm ▸ y₂⟩
-    spec := λ ⟨x₁, y₁⟩ ⟨x₂, y₂⟩ => by
-      constr
-      · intro h
-        cases h
-        apply Sigma.eq
-        · reflexivity
-        · rw [dcast_trans y₁]
-          reflexivity using (.≅.)
-      · intro h
-        cases h
-        apply Sigma.eq
-        · reflexivity
-        · rw [dcast_trans y₂]
-          reflexivity using (.≅.)
+    spec := by
+      intro
+      | ⟨x₁, y₁⟩, ⟨x₂, y₂⟩ =>
+        constr
+        · intro h
+          cases h
+          apply Sigma.eq
+          · reflexivity
+          · rw [dcast_trans y₁]
+            reflexivity using (.≅.)
+        · intro h
+          cases h
+          apply Sigma.eq
+          · reflexivity
+          · rw [dcast_trans y₂]
+            reflexivity using (.≅.)
   }
 
 protected def equivProd (α β): Equiv (α × β) (Sigma (λ _ : α => β)) where

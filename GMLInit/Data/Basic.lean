@@ -4,7 +4,7 @@ deriving instance DecidableEq for Ordering
 structure Equiv.{u,v} (α : Sort u) (β : Sort v) : Sort (max 1 (max u v)) where
   fwd : α → β
   rev : β → α
-  spec (x y) : fwd x = y ↔ rev y = x
+  spec {x y} : fwd x = y ↔ rev y = x
 
 inductive Index.{u} {α : Type u} : List α → Type u where
 | head {a : α} {as : List α} : Index (a :: as)

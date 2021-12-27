@@ -45,7 +45,7 @@ protected theorem extEq {α} (as₁ as₂ : List α) : All (List.extAux as₁ as
   | nil => rfl
   | cons a as H => unfold map; rw [H]; rfl
 
-lemma comp_map {α β γ} (g : β → γ) (f : α → β) (as : List α) : (as.map f).map g = as.map (g ∘ f) := by
+lemma comp_map {α β γ} (f : α → β) (g : β → γ) (as : List α) : as.map (g ∘ f) = (as.map f).map g := by
   induction as with
   | nil => rfl
   | cons a as H => unfold map; rw [H, Function.comp_apply]
@@ -69,9 +69,10 @@ lemma bind_assoc {α β γ} (f : α → List β) (g : β → List γ) (as : List
 def equiv {α β} (e : Equiv α β) : Equiv (List α) (List β) where
   fwd := List.map e.fwd
   rev := List.map e.rev
-  spec xs ys := by
+  spec := by
+    intros
     constr
-    intro h; rw [←h, comp_map, e.comp_rev_fwd, id_map]
-    intro h; rw [←h, comp_map, e.comp_fwd_rev, id_map]
+    · intro h; rw [←h, ←comp_map, e.comp_rev_fwd, id_map]
+    · intro h; rw [←h, ←comp_map, e.comp_fwd_rev, id_map]
 
 end List

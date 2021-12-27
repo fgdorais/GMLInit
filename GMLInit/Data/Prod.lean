@@ -40,17 +40,19 @@ def assocEquiv (α β γ) : Equiv ((α × β) × γ) (α × (β × γ)) where
 protected def equiv {α₁ α₂ β₁ β₂} (e : Equiv α₁ α₂) (f : Equiv β₁ β₂) : Equiv (α₁ × β₁) (α₂ × β₂) where
   fwd | (x₁, y₁) => (e.fwd x₁, f.fwd y₁)
   rev | (x₂, y₂) => (e.rev x₂, f.rev y₂)
-  spec | (x₁, y₁), (x₂,y₂) => by
-    constr
-    · intro h
-      cases h
-      apply Prod.eq
-      exact e.rev_fwd x₁
-      exact f.rev_fwd y₁
-    · intro h
-      cases h
-      apply Prod.eq
-      exact e.fwd_rev x₂
-      exact f.fwd_rev y₂
+  spec := by
+    intro
+    | (x₁, y₁), (x₂,y₂) =>
+      constr
+      · intro h
+        cases h
+        apply Prod.eq
+        exact e.rev_fwd x₁
+        exact f.rev_fwd y₁
+      · intro h
+        cases h
+        apply Prod.eq
+        exact e.fwd_rev x₂
+        exact f.fwd_rev y₂
 
 end Prod
