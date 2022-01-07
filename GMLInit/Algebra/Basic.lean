@@ -1,3 +1,5 @@
+import GMLInit.Prelude
+
 namespace Algebra
 
 section Signatures
@@ -159,7 +161,9 @@ export OpRightDistrib (op_right_distrib)
 end Identities
 
 section Notation
-variable (α) [HAdd α α α] [Neg α] [OfNat α 0] [HMul α α α] [OfNat α 1]
+variable (α)
+  [HAdd α α α] [Neg α] [OfNat α 0]
+  [HMul α α α] [Inv α] [OfNat α 1]
 
 abbrev add_assoc [self : OpAssoc (.+.:α→α→α)] := self.op_assoc
 abbrev add_comm [self : OpComm (.+.:α→α→α)] := self.op_comm
@@ -171,6 +175,10 @@ abbrev add_zero_right [self : OpRightId (.+.:α→α→α) 0] := self.op_right_i
 abbrev add_neg_left [self : OpLeftInv (.+.:α→α→α) (-.:α→α) 0] := self.op_left_inv
 abbrev add_neg_right [self : OpRightInv (.+.:α→α→α) (-.:α→α) 0] := self.op_right_inv
 
+abbrev neg_add [self : InvHom (-.:α→α) (.+.)] := self.inv_hom
+abbrev neg_neg [self : InvInv (-.:α→α)] := self.inv_inv
+abbrev neg_zero [self : InvId (-.:α→α) 0] := self.inv_id
+
 abbrev mul_assoc [self : OpAssoc (.*.:α→α→α)] := self.op_assoc
 abbrev mul_comm [self : OpComm (.*.:α→α→α)] := self.op_comm
 abbrev mul_left_comm [self : OpLeftComm (.*.:α→α→α)] := self.op_left_comm
@@ -180,10 +188,12 @@ abbrev mul_one_left [self : OpLeftId (.*.:α→α→α) 1] := self.op_left_id
 abbrev mul_one_right [self : OpRightId (.*.:α→α→α) 1] := self.op_right_id
 abbrev mul_left_distrib [self : OpLeftDistrib (.*.:α→α→α) (.+.)] := self.op_left_distrib
 abbrev mul_right_distrib [self : OpRightDistrib (.*.:α→α→α) (.+.)] := self.op_right_distrib
+abbrev mul_inv_left [self : OpLeftInv (.*.:α→α→α) (.⁻¹:α→α) 1] := self.op_left_inv
+abbrev mul_inv_right [self : OpRightInv (.*.:α→α→α) (.⁻¹:α→α) 1] := self.op_right_inv
 
-abbrev neg_add [self : InvHom (-.:α→α) (.+.)] := self.inv_hom
-abbrev neg_neg [self : InvInv (-.:α→α)] := self.inv_inv
-abbrev neg_zero [self : InvId (-.:α→α) 0] := self.inv_id
+abbrev inv_mul [self : InvOp (.⁻¹:α→α) (.*.)] := self.inv_op
+abbrev inv_inv [self : InvInv (.⁻¹:α→α)] := self.inv_inv
+abbrev inv_one [self : InvId (.⁻¹:α→α) 1] := self.inv_id
 
 end Notation
 
