@@ -1,8 +1,10 @@
 import GMLInit.Algebra.Basic
 import GMLInit.Algebra.Group
 import GMLInit.Algebra.Monoid
+import GMLInit.Algebra.Rig
 import GMLInit.Algebra.Ring
 import GMLInit.Algebra.Semigroup
 import GMLInit.Algebra.Semiring
+import GMLInit.Algebra.UnitalRig
 import GMLInit.Algebra.UnitalRing
 import GMLInit.Algebra.UnitalSemiring

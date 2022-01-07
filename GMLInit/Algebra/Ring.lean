@@ -2,7 +2,7 @@ import GMLInit.Algebra.Basic
 import GMLInit.Algebra.Group
 import GMLInit.Algebra.Monoid
 import GMLInit.Algebra.Semigroup
-import GMLInit.Algebra.UnitalSemiring
+import GMLInit.Algebra.UnitalRig
 
 namespace Algebra
 variable {α} (s : RingSig α)
@@ -28,10 +28,14 @@ def Ring.infer [OpAssoc s.add] [OpComm s.add] [OpRightInv s.add s.neg s.zero] [O
 namespace Ring
 variable {s} [self : Ring s]
 
-instance : OpRightId (no_index s.add) (no_index s.zero) := ⟨Ring.add_right_id⟩
-instance : OpRightInv (no_index s.add) (no_index s.neg) (no_index s.zero) := ⟨Ring.add_right_inv⟩
+local instance : OpRightId (no_index s.add) (no_index s.zero) := ⟨Ring.add_right_id⟩
+local instance : OpRightInv (no_index s.add) (no_index s.neg) (no_index s.zero) := ⟨Ring.add_right_inv⟩
 
 instance toAddCommGroup : CommGroup (no_index s.toAddGroupSig) := CommGroup.infer s.toAddGroupSig
+
+instance toCancelRig : CancelRig (no_index s.toRigSig) :=
+  set_option synthInstance.maxHeartbeats 0 in
+  CancelRig.infer s.toRigSig
 
 end Ring
 
@@ -51,12 +55,16 @@ def CommRing.infer [OpAssoc s.add] [OpComm s.add] [OpRightInv s.add s.neg s.zero
 namespace CommRing
 variable {s} [self : CommRing s]
 
-instance : OpRightId (no_index s.add) (no_index s.zero) := ⟨CommRing.add_right_id⟩
-instance : OpRightInv (no_index s.add) (no_index s.neg) (no_index s.zero) := ⟨CommRing.add_right_inv⟩
+local instance : OpRightId (no_index s.add) (no_index s.zero) := ⟨CommRing.add_right_id⟩
+local instance : OpRightInv (no_index s.add) (no_index s.neg) (no_index s.zero) := ⟨CommRing.add_right_inv⟩
 
 instance toRing : Ring s :=
-  set_option synthInstance.maxHeartbeats 1300 in
+  set_option synthInstance.maxHeartbeats 0 in
   Ring.infer s
+
+instance toCancelCommRig : CancelCommRig (no_index s.toRigSig) :=
+  set_option synthInstance.maxHeartbeats 0 in
+  CancelCommRig.infer s.toRigSig
 
 end CommRing
 

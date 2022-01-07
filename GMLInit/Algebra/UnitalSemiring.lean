@@ -55,7 +55,7 @@ protected theorem mul_left_id (x) : e ⋆ x = x := calc
 local instance : OpLeftId (no_index s.mul) (no_index s.one) := ⟨UnitalCommSemiring.mul_left_id⟩
 
 instance toUnitalSemiring : UnitalSemiring s :=
-  set_option synthInstance.maxHeartbeats 1300 in
+  set_option synthInstance.maxHeartbeats 0 in
   UnitalSemiring.infer s
 
 instance toMulCommMonoid : CommMonoid (no_index s.toMulMonoidSig) := CommMonoid.infer s.toMulMonoidSig
