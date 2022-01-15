@@ -4,7 +4,7 @@ import GMLInit.Data.Set.Insert
 set_option checkBinderAnnotations false in
 class inductive Set.IsSubfinite : Set α → Prop
 | protected empty : IsSubfinite Set.empty
-| protected insertIf (s : Set α) [IsSubfinite s] (a : α) (p : Prop := True) : IsSubfinite (s.insertIf a p)
+| protected insertIf (s : Set α) [inst : IsSubfinite s] (a : α) (p : Prop := True) : IsSubfinite (s.insertIf a p)
 attribute [instance] Set.IsSubfinite.empty Set.IsSubfinite.insertIf
 
 namespace Set.IsSubfinite
@@ -31,11 +31,10 @@ protected instance union (s t : Set α) [hs : IsSubfinite s] [ht : IsSubfinite t
   induction hs with
   | empty =>
     rw [empty_union]
-    infer_instance
+    exact ht
   | insertIf s a p H =>
-    let rec @[instance] inst : IsSubfinite (s ∪ t) := H
     rw [insertIf_union_left]
-    infer_instance
+    apply IsSubfinite.insertIf (inst:=H) (s ∪ t) a p
 
 protected instance inter_left (s t : Set α) [hs : IsSubfinite s] : IsSubfinite (Set.inter s t) := by
   induction hs with
@@ -43,49 +42,45 @@ protected instance inter_left (s t : Set α) [hs : IsSubfinite s] : IsSubfinite 
     rw [empty_inter]
     exact IsSubfinite.empty
   | insertIf s a p H =>
-    let rec @[instance] inst : IsSubfinite (s ∩ t) := H
     rw [insertIf_inter_left]
-    infer_instance
+    apply IsSubfinite.insertIf (inst:=H) (s ∩ t) a (p ∧ a ∈ t)
 
 protected instance inter_right (s t : Set α) [ht : IsSubfinite t] : IsSubfinite (Set.inter s t) := by
   induction ht with
   | empty =>
     rw [inter_empty]
-    infer_instance
+    exact IsSubfinite.empty
   | insertIf t a p H =>
-    let rec @[instance] inst : IsSubfinite (s ∩ t) := H
     rw [insertIf_inter_right]
-    infer_instance
+    apply IsSubfinite.insertIf (inst:=H) (s ∩ t) a (p ∧ a ∈ s)
 
 protected instance map (f : α → β) (s : Set α) [hs : IsSubfinite s] : IsSubfinite (s.map f) := by
   induction hs with
   | empty =>
     rw [empty_map]
-    infer_instance
+    exact IsSubfinite.empty
   | insertIf s a p H =>
-    let rec @[instance] inst : IsSubfinite (s.map f) := H
     rw [insertIf_map]
-    infer_instance
+    apply IsSubfinite.insertIf (inst:=H) (s.map f) (f a) p
 
 protected instance bind (f : α → Set β) [hf : (x : α) → IsSubfinite (f x)] (s : Set α) [hs : IsSubfinite s] : IsSubfinite (s.bind f) := by
   induction hs with
   | empty =>
     rw [empty_bind]
-    infer_instance
+    exact IsSubfinite.empty
   | insertIf s a p H =>
-    let rec @[instance] inst : IsSubfinite (s.bind f) := H
     rw [insertIf_bind]
-    infer_instance
+    apply IsSubfinite.union (ht:=H) (f a ∩ Set.const p) (s.bind f)
 
 protected instance seq (f : Set (α → β)) [hf : IsSubfinite f] (s : Set α) [hs : IsSubfinite s] : IsSubfinite (Set.seq f s) := by
   induction hs with
   | empty =>
     rw [empty_seq]
-    infer_instance
+    exact IsSubfinite.empty
   | insertIf s a p H =>
     let rec @[instance] inst : IsSubfinite (Set.seq f s) := H
     rw [insertIf_seq]
-    infer_instance
+    apply IsSubfinite.union (ht:=H) (f.map (λ f => f a) ∩ Set.const p) (Set.seq f s)
 
 protected instance seqLeft (s : Set α) [hs : IsSubfinite s] (t : Set β) [ht : IsSubfinite t] : IsSubfinite (Set.seqLeft s t) := by
   unfold Set.seqLeft
