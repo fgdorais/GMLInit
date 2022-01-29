@@ -9,7 +9,7 @@ protected abbrev recNilOn {α} {motive : Index ([]:List α) → Sort _} (i : Ind
 
 protected abbrev casesNilOn {α} {motive : Index ([]:List α) → Sort _} (i : Index ([]:List α)) : motive i := nomatch i
 
-@[simp] lemma val_head {α} (a : α) (as : List α) : (@head α a as).val = a := rfl
+lemma val_head {α} (a : α) (as : List α) : (@head α a as).val = a := rfl
 
 @[simp] lemma val_tail {α} (a : α) (as : List α) (i : Index as) : (@tail α a as i).val = i.val := rfl
 
