@@ -85,7 +85,7 @@ protected theorem succ_le_or_eq_zero_iff_le_pred (x y : Nat) : x + 1 ≤ y ∨ x
     constr
     · intro
       | Or.inl h => absurd h; apply Nat.not_succ_le_zero
-      | Or.inr h => rw [h]; reflexivity
+      | Or.inr h => rw [h]; apply Nat.le_refl
     · intro h
       right
       antisymmetry using LE.le

@@ -42,7 +42,7 @@ protected theorem lt_iff_le_and_ne (x y : Nat) : x < y ↔ x ≤ y ∧ x ≠ y :
 protected theorem lt_connex {x y : Nat} : x ≠ y → x < y ∨ x > y :=
   λ hne => Or.elim (Nat.lt_or_ge x y) Or.inl λ h => Or.inr (Nat.lt_of_le_of_ne h hne.symm)
 
-protected theorem ge_of_not_lt {x y : Nat} : ¬ x < y → x ≥ y := Or.mtp (Nat.le_or_gt y x)
+-- assert theorem ge_of_not_lt {x y : Nat} : ¬ x < y → x ≥ y := Or.mtp (Nat.le_or_gt y x)
 
 -- assert theorem gt_of_not_le {x y : Nat} : ¬ x ≤ y → x > y
 
