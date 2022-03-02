@@ -20,7 +20,7 @@ macro_rules
 | `(tactic|bool_tt using $tac) => `(tactic|$tac)
 | `(tactic|bool_tt $[using $tac]? $x:term $xs:term*) => `(tactic|cases ($x : Bool) <;> bool_tt $[using $tac]? $xs*)
 
-theorem not_not : !(!x) = x := by bool_tt x
+-- assert not_not : !(!x) = x := by bool_tt x
 theorem not_and : !(x && y) = (!x || !y) := by bool_tt x y
 theorem not_or : !(x || y) = (!x && !y) := by bool_tt x y
 

@@ -86,7 +86,7 @@ protected theorem add_lt_add_of_lt_of_le {x₁ x₂ y₁ y₂ : Nat} : x₁ < x�
   · apply Nat.add_lt_add_right
     exact h₁
 
-protected theorem le_of_add_le_add_left (x : Nat) {y z : Nat} : x + y ≤ x + z → y ≤ z := by
+protected theorem le_of_add_le_add_left' (x : Nat) {y z : Nat} : x + y ≤ x + z → y ≤ z := by
   induction x with
   | zero =>
     simp only [Nat.simp_zero, Nat.zero_add]
@@ -100,9 +100,9 @@ protected theorem le_of_add_le_add_left (x : Nat) {y z : Nat} : x + y ≤ x + z 
     assumption
 
 protected theorem le_iff_add_le_add_left (x y z : Nat) : x ≤ y ↔ z + x ≤ z + y :=
-  ⟨λ h => Nat.add_le_add_left h z, Nat.le_of_add_le_add_left z⟩
+  ⟨λ h => Nat.add_le_add_left h z, Nat.le_of_add_le_add_left' z⟩
 
-protected theorem le_of_add_le_add_right (x : Nat) {y z : Nat} : y + x ≤ z + x → y ≤ z := by
+protected theorem le_of_add_le_add_right' (x : Nat) {y z : Nat} : y + x ≤ z + x → y ≤ z := by
   induction x with
   | zero =>
     simp only [Nat.simp_zero, Nat.zero_add]
@@ -116,7 +116,7 @@ protected theorem le_of_add_le_add_right (x : Nat) {y z : Nat} : y + x ≤ z + x
     assumption
 
 protected theorem le_iff_add_le_add_right (x y z : Nat) : x ≤ y ↔ x + z ≤ y + z :=
-  ⟨λ h => Nat.add_le_add_right h z, Nat.le_of_add_le_add_right z⟩
+  ⟨λ h => Nat.add_le_add_right h z, Nat.le_of_add_le_add_right' z⟩
 
 protected theorem lt_of_add_lt_add_left (x : Nat) {y z : Nat} : x + y < x + z → y < z := by
   induction x with

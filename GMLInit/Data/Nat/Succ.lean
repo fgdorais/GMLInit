@@ -4,9 +4,9 @@ import GMLInit.Data.Nat.Order
 
 namespace Nat
 
-protected theorem pred_zero : 0 - 1 = 0 := rfl
+-- assert theorem pred_zero : 0 - 1 = 0 := rfl
 
-protected theorem pred_succ (x : Nat) : (x + 1) - 1 = x := rfl
+-- assert theorem pred_succ (x : Nat) : (x + 1) - 1 = x := rfl
 
 protected theorem succ_pred_of_pos {x : Nat} : x > 0 → (x - 1) + 1 = x := by
   cases x using Nat.casesAuxOn with
