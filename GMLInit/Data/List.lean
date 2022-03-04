@@ -75,4 +75,22 @@ def equiv {α β} (e : Equiv α β) : Equiv (List α) (List β) where
     · intro h; rw [←h, ←comp_map, e.comp_rev_fwd, id_map]
     · intro h; rw [←h, ←comp_map, e.comp_fwd_rev, id_map]
 
+@[simp] lemma all_nil {α} (p : α → Bool) : [].all p = true := rfl
+
+@[simp] lemma all_cons {α} (p : α → Bool) (x : α) (xs : List α) : (x :: xs).all p = (p x && xs.all p) := rfl
+
+lemma all_eq_true {α} (p : α → Bool) (xs : List α) : xs.all p = true ↔ All (xs.map λ x => p x = true) := by
+  induction xs generalizing p with
+  | nil => rw [all_nil, nil_map]; simp
+  | cons x xs H => rw [all_cons, cons_map, All.cons_eq, ←H]; simp
+
+@[simp] lemma any_nil {α} (p : α → Bool) : [].any p = false := rfl
+
+@[simp] lemma any_cons {α} (p : α → Bool) (x : α) (xs : List α) : (x :: xs).any p = (p x || xs.any p) := rfl
+
+lemma any_eq_true {α} (p : α → Bool) (xs : List α) : xs.any p = true ↔ Any (xs.map λ x => p x = true) := by
+  induction xs generalizing p with
+  | nil => rw [any_nil, nil_map, Any.nil_eq]; simp
+  | cons x xs H => rw [any_cons, cons_map, Any.cons_eq, ←H]; simp
+
 end List

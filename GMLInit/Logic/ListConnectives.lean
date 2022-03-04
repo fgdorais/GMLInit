@@ -10,6 +10,15 @@ inductive All : List Prop → Prop
 
 namespace All
 
+@[simp] theorem nil_eq : All [] = True :=
+  propext ⟨λ _ => trivial, λ _ => All.nil⟩
+
+@[simp] theorem cons_eq {a as} : All (a :: as) = (a ∧ All as) :=
+  propext $ by
+  constr
+  · intro | All.cons hh ht => exact And.intro hh ht
+  · intro | And.intro hh ht => exact All.cons hh ht
+
 protected abbrev head {a as} : All (a :: as) → a
 | All.cons h _ => h
 
@@ -21,7 +30,7 @@ protected def introIdx : {as : List Prop} → (∀ i : Index as, i.val) → All 
 | _::_, h => All.cons (h Index.head) (All.introIdx (λ i => h (Index.tail i)))
 
 protected def projIdx : {as : List Prop} → All as → (i : Index as) → i.val
-| _::_, All.cons h _, Index.head => h 
+| _::_, All.cons h _, Index.head => h
 | _::_, All.cons _ h, Index.tail i => All.projIdx h i
 
 syntax "All.intro" termList : term
@@ -34,7 +43,7 @@ syntax "All.pr." noWs num termOrHole : term
 macro_rules
 | `(All.pr.$n $h) => match n.isNatLit? with
   | some 0 => `(All.head $h)
-  | some (n+1) => 
+  | some (n+1) =>
     let n := Lean.Syntax.mkNumLit (toString n)
     `(All.pr.$n (All.tail $h))
   | _ => Lean.Macro.throwUnsupported
@@ -46,6 +55,19 @@ inductive Any : List Prop → Prop
 | protected tail {a as} : Any as → Any (a :: as)
 
 namespace Any
+
+@[simp] protected theorem nil_eq : Any [] = False :=
+  propext ⟨λ h => nomatch h, False.elim⟩
+
+@[simp] protected theorem cons_eq {a as} : Any (a :: as) = (a ∨ Any as) :=
+  propext $ by
+  constr
+  · intro
+    | Any.head h => exact Or.inl h
+    | Any.tail h => exact Or.inr h
+  · intro
+    | Or.inl h => exact Any.head h
+    | Or.inr h => exact Any.tail h
 
 protected def elimAll {motive : Prop} : {as : List Prop} → Any as → All (as.map λ a => a → motive) → motive
 | _::_, Any.head hh, All.cons h _ => h hh
@@ -101,4 +123,4 @@ theorem any_not_of_not_all : {as : List Prop} → [WeaklyComplementedList as] �
 theorem not_all_iff_any_not (as : List Prop) [WeaklyComplementedList as] : ¬All as ↔ Any (as.map (¬.)) :=
   Iff.intro any_not_of_not_all not_all_of_any_not
 
-theorem All.deMorgan {as : List Prop} [WeaklyComplementedList as] : ¬All as ↔ Any (as.map (¬.)) := not_all_iff_any_not as 
+theorem All.deMorgan {as : List Prop} [WeaklyComplementedList as] : ¬All as ↔ Any (as.map (¬.)) := not_all_iff_any_not as
