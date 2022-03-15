@@ -30,7 +30,7 @@ protected theorem le_iff_lt_or_eq (x y : Nat) : x ≤ y ↔ x < y ∨ x = y :=
 
 -- assert theorem le_of_lt {x y : Nat} : x < y → x ≤ y
 
-protected theorem ne_of_lt {x y : Nat} : x < y → x ≠ y | h, rfl => Nat.lt_irrefl x h -- fix?
+-- assert theorem ne_of_lt {x y : Nat} : x < y → x ≠ y | h, rfl => Nat.lt_irrefl x h
 
 -- assert theorem lt_of_le_of_ne {x y : Nat} : x ≤ y → x ≠ y → x < y
 
