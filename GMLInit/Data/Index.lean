@@ -35,4 +35,37 @@ protected def pred? {α} : {as : List α} → Index as → Option (Index as)
   | some i => some (tail i)
   | none => some head
 
+protected def find? {α} : {xs : List α} → (p : Index xs → Bool) → Option (Index xs)
+| [], _ => none
+| _::_, p =>
+  match p head, Index.find? (λ i => p (tail i)) with
+  | true, _ => some head
+  | false, some i => some (tail i)
+  | false, none => none
+
+theorem find_some {α} {xs : List α} {p : Index xs → Bool} (i : Index xs) : Index.find? p = some i → p i = true := by
+  induction xs with
+  | nil => cases i
+  | cons x xs H =>
+    intro h
+    unfold Index.find? at h
+    split at h
+    next hh => cases h; exact hh
+    next ht => cases h; exact H _ ht
+    next => contradiction
+
+theorem find_none {α} {xs : List α} {p : Index xs → Bool} (i : Index xs) : Index.find? p = none → p i = false := by
+  induction xs with
+  | nil => cases i
+  | cons x xs H =>
+    intro h
+    unfold Index.find? at h
+    split at h
+    next => contradiction
+    next => contradiction
+    next hh ht =>
+      cases i with
+      | head => exact hh
+      | tail i => exact H _ ht
+
 end Index
