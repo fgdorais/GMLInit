@@ -1,6 +1,8 @@
 import GMLInit.Data.Basic
 import GMLInit.Data.Bool
 import GMLInit.Data.Equiv
+import GMLInit.Data.Fin
+import GMLInit.Data.Find
 import GMLInit.Data.HList
 import GMLInit.Data.HVal
 import GMLInit.Data.Index
