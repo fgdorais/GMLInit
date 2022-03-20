@@ -9,14 +9,14 @@ inductive HList.{u} : List (Sort u) → Type u
 | nil : HList []
 | cons {α αs} : α → HList αs → HList (α :: αs)
 
-infixr:67 " :: " => HList.cons
-syntax (name := hlist) "[" term,* "]"  : term
-macro_rules (kind := hlist)
+namespace HList
+
+scoped infixr:67 " :: " => HList.cons
+scoped syntax (name := hlist) "[" term,* "]"  : term
+scoped macro_rules (kind := hlist)
   | `([ ])           => `(HList.nil)
   | `([ $a ])        => `(HList.cons $a HList.nil)
   | `([ $a, $as,* ]) => `(HList.cons $a [$as,*])
-
-namespace HList
 
 protected def extAux : {αs βs : List (Sort _)} → (as : HList αs) → (bs : HList βs) → List Prop
 | [], [], [], [] => []
