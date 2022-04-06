@@ -4,6 +4,11 @@ import GMLInit.Meta.Basic
 
 namespace Option
 
+def get {α} : (a : Option α) → a.isSome → α
+| some a, rfl => a
+
+@[simp] lemma get_some (a : α) {h : (some a).isSome} : get (some a) h = a := rfl
+
 @[simp] lemma none_map {α β} (f : α → β) : none.map f = none := rfl
 
 @[simp] lemma some_map {α β} (f : α → β) (a : α) : (some a).map f = some (f a) := rfl
