@@ -13,6 +13,7 @@ theorem Reflexive.of_eq {α} (r : α → α → Prop) [Reflexive r] : {x y : α}
 | _, _, rfl => Reflexive.rfl
 
 instance (α) [Setoid α] : Reflexive (α:=α) (.≈.) := ⟨Setoid.refl⟩
+instance (α) [Setoid α] : Reflexive (α:=α) Setoid.r := ⟨Setoid.refl⟩
 instance (α) : Reflexive (α:=α) (.≅.) := ⟨HEq.refl⟩
 instance (α) : Reflexive (α:=α) (.=.) := ⟨Eq.refl⟩
 instance : Reflexive (.→.) := ⟨@id⟩
@@ -57,6 +58,7 @@ instance {α} (r : α → α → Prop) [Asymmetric r] : HSymmetric r (λ x y => 
 instance (α) : Symmetric (α:=α) (.=.) := ⟨Eq.symm⟩
 instance (α) : Symmetric (α:=α) (.≠.) := ⟨Ne.symm⟩
 instance (α) [Setoid α] : Symmetric (α:=α) (.≈.) := ⟨Setoid.symm⟩
+instance (α) [Setoid α] : Symmetric (α:=α) Setoid.r := ⟨Setoid.symm⟩
 instance (α β) : HSymmetric (α:=α) (β:=β) (.≅.) (.≅.) := ⟨HEq.symm⟩
 instance (α) [LE α] : HSymmetric (α:=α) (.≤.) (.≥.) := ⟨id⟩
 instance (α) [LE α] : HSymmetric (α:=α) (.≥.) (.≤.) := ⟨id⟩
