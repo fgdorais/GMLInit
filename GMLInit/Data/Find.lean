@@ -68,14 +68,14 @@ instance : Find PUnit where
   | p, (), h => by
     clean at h
     split at h
-    next => rfl
+    next => assumption
     next => contradiction
   find_none
   | p, (), h => by
     clean at h
     split at h
     next => contradiction
-    next => rfl
+    next => assumption
 
 instance : Find Bool where
   find? p :=
@@ -87,14 +87,14 @@ instance : Find Bool where
   | p, true, h => by
     clean at h
     split at h
-    next => rfl
+    next => assumption
     next h => cases h
     next h => cases h
   | p, false, h => by
     clean at h
     split at h
     next h => cases h
-    next => rfl
+    next => assumption
     next h => cases h
   find_none
   | p, true, h => by
@@ -135,12 +135,12 @@ instance [Find α] : Find (Option α) where
     next h =>
       apply Find.find_some (p := λ x => p (some x))
       split at h
-      next h => cases h; rfl
+      next h => cases h; assumption
       next h => cases h
   | p, none, h => by
     clean at h
     split at h
-    next => rfl
+    next => assumption
     next h =>
       split at h
       next h => cases h
@@ -163,7 +163,7 @@ instance [Find α] : Find (Option α) where
     next h =>
       split at h
       next h => cases h
-      next => rfl
+      next => assumption
 
 instance (α β) [Find α] [Find β] : Find (Sum α β) where
   find? p :=
@@ -196,21 +196,21 @@ instance (α β) [Find α] [Find β] : Find (Sum α β) where
     split at h
     next => cases h
     next => cases h
-    next h' _ =>
+    next _ h' =>
       apply Find.find_none (p := λ x => p (Sum.inl x))
       cases h: find? (λ x => p (Sum.inl x)) with
       | none => rfl
-      | some x => absurd h' x; simp_all
+      | some x => absurd h' x; exact h
   | p, Sum.inr y, h => by
     clean at h
     split at h
     next h => cases h
     next h => cases h
-    next _ h' =>
+    next h' _ =>
       apply Find.find_none (p := λ x => p (Sum.inr x))
       cases h: find? (λ x => p (Sum.inr x)) with
       | none => rfl
-      | some x => absurd h' x; simp_all
+      | some x => absurd h' x; exact h
 
 instance (α) [Find α] (C : α → Prop) [DecidablePred C] : Find { x : α // C x } where
   find? p :=
