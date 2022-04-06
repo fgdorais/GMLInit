@@ -1,10 +1,5 @@
 import GMLInit.Data.Nat.Basic
 import GMLInit.Data.Nat.Order
-import GMLInit.Data.Nat.Succ
-import GMLInit.Data.Nat.Add
-import GMLInit.Data.Nat.Sub
-import GMLInit.Data.Nat.Mul
-import GMLInit.Data.Nat.Pow
 
 namespace Nat
 
@@ -156,5 +151,18 @@ theorem pair_fst_snd (n) : pair n.fst n.snd = n := by
   | ⟨t,⟨s,hs⟩⟩ =>
     rw [Nat.add_comm s, Nat.sub_add_cancel (Nat.le_of_lt_succ hs)]
     rw [←split_eq n, h]
+
+def prodEquiv : Equiv Nat (Nat × Nat) where
+  fwd n := (n.fst, n.snd)
+  rev | (n₁,n₂) => pair n₁ n₂
+  spec | n, (n₁,n₂) => by
+    clean
+    constr
+    · intro h
+      cases h
+      rw [pair_fst_snd]
+    · intro h
+      cases h
+      rw [fst_pair, snd_pair]
 
 end Nat
