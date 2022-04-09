@@ -8,14 +8,16 @@ protected def Stable.by_contradiction {a : Prop} [inst : Stable a] : ¬¬a → a
   match inst with | Stable.intro h => h
 
 /-- double negation elimination (DNE) -/
-theorem Stable.dne (a : Prop) [inst : Stable a] : ¬¬a → a := 
+theorem Stable.dne (a : Prop) [inst : Stable a] : ¬¬a → a :=
   match inst with | Stable.intro h => h
 
 /-- Pierces's law -/
 theorem Stable.pierce (a b : Prop) [Stable a] : ((a → b) → a) → a :=
   λ h => Stable.by_contradiction λ na => na (h λ ha => absurd ha na)
 
-abbrev StablePred {α} (a : α → Prop) := (x : α) → Stable (a x)
+abbrev StablePred {α} (p : α → Prop) := (x : α) → Stable (p x)
+
+abbrev StableRel {α β} (r : α → β → Prop) := (x : α) → (y : β) → Stable (r x y)
 
 class inductive StableList : List Prop → Prop
 | nil : StableList []
@@ -43,7 +45,7 @@ class inductive Complemented (a : Prop) : Prop
 | protected isFalse : ¬a → Complemented a
 
 /-- eliminator for `Complemented` -/
-protected def Complemented.by_cases (a : Prop) [inst : Complemented a] {motive : Prop} (isTrue : a → motive) (isFalse : ¬a → motive) : motive := 
+protected def Complemented.by_cases (a : Prop) [inst : Complemented a] {motive : Prop} (isTrue : a → motive) (isFalse : ¬a → motive) : motive :=
   match inst with
   | Complemented.isTrue h => isTrue h
   | Complemented.isFalse h => isFalse h
@@ -51,7 +53,9 @@ protected def Complemented.by_cases (a : Prop) [inst : Complemented a] {motive :
 /-- excluded middle (EM) -/
 theorem Complemented.em (a : Prop) [Complemented a] : a ∨ ¬a := Complemented.by_cases a Or.inl Or.inr
 
-abbrev ComplementedPred {α} (a : α → Prop) := (x : α) → Complemented (a x)
+abbrev ComplementedPred {α} (p : α → Prop) := (x : α) → Complemented (p x)
+
+abbrev ComplementedRel {α β} (r : α → β → Prop) := (x : α) → (y : β) → Complemented (r x y)
 
 class inductive ComplementedList : List Prop → Prop
 | nil : ComplementedList []
@@ -120,7 +124,9 @@ theorem WeaklyComplemented.wem (a : Prop) : [WeaklyComplemented a] → ¬¬a ∨
 | WeaklyComplemented.isIrrefutable h => Or.inl h
 | WeaklyComplemented.isFalse h => Or.inr h
 
-abbrev WeaklyComplementedPred {α} (a : α → Prop) := (x : α) → WeaklyComplemented (a x)
+abbrev WeaklyComplementedPred {α} (p : α → Prop) := (x : α) → WeaklyComplemented (p x)
+
+abbrev WeaklyComplementedRel {α β} (r : α → β → Prop) := (x : α) → (y : β) → WeaklyComplemented (r x y)
 
 class inductive WeaklyComplementedList : List Prop → Prop
 | nil : WeaklyComplementedList []
@@ -163,7 +169,9 @@ class inductive WeaklyDecidable (a : Prop) : Type
 | protected isFalse : ¬a → WeaklyDecidable a
 | protected isIrrefutable : ¬¬a → WeaklyDecidable a
 
-abbrev WeaklyDecidablePred {α} (a : α → Prop) := (x : α) → WeaklyDecidable (a x)
+abbrev WeaklyDecidablePred {α} (p : α → Prop) := (x : α) → WeaklyDecidable (p x)
+
+abbrev WeaklyDecidableRel {α β} (r : α → β → Prop) := (x : α) → (y : β) → WeaklyDecidable (r x y)
 
 class inductive WeaklyDecidableList : List Prop → Type
 | nil : WeaklyDecidableList []
