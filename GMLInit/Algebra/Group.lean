@@ -82,7 +82,7 @@ protected theorem inv_id : e⁻¹ = e :=
   _ = e ⋆ e := by rw [op_right_id (.⋆.) e]
 instance : InvId (no_index s.inv) (no_index s.id) := ⟨Group.inv_id⟩
 
-instance toCancelMonoid : CancelMonoid (no_index s.toMonoidSig) := CancelMonoid.infer s.toMonoidSig
+instance toCancelMonoid : CancelMonoid (no_index s.toMonoidSig) := CancelMonoid.infer _
 
 end Group
 
@@ -102,7 +102,7 @@ protected theorem inv_hom (x y) : (x ⋆ y)⁻¹ = x⁻¹ ⋆ y⁻¹ := calc
   _ = x⁻¹ ⋆ y⁻¹ := by rw [op_comm (.⋆.) x⁻¹ y⁻¹]
 instance : InvHom (no_index s.inv) (no_index s.op) := ⟨CommGroup.inv_hom⟩
 
-instance toCancelCommMonoid : CancelCommMonoid (no_index s.toMonoidSig) := CancelCommMonoid.infer s.toMonoidSig
+instance toCancelCommMonoid : CancelCommMonoid (no_index s.toMonoidSig) := CancelCommMonoid.infer _
 
 end CommGroup
 

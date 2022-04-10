@@ -55,7 +55,7 @@ local instance : OpRightId (no_index s.mul) (no_index s.one) := ⟨UnitalCommRin
 
 instance toCancelUnitalCommRig : CancelUnitalCommRig (no_index s.toUnitalRigSig) := CancelUnitalCommRig.infer _
 
-instance toMulCommMonoid : CommMonoid (no_index s.toUnitalRigSig.toUnitalSemiringSig.toMulMonoidSig) := CommMonoid.infer s.toUnitalRigSig.toUnitalSemiringSig.toMulMonoidSig
+instance toMulCommMonoid : CommMonoid (no_index s.toUnitalRigSig.toUnitalSemiringSig.toMulMonoidSig) := CommMonoid.infer _
 
 instance toUnitalRing : UnitalRing s := UnitalRing.infer _
 

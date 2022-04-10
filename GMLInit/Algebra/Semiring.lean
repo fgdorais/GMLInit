@@ -30,9 +30,9 @@ local instance : OpAssoc (no_index s.mul) := ⟨Semiring.mul_assoc⟩
 instance : OpLeftDistrib (no_index s.mul) (no_index s.add) := ⟨Semiring.mul_left_distrib⟩
 instance : OpRightDistrib (no_index s.mul) (no_index s.add) := ⟨Semiring.mul_right_distrib⟩
 
-instance toAddCommSemigroup : CommSemigroup (no_index s.toAddSemigroupSig) := CommSemigroup.infer s.toAddSemigroupSig
+instance toAddCommSemigroup : CommSemigroup (no_index s.toAddSemigroupSig) := CommSemigroup.infer _
 
-instance toMulSemigroup : Semigroup (no_index s.toMulSemigroupSig) := Semigroup.infer s.toMulSemigroupSig
+instance toMulSemigroup : Semigroup (no_index s.toMulSemigroupSig) := Semigroup.infer _
 
 end Semiring
 
@@ -68,6 +68,6 @@ local instance : OpLeftDistrib (no_index s.mul) (no_index s.add) := ⟨CommSemir
 
 instance toSemiring : Semiring s := Semiring.infer s
 
-instance toMulCommSemigroup : CommSemigroup (no_index s.toMulSemigroupSig) := CommSemigroup.infer s.toMulSemigroupSig
+instance toMulCommSemigroup : CommSemigroup (no_index s.toMulSemigroupSig) := CommSemigroup.infer _
 
 end CommSemiring

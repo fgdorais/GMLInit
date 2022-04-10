@@ -33,7 +33,7 @@ local instance : OpRightId (no_index s.add) (no_index s.zero) := ⟨Rig.add_righ
 instance : OpLeftNil (no_index s.mul) (no_index s.zero) := ⟨Rig.mul_left_zero⟩
 instance : OpRightNil (no_index s.mul) (no_index s.zero) := ⟨Rig.mul_right_zero⟩
 
-instance toAddCommMonoid : CommMonoid (no_index s.toAddMonoidSig) := CommMonoid.infer s.toAddMonoidSig
+instance toAddCommMonoid : CommMonoid (no_index s.toAddMonoidSig) := CommMonoid.infer _
 
 end Rig
 
@@ -84,7 +84,7 @@ variable {s} [self : CancelRig s]
 local instance : OpRightId (no_index s.add) (no_index s.zero) := ⟨CancelRig.add_right_id⟩
 local instance : OpRightCancel (no_index s.add) := ⟨CancelRig.add_right_cancel⟩
 
-instance toAddCancelCommMonoid : CancelCommMonoid (no_index s.toAddMonoidSig) := CancelCommMonoid.infer s.toAddMonoidSig
+instance toAddCancelCommMonoid : CancelCommMonoid (no_index s.toAddMonoidSig) := CancelCommMonoid.infer _
 
 protected theorem mul_left_zero (x) : 𝟘 ⋆ x = 𝟘 :=
   op_right_cancel (.⊹.) (𝟘 ⋆ x) $ calc

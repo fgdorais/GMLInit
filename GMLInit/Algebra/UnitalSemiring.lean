@@ -29,7 +29,7 @@ variable {s} [self : UnitalSemiring s]
 local instance : OpLeftId (no_index s.mul) (no_index s.one) := ⟨UnitalSemiring.mul_left_id⟩
 local instance : OpRightId (no_index s.mul) (no_index s.one) := ⟨UnitalSemiring.mul_right_id⟩
 
-instance toMulMonoid : Monoid (no_index s.toMulMonoidSig) := Monoid.infer s.toMulMonoidSig
+instance toMulMonoid : Monoid (no_index s.toMulMonoidSig) := Monoid.infer _
 
 end UnitalSemiring
 
@@ -54,10 +54,8 @@ protected theorem mul_left_id (x : α) : e ⋆ x = x := calc
   _ = x := by rw [op_right_id (.⋆.) x]
 local instance : OpLeftId (no_index s.mul) (no_index s.one) := ⟨UnitalCommSemiring.mul_left_id⟩
 
-instance toUnitalSemiring : UnitalSemiring s :=
-  set_option synthInstance.maxHeartbeats 0 in
-  UnitalSemiring.infer s
+instance toUnitalSemiring : UnitalSemiring s := UnitalSemiring.infer _
 
-instance toMulCommMonoid : CommMonoid (no_index s.toMulMonoidSig) := CommMonoid.infer s.toMulMonoidSig
+instance toMulCommMonoid : CommMonoid (no_index s.toMulMonoidSig) := CommMonoid.infer _
 
 end UnitalCommSemiring
