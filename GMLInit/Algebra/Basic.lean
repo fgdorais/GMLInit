@@ -119,79 +119,79 @@ local postfix:max "⁻¹" => inv
 local notation "e" => id
 
 class OpAssoc : Prop where
-  op_assoc (x y z) : (x ⋆ y) ⋆ z = x ⋆ (y ⋆ z)
+  op_assoc {} (x y z) : (x ⋆ y) ⋆ z = x ⋆ (y ⋆ z)
 export OpAssoc (op_assoc)
 
 class OpComm : Prop where
-  op_comm (x y) : x ⋆ y = y ⋆ x
+  op_comm {} (x y) : x ⋆ y = y ⋆ x
 export OpComm (op_comm)
 
 class OpLeftComm : Prop where
-  op_left_comm (x y z) : x ⋆ (y ⋆ z) = y ⋆ (x ⋆ z)
+  op_left_comm {} (x y z) : x ⋆ (y ⋆ z) = y ⋆ (x ⋆ z)
 export OpLeftComm (op_left_comm)
 
 class OpRightComm : Prop where
-  op_right_comm (x y z) : (x ⋆ y) ⋆ z = (x ⋆ z) ⋆ y
+  op_right_comm {} (x y z) : (x ⋆ y) ⋆ z = (x ⋆ z) ⋆ y
 export OpRightComm (op_right_comm)
 
 class OpCrossComm : Prop where
-  op_cross_comm (x₁ x₂ y₁ y₂) : (x₁ ⋆ x₂) ⋆ (y₁ ⋆ y₂) = (x₁ ⋆ y₁) ⋆ (x₂ ⋆ y₂)
+  op_cross_comm {} (x₁ x₂ y₁ y₂) : (x₁ ⋆ x₂) ⋆ (y₁ ⋆ y₂) = (x₁ ⋆ y₁) ⋆ (x₂ ⋆ y₂)
 export OpCrossComm (op_cross_comm)
 
 class OpLeftId : Prop where
-  op_left_id (x) : e ⋆ x = x
+  op_left_id {} (x) : e ⋆ x = x
 export OpLeftId (op_left_id)
 
 class OpRightId : Prop where
-  op_right_id (x) : x ⋆ e = x
+  op_right_id {} (x) : x ⋆ e = x
 export OpRightId (op_right_id)
 
 class OpLeftInv : Prop where
-  op_left_inv (x) : x⁻¹ ⋆ x = e
+  op_left_inv {} (x) : x⁻¹ ⋆ x = e
 export OpLeftInv (op_left_inv)
 
 class OpRightInv : Prop where
-  op_right_inv (x) : x ⋆ x⁻¹ = e
+  op_right_inv {} (x) : x ⋆ x⁻¹ = e
 export OpRightInv (op_right_inv)
 
 class OpLeftNil : Prop where
-  op_left_nil (x) : nil ⋆ x = nil
+  op_left_nil {} (x) : nil ⋆ x = nil
   export OpLeftNil (op_left_nil)
 
 class OpRightNil : Prop where
-  op_right_nil (x) : x ⋆ nil = nil
+  op_right_nil {} (x) : x ⋆ nil = nil
 export OpRightNil (op_right_nil)
 
 class InvOp (inv : α → α) (op : outParam (α → α → α)) : Prop where
-  inv_op (x y) : inv (op x y) = op (inv y) (inv x)
+  inv_op {} (x y) : inv (op x y) = op (inv y) (inv x)
 export InvOp (inv_op)
 
 class InvHom (inv : α → α) (op : outParam (α → α → α)) : Prop where
-  inv_hom (x y) : inv (op x y) = op (inv x) (inv y)
+  inv_hom {} (x y) : inv (op x y) = op (inv x) (inv y)
 export InvHom (inv_hom)
 
 class InvInv (inv : α → α) : Prop where
-  inv_inv (x) : inv (inv x) = x
+  inv_inv {} (x) : inv (inv x) = x
 export InvInv (inv_inv)
 
 class InvId (inv : α → α) (id : outParam α): Prop where
-  inv_id : inv id = id
+  inv_id {} : inv id = id
 export InvId (inv_id)
 
 class OpLeftCancel : Prop where
-  op_left_cancel (x) {y z} : x ⋆ y = x ⋆ z → y = z
-export OpLeftCancel (op_left_cancel)
+  op_left_cancel {} (x) {y z} : x ⋆ y = x ⋆ z → y = z
+abbrev op_left_cancel (op : α → α → α) [self : OpLeftCancel op] (x) {y z} : op x y = op x z → y = z := self.op_left_cancel x
 
 class OpRightCancel : Prop where
-  op_right_cancel (x) {y z} : y ⋆ x = z ⋆ x → y = z
-export OpRightCancel (op_right_cancel)
+  op_right_cancel {} (x) {y z} : y ⋆ x = z ⋆ x → y = z
+abbrev op_right_cancel (op : α → α → α) [self : OpRightCancel op] (x) {y z} : op y x = op z x → y = z := self.op_right_cancel x
 
 class OpLeftDistrib : Prop where
-  op_left_distrib (x y z) : x ⋆ (y ⊹ z) = x ⋆ y ⊹ x ⋆ z
+  op_left_distrib {} (x y z) : x ⋆ (y ⊹ z) = x ⋆ y ⊹ x ⋆ z
 export OpLeftDistrib (op_left_distrib)
 
 class OpRightDistrib : Prop where
-  op_right_distrib (x y z) : (x ⊹ y) ⋆ z = x ⋆ z ⊹ y ⋆ z
+  op_right_distrib {} (x y z) : (x ⊹ y) ⋆ z = x ⋆ z ⊹ y ⋆ z
 export OpRightDistrib (op_right_distrib)
 
 end Identities
@@ -208,8 +208,8 @@ abbrev add_right_comm [self : OpRightComm (.+.:α→α→α)] := self.op_right_c
 abbrev add_cross_comm [self : OpCrossComm (.+.:α→α→α)] := self.op_cross_comm
 abbrev add_zero_left [self : OpLeftId (.+.:α→α→α) 0] := self.op_left_id
 abbrev add_zero_right [self : OpRightId (.+.:α→α→α) 0] := self.op_right_id
-abbrev add_neg_left [self : OpLeftInv (.+.:α→α→α) (-.:α→α) 0] := self.op_left_inv
-abbrev add_neg_right [self : OpRightInv (.+.:α→α→α) (-.:α→α) 0] := self.op_right_inv
+abbrev add_neg_left [self : OpLeftInv (.+.:α→α→α) (-.) 0] := self.op_left_inv
+abbrev add_neg_right [self : OpRightInv (.+.:α→α→α) (-.) 0] := self.op_right_inv
 
 abbrev neg_add [self : InvHom (-.:α→α) (.+.)] := self.inv_hom
 abbrev neg_neg [self : InvInv (-.:α→α)] := self.inv_inv
@@ -224,8 +224,8 @@ abbrev mul_one_left [self : OpLeftId (.*.:α→α→α) 1] := self.op_left_id
 abbrev mul_one_right [self : OpRightId (.*.:α→α→α) 1] := self.op_right_id
 abbrev mul_left_distrib [self : OpLeftDistrib (.*.:α→α→α) (.+.)] := self.op_left_distrib
 abbrev mul_right_distrib [self : OpRightDistrib (.*.:α→α→α) (.+.)] := self.op_right_distrib
-abbrev mul_inv_left [self : OpLeftInv (.*.:α→α→α) (.⁻¹:α→α) 1] := self.op_left_inv
-abbrev mul_inv_right [self : OpRightInv (.*.:α→α→α) (.⁻¹:α→α) 1] := self.op_right_inv
+abbrev mul_inv_left [self : OpLeftInv (.*.:α→α→α) (.⁻¹) 1] := self.op_left_inv
+abbrev mul_inv_right [self : OpRightInv (.*.:α→α→α) (.⁻¹) 1] := self.op_right_inv
 abbrev mul_zero_left [self : OpLeftNil (.*.:α→α→α) 0] := self.op_left_nil
 abbrev mul_zero_right [self : OpRightNil (.*.:α→α→α) 0] := self.op_right_nil
 
