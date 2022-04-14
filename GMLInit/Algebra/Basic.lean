@@ -119,80 +119,81 @@ local postfix:max "⁻¹" => inv
 local notation "e" => id
 
 class OpAssoc : Prop where
-  op_assoc {} (x y z) : (x ⋆ y) ⋆ z = x ⋆ (y ⋆ z)
-export OpAssoc (op_assoc)
+  protected op_assoc (x y z) : (x ⋆ y) ⋆ z = x ⋆ (y ⋆ z)
+def op_assoc (op : α → α → α) [self : OpAssoc op] := self.op_assoc
 
 class OpComm : Prop where
-  op_comm {} (x y) : x ⋆ y = y ⋆ x
-export OpComm (op_comm)
+  protected op_comm (x y) : x ⋆ y = y ⋆ x
+def op_comm (op : α → α → α) [self : OpComm op] := self.op_comm
 
 class OpLeftComm : Prop where
-  op_left_comm {} (x y z) : x ⋆ (y ⋆ z) = y ⋆ (x ⋆ z)
-export OpLeftComm (op_left_comm)
+  protected op_left_comm (x y z) : x ⋆ (y ⋆ z) = y ⋆ (x ⋆ z)
+def op_left_comm (op : α → α → α) [self : OpLeftComm op] := self.op_left_comm
 
 class OpRightComm : Prop where
-  op_right_comm {} (x y z) : (x ⋆ y) ⋆ z = (x ⋆ z) ⋆ y
+  protected op_right_comm (x y z) : (x ⋆ y) ⋆ z = (x ⋆ z) ⋆ y
 export OpRightComm (op_right_comm)
+def op_right_comm (op : α → α → α) [self : OpRightComm op] := self.op_right_comm
 
 class OpCrossComm : Prop where
-  op_cross_comm {} (x₁ x₂ y₁ y₂) : (x₁ ⋆ x₂) ⋆ (y₁ ⋆ y₂) = (x₁ ⋆ y₁) ⋆ (x₂ ⋆ y₂)
-export OpCrossComm (op_cross_comm)
+  protected op_cross_comm (x₁ x₂ y₁ y₂) : (x₁ ⋆ x₂) ⋆ (y₁ ⋆ y₂) = (x₁ ⋆ y₁) ⋆ (x₂ ⋆ y₂)
+def op_cross_comm (op : α → α → α) [self : OpCrossComm op] := self.op_cross_comm
 
 class OpLeftId : Prop where
-  op_left_id {} (x) : e ⋆ x = x
-export OpLeftId (op_left_id)
+  op_left_id (x) : e ⋆ x = x
+def op_left_id (op : α → α → α) {id : α} [self : OpLeftId op id] := self.op_left_id
 
 class OpRightId : Prop where
-  op_right_id {} (x) : x ⋆ e = x
-export OpRightId (op_right_id)
+  protected op_right_id (x) : x ⋆ e = x
+def op_right_id (op : α → α → α) {id : α} [self : OpRightId op id] := self.op_right_id
 
 class OpLeftInv : Prop where
-  op_left_inv {} (x) : x⁻¹ ⋆ x = e
-export OpLeftInv (op_left_inv)
+  protected op_left_inv (x) : x⁻¹ ⋆ x = e
+def op_left_inv (op : α → α → α) {inv : α → α} {id : α} [self : OpLeftInv op inv id] := self.op_left_inv
 
 class OpRightInv : Prop where
-  op_right_inv {} (x) : x ⋆ x⁻¹ = e
-export OpRightInv (op_right_inv)
+  protected op_right_inv (x) : x ⋆ x⁻¹ = e
+def op_right_inv (op : α → α → α) {inv : α → α} {id : α} [self : OpRightInv op inv id] := self.op_right_inv
 
 class OpLeftNil : Prop where
-  op_left_nil {} (x) : nil ⋆ x = nil
-  export OpLeftNil (op_left_nil)
+  protected op_left_nil (x) : nil ⋆ x = nil
+def op_left_nil (op : α → α → α) {nil : α} [self : OpLeftNil op nil] := self.op_left_nil
 
 class OpRightNil : Prop where
-  op_right_nil {} (x) : x ⋆ nil = nil
-export OpRightNil (op_right_nil)
+  protected op_right_nil (x) : x ⋆ nil = nil
+def op_right_nil (op : α → α → α) {nil : α} [self : OpRightNil op nil] := self.op_right_nil
 
 class InvOp (inv : α → α) (op : outParam (α → α → α)) : Prop where
-  inv_op {} (x y) : inv (op x y) = op (inv y) (inv x)
-export InvOp (inv_op)
+  protected inv_op (x y) : inv (op x y) = op (inv y) (inv x)
+def inv_op (inv : α → α) {op : α → α → α} [self : InvOp inv op] := self.inv_op
 
 class InvHom (inv : α → α) (op : outParam (α → α → α)) : Prop where
-  inv_hom {} (x y) : inv (op x y) = op (inv x) (inv y)
-export InvHom (inv_hom)
+  protected inv_hom (x y) : inv (op x y) = op (inv x) (inv y)
+def inv_hom (inv : α → α) {op : α → α → α} [self : InvHom inv op] := self.inv_hom
 
 class InvInv (inv : α → α) : Prop where
-  inv_inv {} (x) : inv (inv x) = x
-export InvInv (inv_inv)
+  protected inv_inv (x) : inv (inv x) = x
+def inv_inv (inv : α → α) [self : InvInv inv] := self.inv_inv
 
 class InvId (inv : α → α) (id : outParam α): Prop where
-  inv_id {} : inv id = id
-export InvId (inv_id)
+  protected inv_id : inv id = id
+def inv_id (inv : α → α) {id : α} [self : InvId inv id] := self.inv_id
 
 class OpLeftCancel : Prop where
-  op_left_cancel {} (x) {y z} : x ⋆ y = x ⋆ z → y = z
-abbrev op_left_cancel (op : α → α → α) [self : OpLeftCancel op] (x) {y z} : op x y = op x z → y = z := self.op_left_cancel x
+  protected op_left_cancel (x) {y z} : x ⋆ y = x ⋆ z → y = z
+def op_left_cancel (op : α → α → α) [self : OpLeftCancel op] := self.op_left_cancel
 
 class OpRightCancel : Prop where
-  op_right_cancel {} (x) {y z} : y ⋆ x = z ⋆ x → y = z
-abbrev op_right_cancel (op : α → α → α) [self : OpRightCancel op] (x) {y z} : op y x = op z x → y = z := self.op_right_cancel x
+  protected op_right_cancel (x) {y z} : y ⋆ x = z ⋆ x → y = z
+def op_right_cancel (op : α → α → α) [self : OpRightCancel op] := self.op_right_cancel
 
 class OpLeftDistrib : Prop where
-  op_left_distrib {} (x y z) : x ⋆ (y ⊹ z) = x ⋆ y ⊹ x ⋆ z
-export OpLeftDistrib (op_left_distrib)
+  protected op_left_distrib (x y z) : x ⋆ (y ⊹ z) = x ⋆ y ⊹ x ⋆ z
+def op_left_distrib (op : α → α → α) {op' : α → α → α} [self : OpLeftDistrib op op'] := self.op_left_distrib
 
 class OpRightDistrib : Prop where
-  op_right_distrib {} (x y z) : (x ⊹ y) ⋆ z = x ⋆ z ⊹ y ⋆ z
-export OpRightDistrib (op_right_distrib)
+  protected op_right_distrib (x y z) : (x ⊹ y) ⋆ z = x ⋆ z ⊹ y ⋆ z
+def op_right_distrib (op : α → α → α) {op' : α → α → α} [self : OpRightDistrib op op'] := self.op_right_distrib
 
 end Identities
 
@@ -230,7 +231,7 @@ abbrev mul_zero_left [self : OpLeftNil (.*.:α→α→α) 0] := self.op_left_nil
 abbrev mul_zero_right [self : OpRightNil (.*.:α→α→α) 0] := self.op_right_nil
 
 abbrev inv_mul [self : InvOp (.⁻¹:α→α) (.*.)] := self.inv_op
-abbrev inv_inv [self : InvInv (.⁻¹:α→α)] := self.inv_inv
+-- abbrev inv_inv [self : InvInv (.⁻¹:α→α)] := self.inv_inv
 abbrev inv_one [self : InvId (.⁻¹:α→α) 1] := self.inv_id
 
 end Notation

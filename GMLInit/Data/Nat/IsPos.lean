@@ -7,9 +7,9 @@ import GMLInit.Data.Nat.Order
 namespace Nat
 
 class IsPos (n : Nat) : Prop where
-  is_pos {} : n > 0
+  protected is_pos : n > 0
 
-export IsPos (is_pos)
+def is_pos (n : Nat) [self : IsPos n] : n > 0 := self.is_pos
 
 def is_nonzero (n : Nat) [IsPos n] : n ≠ 0 := (Nat.ne_of_lt (is_pos n)).symm
 
