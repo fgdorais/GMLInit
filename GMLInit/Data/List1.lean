@@ -1,7 +1,5 @@
 import GMLInit.Data.List
 
-namespace Data
-
 structure List1 (α : Type _) where
   toList : List α
   nonnil : toList ≠ []
@@ -56,5 +54,3 @@ def bind : List1 α → (α → List1 β) → List1 β
 | cons x xs, f => append (f x) (xs.bind (λ x => (f x).toList))
 
 end List1
-
-end Data
