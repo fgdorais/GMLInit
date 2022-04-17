@@ -2,40 +2,6 @@ import GMLInit.Algebra.Basic
 import GMLInit.Algebra.Group
 
 namespace Algebra
-
-section DOp
-variable {α} {β : α → α → Sort _} (op : {{a b c : α}} → β b c → β a b → β a c) (inv : outParam ({{a b : α}} → β a b → β b a)) (id : outParam ({a : α} → β a a))
-
-class DOpAssoc : Prop where
-  protected dop_assoc {{a b c d}} (x : β c d) (y : β b c) (z : β a b) : op (op x y) z = op x (op y z)
-abbrev dop_assoc [self : DOpAssoc op] := self.dop_assoc
-
-class DOpLeftId : Prop where
-  protected dop_left_id {{a b}} (x : β a b) : op id x = x
-abbrev dop_left_id {id : {a : α} → β a a} [self : DOpLeftId op id] := self.dop_left_id
-
-class DOpRightId : Prop where
-  protected dop_right_id {{a b}} (x : β a b) : op x id = x
-abbrev dop_right_id (op) {id : {a : α} → β a a} [self : DOpRightId op id] := self.dop_right_id
-
-class DOpLeftInv : Prop where
-  protected dop_left_inv {{a b}} (x : β a b) : op (inv x) x = id
-abbrev dop_left_inv {inv} {id : {a : α} → β a a} [self : DOpLeftInv op inv id] := self.dop_left_inv
-
-class DOpRightInv : Prop where
-  protected dop_right_inv {{a b}} (x : β a b) : op x (inv x) = id
-abbrev dop_right_inv {inv} {id : {a : α} → β a a} [self : DOpRightInv op inv id] := self.dop_right_inv
-
-class DOpLeftCancel : Prop where
-  protected dop_left_cancel {{a b c}} (x : β b c) {y z : β a b} : op x y = op x z → y = z
-abbrev dop_left_cancel [self : DOpLeftCancel op] := self.dop_left_cancel
-
-class DOpRightCancel : Prop where
-  protected dop_right_cancel {{a b c}} (x : β a b) {y z : β b c} : op y x = op z x → y = z
-abbrev dop_right_cancel [self : DOpRightCancel op] := self.dop_right_cancel
-
-end DOp
-
 variable {α} {β : α → α → Sort _}
 
 class Semicategory (s : SemicategorySig β) : Prop where
