@@ -5,6 +5,14 @@ import GMLInit.Meta.Basic
 
 namespace List
 
+instance {α} : (xs : List α) → Decidable (xs = [])
+| [] => isTrue rfl
+| _::_ => isFalse List.noConfusion
+
+instance {α} : (xs : List α) → Decidable ([] = xs)
+| [] => isTrue rfl
+| _::_ => isFalse List.noConfusion
+
 protected def extAux {α} : (as₁ as₂ : List α) → List Prop
 | [], [] => []
 | [], a₂::as₂ => [False]
