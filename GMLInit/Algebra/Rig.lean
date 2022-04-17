@@ -16,7 +16,7 @@ class Rig extends Semiring (no_index s.toSemiringSig) : Prop where
   protected mul_left_zero (x) : 𝟘 ⋆ x = 𝟘
   protected mul_right_zero (x) : x ⋆ 𝟘 = 𝟘
 
-def Rig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpAssoc s.mul] [OpLeftDistrib s.mul s.add] [OpRightDistrib s.mul s.add] [OpLeftNil s.mul s.zero] [OpRightNil s.mul s.zero] : Rig s where
+protected def Rig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpAssoc s.mul] [OpLeftDistrib s.mul s.add] [OpRightDistrib s.mul s.add] [OpLeftNil s.mul s.zero] [OpRightNil s.mul s.zero] : Rig s where
   add_assoc := op_assoc _
   add_comm := op_comm _
   add_right_id := op_right_id _
@@ -41,7 +41,7 @@ class CommRig extends CommSemiring (no_index s.toSemiringSig): Prop where
   protected add_right_id (x) : x ⊹ 𝟘 = x
   protected mul_right_zero (x) : x ⋆ 𝟘 = 𝟘
 
-def CommRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpAssoc s.mul] [OpComm s.mul] [OpRightDistrib s.mul s.add] [OpRightNil s.mul s.zero] : CommRig s where
+protected def CommRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpAssoc s.mul] [OpComm s.mul] [OpRightDistrib s.mul s.add] [OpRightNil s.mul s.zero] : CommRig s where
   add_assoc := op_assoc _
   add_comm := op_comm _
   add_right_id := op_right_id _
@@ -69,7 +69,7 @@ class CancelRig extends Semiring (no_index s.toSemiringSig) : Prop where
   protected add_right_id (x) : x ⊹ 𝟘 = x
   protected add_right_cancel (x) {y z} : y ⊹ x = z ⊹ x → y = z
 
-def CancelRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpRightCancel s.add] [OpAssoc s.mul] [OpLeftDistrib s.mul s.add] [OpRightDistrib s.mul s.add] : CancelRig s where
+protected def CancelRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpRightCancel s.add] [OpAssoc s.mul] [OpLeftDistrib s.mul s.add] [OpRightDistrib s.mul s.add] : CancelRig s where
   add_assoc := op_assoc _
   add_comm := op_comm _
   add_right_id := op_right_id _
@@ -108,7 +108,7 @@ class CancelCommRig extends CommSemiring (no_index s.toSemiringSig) : Prop where
   protected add_right_id (x) : x ⊹ 𝟘 = x
   protected add_right_cancel (x) {y z} : y ⊹ x = z ⊹ x → y = z
 
-def CancelCommRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpRightCancel s.add] [OpAssoc s.mul] [OpComm s.mul] [OpRightDistrib s.mul s.add] : CancelCommRig s where
+protected def CancelCommRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpRightCancel s.add] [OpAssoc s.mul] [OpComm s.mul] [OpRightDistrib s.mul s.add] : CancelCommRig s where
   add_assoc := op_assoc _
   add_comm := op_comm _
   add_right_id := op_right_id _

@@ -14,7 +14,7 @@ local notation "𝟙" => s.one
 
 class UnitalRig extends Rig (no_index s.toRigSig), UnitalSemiring (no_index s.toUnitalSemiringSig) : Prop
 
-def UnitalRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpAssoc s.mul] [OpLeftDistrib s.mul s.add] [OpRightDistrib s.mul s.add] [OpLeftId s.mul s.one] [OpRightId s.mul s.one] [OpLeftNil s.mul s.zero] [OpRightNil s.mul s.zero] : UnitalRig s where
+protected def UnitalRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpAssoc s.mul] [OpLeftDistrib s.mul s.add] [OpRightDistrib s.mul s.add] [OpLeftId s.mul s.one] [OpRightId s.mul s.one] [OpLeftNil s.mul s.zero] [OpRightNil s.mul s.zero] : UnitalRig s where
   add_assoc := op_assoc _
   add_comm := op_comm _
   add_right_id := op_right_id _
@@ -33,7 +33,7 @@ end UnitalRig
 
 class UnitalCommRig extends CommRig (no_index s.toRigSig), UnitalCommSemiring (no_index s.toUnitalSemiringSig) : Prop
 
-def UnitalCommRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpAssoc s.mul] [OpComm s.mul] [OpRightDistrib s.mul s.add] [OpRightId s.mul s.one] [OpRightNil s.mul s.zero] : UnitalCommRig s where
+protected def UnitalCommRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpAssoc s.mul] [OpComm s.mul] [OpRightDistrib s.mul s.add] [OpRightId s.mul s.one] [OpRightNil s.mul s.zero] : UnitalCommRig s where
   add_assoc := op_assoc _
   add_comm := op_comm _
   add_right_id := op_right_id _
@@ -50,7 +50,7 @@ end UnitalCommRig
 
 class CancelUnitalRig extends CancelRig (no_index s.toRigSig), UnitalSemiring (no_index s.toUnitalSemiringSig) : Prop
 
-def CancelUnitalRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpRightCancel s.add] [OpAssoc s.mul] [OpLeftDistrib s.mul s.add] [OpRightDistrib s.mul s.add] [OpLeftId s.mul s.one] [OpRightId s.mul s.one] [OpLeftNil s.mul s.zero] [OpRightNil s.mul s.zero] : CancelUnitalRig s where
+protected def CancelUnitalRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpRightCancel s.add] [OpAssoc s.mul] [OpLeftDistrib s.mul s.add] [OpRightDistrib s.mul s.add] [OpLeftId s.mul s.one] [OpRightId s.mul s.one] [OpLeftNil s.mul s.zero] [OpRightNil s.mul s.zero] : CancelUnitalRig s where
   add_assoc := op_assoc _
   add_comm := op_comm _
   add_right_id := op_right_id _
@@ -68,7 +68,7 @@ end CancelUnitalRig
 
 class CancelUnitalCommRig extends CancelCommRig (no_index s.toRigSig), UnitalCommSemiring (no_index s.toUnitalSemiringSig) : Prop
 
-def CancelUnitalCommRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpRightCancel s.add] [OpAssoc s.mul] [OpComm s.mul] [OpRightDistrib s.mul s.add] [OpRightId s.mul s.one] [OpRightNil s.mul s.zero] : CancelUnitalCommRig s where
+protected def CancelUnitalCommRig.infer [OpAssoc s.add] [OpComm s.add] [OpRightId s.add s.zero] [OpRightCancel s.add] [OpAssoc s.mul] [OpComm s.mul] [OpRightDistrib s.mul s.add] [OpRightId s.mul s.one] [OpRightNil s.mul s.zero] : CancelUnitalCommRig s where
   add_assoc := op_assoc _
   add_comm := op_comm _
   add_right_id := op_right_id _

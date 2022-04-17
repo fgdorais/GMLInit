@@ -8,7 +8,7 @@ local infixr:70 " ⋆ " => s.op
 class Semigroup : Prop where
   protected op_assoc (x y z) : (x ⋆ y) ⋆ z = x ⋆ (y ⋆ z)
 
-def Semigroup.infer [OpAssoc s.op] : Semigroup s where
+protected def Semigroup.infer [OpAssoc s.op] : Semigroup s where
   op_assoc := op_assoc _
 
 namespace Semigroup
@@ -21,7 +21,7 @@ end Semigroup
 class CommSemigroup extends Semigroup s : Prop where
   protected op_comm (x y) : x ⋆ y = y ⋆ x
 
-def CommSemigroup.infer [OpAssoc s.op] [OpComm s.op] : CommSemigroup s where
+protected def CommSemigroup.infer [OpAssoc s.op] [OpComm s.op] : CommSemigroup s where
   op_assoc := op_assoc _
   op_comm := op_comm _
 
@@ -54,7 +54,7 @@ class CancelSemigroup extends Semigroup s where
   protected op_left_cancel (x) {y z} : x ⋆ y = x ⋆ z → y = z
   protected op_right_cancel (x) {y z} : y ⋆ x = z ⋆ x → y = z
 
-def CancelSemigroup.infer [OpAssoc s.op] [OpLeftCancel s.op] [OpRightCancel s.op] : CancelSemigroup s where
+protected def CancelSemigroup.infer [OpAssoc s.op] [OpLeftCancel s.op] [OpRightCancel s.op] : CancelSemigroup s where
   op_assoc := op_assoc _
   op_left_cancel := op_left_cancel _
   op_right_cancel := op_right_cancel _
@@ -70,7 +70,7 @@ end CancelSemigroup
 class CancelCommSemigroup extends CommSemigroup s where
   protected op_right_cancel (x) {y z} : y ⋆ x = z ⋆ x → y = z
 
-def CancelCommSemigroup.infer [OpAssoc s.op] [OpComm s.op] [OpRightCancel s.op] : CancelCommSemigroup s where
+protected def CancelCommSemigroup.infer [OpAssoc s.op] [OpComm s.op] [OpRightCancel s.op] : CancelCommSemigroup s where
   op_assoc := op_assoc _
   op_comm := op_comm _
   op_right_cancel := op_right_cancel _
