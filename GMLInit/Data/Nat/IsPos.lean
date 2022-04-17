@@ -39,4 +39,9 @@ macro "nat_is_pos" : tactic => `(tactic| show ((_:Nat) > 0); first | assumption 
 
 macro "nat_is_nonzero" : tactic => `(tactic| show ((_:Nat) ≠ 0); first | assumption | symmetry; assumption | exact Nat.is_nonzero _)
 
+protected theorem pred_lt_self (n : Nat) (h : n > 0 := by nat_is_pos) : n.pred < n := by
+  cases n with
+  | zero => contradiction
+  | succ _ => exact Nat.lt_succ_self _
+
 end Nat

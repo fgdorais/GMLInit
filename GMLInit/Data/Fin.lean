@@ -7,9 +7,9 @@ variable {n : Nat}
 protected theorem eq : {i j : Fin n} → i.val = j.val → i = j
 | ⟨_,_⟩, ⟨_,_⟩, rfl => rfl
 
-protected def zero : Fin (n+1) := ⟨0, Nat.zero_lt_succ n⟩
+protected def zero {n : Nat} (is_pos : n > 0 := by nat_is_pos) : Fin n := ⟨0, is_pos⟩
 
-protected def last : Fin (n+1) := ⟨n, Nat.lt_succ_self n⟩
+protected def last {n : Nat} (is_pos : n > 0 := by nat_is_pos) : Fin n := ⟨n.pred, Nat.pred_lt_self n is_pos⟩
 
 protected def lift : Fin n → Fin (n+1)
 | ⟨i, hi⟩ => ⟨i, Nat.lt_succ_of_le (Nat.le_of_lt hi)⟩
