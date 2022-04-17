@@ -1,3 +1,4 @@
+import GMLInit.Prelude
 
 deriving instance DecidableEq for Ordering
 

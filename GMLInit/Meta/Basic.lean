@@ -1,3 +1,4 @@
+import GMLInit.Prelude
 import Lean
 
 open Lean
