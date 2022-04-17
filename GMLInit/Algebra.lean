@@ -1,4 +1,5 @@
 import GMLInit.Algebra.Basic
+import GMLInit.Algebra.Category
 import GMLInit.Algebra.Group
 import GMLInit.Algebra.Monoid
 import GMLInit.Algebra.Rig
