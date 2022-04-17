@@ -84,20 +84,20 @@ theorem dcast_trans' {α} {a a' a'' : α} {β : α → Sort _} {h : a = a'} {h' 
 theorem dcast_congr {α} {β : α → Sort _} {a a' : α} (h₁ h₂ : a = a') (b₁ b₂ : β a) : (h₁ ▸ b₁ : β a') = (h₂ ▸ b₂ : β a') ↔ b₁ = b₂ :=
   match h₁, h₂ with | rfl, rfl => Iff.rfl
 
-def Eq.ndrecRefl {α} {motive : α → Sort _} {a : α} (t : motive a) : (h : a = a) → Eq.ndrec t h = t
+def Eq.ndrec_refl {α} {motive : α → Sort _} {a : α} (t : motive a) : (h : a = a) → Eq.ndrec t h = t
 | rfl => rfl
 
-def Eq.ndrecSymm {α} {motive : α → Sort _} {a b : α} (t : motive a) (u : motive b) : (h : a = b) → Eq.ndrec t h = u → Eq.ndrec u h.symm = t
+def Eq.ndrec_symm {α} {motive : α → Sort _} {a b : α} (t : motive a) (u : motive b) : (h : a = b) → Eq.ndrec t h = u → Eq.ndrec u h.symm = t
 | rfl, rfl => rfl
 
-def Eq.ndrecTrans {α} {motive : α → Sort _} {a b c : α} (t : motive a) : (h₁ : a = b) → (h₂ : b = c) → Eq.ndrec (Eq.ndrec t h₁) h₂ = Eq.ndrec t (Eq.trans h₁ h₂)
+def Eq.ndrec_trans {α} {motive : α → Sort _} {a b c : α} (t : motive a) : (h₁ : a = b) → (h₂ : b = c) → Eq.ndrec (Eq.ndrec t h₁) h₂ = Eq.ndrec t (Eq.trans h₁ h₂)
 | rfl, rfl => rfl
 
 @[simp] def Eq.rec_eq_ndrec {α} {motive : α → Sort _} {a b : α} (t : motive a) : (h : a = b) → Eq.rec (motive := λ a _ => motive a) t h = Eq.ndrec t h
 | rfl => rfl
 
-def Eq.recRefl {α} {a : α} {motive : (x : α) → (a = x) → Sort _} (t : motive a rfl) : (h : a = a) → Eq.rec (motive:=motive) t h = t
+def Eq.rec_refl {α} {a : α} {motive : (x : α) → (a = x) → Sort _} (t : motive a rfl) : (h : a = a) → Eq.rec (motive:=motive) t h = t
 | rfl => rfl
 
-def Eq.recTrans {α} {a b c : α} {motive : (x : α) → (a = x) → Sort _} (t : motive a rfl) : (h₁ : a = b) → (h₂ : b = c) → Eq.rec (motive := λ y h => motive y (Eq.trans h₁ h)) (Eq.rec t h₁) h₂ = Eq.rec t (Eq.trans h₁ h₂)
+def Eq.rec_trans {α} {a b c : α} {motive : (x : α) → (a = x) → Sort _} (t : motive a rfl) : (h₁ : a = b) → (h₂ : b = c) → Eq.rec (motive := λ y h => motive y (Eq.trans h₁ h)) (Eq.rec t h₁) h₂ = Eq.rec t (Eq.trans h₁ h₂)
 | rfl, rfl => rfl
