@@ -74,7 +74,7 @@ protected theorem inv_inv (x) : x⁻¹⁻¹ = x :=
   op_right_cancel (.⋆.) x⁻¹ $ calc
   _ = e := by rw [←op_left_inv (.⋆.) x⁻¹]
   _ = x ⋆ x⁻¹ := by rw [op_right_inv (.⋆.) x]
-instance : InvInv (no_index s.inv) := ⟨Group.inv_inv⟩
+instance : FnInvol (no_index s.inv) := ⟨Group.inv_inv⟩
 
 protected theorem inv_id : e⁻¹ = e :=
   op_right_cancel (.⋆.) e $ show e⁻¹ ⋆ e = e ⋆ e from calc
