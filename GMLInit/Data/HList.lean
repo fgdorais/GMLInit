@@ -52,7 +52,7 @@ protected def ofList {α} : (as : List α) → HList (as.map λ _ => α)
 | [] => []
 | a::as => a :: HList.ofList as
 
-protected def ofListHVal : (vs : List HVal) → HList (vs.map HVal.Sort)
+protected def ofListHVal : (vs : List HVal) → HList (vs.map HVal.sort)
 | [] => []
 | v::vs => v.val :: HList.ofListHVal vs
 
