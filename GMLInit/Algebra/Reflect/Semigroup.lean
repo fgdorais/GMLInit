@@ -77,10 +77,10 @@ class Reflect (s : SemigroupSig α) (x : α) (xs : List α) where
   expr : Expr xs
   eval_eq : expr.eval s = x
 
-namespace Reflect
-variable {α} (s : SemigroupSig α)
+protected def Reflect.eq (s : SemigroupSig α) (x xs) [inst : Reflect s x xs] : inst.expr.eval s = x := inst.eval_eq
 
-variable [Semigroup s]
+namespace Reflect
+variable (s : SemigroupSig α) [Semigroup s]
 
 @[simp] instance instLift (y x : α) {xs : List α} [Reflect s y xs] : Reflect s y (x :: xs) where
   expr := Expr.lift x (expr s y)
@@ -96,9 +96,9 @@ variable [Semigroup s]
 
 end Reflect
 
-theorem reflect {α} (s : SemigroupSig α) [Semigroup s] (xs : List α) {a b : α} [Reflect s a xs] [Reflect s b xs] : Reflect.expr s a (xs:=xs) = Reflect.expr s b (xs:=xs) → a = b := by
+theorem reflect {α} (s : SemigroupSig α) [Semigroup s] (xs : List α) {a b : α} [Reflect s a xs] [Reflect s b xs] : Reflect.expr s a (xs:=xs) = Reflect.expr s b → a = b := by
   intro h
-  rw [← Reflect.eval_eq (s:=s) (x:=a) (xs:=xs), ← Reflect.eval_eq (s:=s) (x:=b) (xs:=xs), h]
+  rw [←Reflect.eq s a xs, ←Reflect.eq s b xs, h]
 
 end Semigroup
 
