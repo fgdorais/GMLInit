@@ -14,4 +14,5 @@ import GMLInit.Data.Pi
 import GMLInit.Data.Prod
 import GMLInit.Data.Set
 import GMLInit.Data.Sigma
+import GMLInit.Data.Subtype
 import GMLInit.Data.Sum
