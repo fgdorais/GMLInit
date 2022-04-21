@@ -1,6 +1,5 @@
 import GMLInit.Data.Basic
 import GMLInit.Data.HVal
-import GMLInit.Logic.Eq
 import GMLInit.Logic.ListConnectives
 import GMLInit.Meta.Basic
 import GMLInit.Meta.Relation

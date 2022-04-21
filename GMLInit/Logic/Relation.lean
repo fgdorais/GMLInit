@@ -1,4 +1,4 @@
-import GMLInit.Logic.Eq
+import GMLInit.Meta.Stable
 
 namespace Relation
 
@@ -18,6 +18,9 @@ instance (α) : Reflexive (α:=α) (.≅.) := ⟨HEq.refl⟩
 instance (α) : Reflexive (α:=α) (.=.) := ⟨Eq.refl⟩
 instance : Reflexive (.→.) := ⟨@id⟩
 instance : Reflexive (.↔.) := ⟨Iff.refl⟩
+
+instance {α} (r : α → α → Prop) [Reflexive r] : Reflexive (TC r) where
+  refl x := TC.base _ _ (Reflexive.refl x)
 
 end Reflexive
 
@@ -66,6 +69,18 @@ instance (α) [LT α] : HSymmetric (α:=α) (.<.) (.>.) := ⟨id⟩
 instance (α) [LT α] : HSymmetric (α:=α) (.>.) (.<.) := ⟨id⟩
 instance : Symmetric (.↔.) := ⟨Iff.symm⟩
 
+instance {α} (r : α → α → Prop) [Symmetric r] : Symmetric (TC r) where
+  symm := by
+    intros x y hxy
+    induction hxy with
+    | base x y h =>
+      apply TC.base
+      exact Symmetric.symm h
+    | trans x y z _ _ hyx hzy =>
+      apply TC.trans
+      exact hzy
+      exact hyx
+
 end Symmetric
 
 section Antisymmetric
@@ -81,6 +96,10 @@ instance {α} (r : α → α → Prop) [Antisymmetric r] : HAntisymmetric r Eq w
   antisymm := Antisymmetric.antisymm
 
 instance : HAntisymmetric (.→.) (.↔.) := ⟨Iff.intro⟩
+
+abbrev WeaklyConnex {α} (r : α → α → Prop) := Antisymmetric (λ x y => ¬ r y x)
+
+abbrev WeaklyConnex.connex {α} {r : α → α → Prop} [WeaklyConnex r] {x y} : ¬ r y x → ¬ r x y → x = y := Antisymmetric.antisymm (r := λ x y => ¬ r y x)
 
 end Antisymmetric
 
@@ -107,7 +126,32 @@ instance (α) [Setoid α] : Transitive (α:=α) Setoid.r := ⟨Setoid.trans⟩
 instance : Transitive (.→.) := ⟨λ h₁ h₂ h => h₂ (h₁ h)⟩
 instance : Transitive (.↔.) := ⟨Iff.trans⟩
 
+instance {α} (r : α → α → Prop) : Transitive (TC r) where
+  trans := TC.trans _ _ _
+
 end Transitive
+
+section Euclidean
+
+class HEuclidean {α β γ} (r : α → β → Prop) (s : α → γ → Prop) (t : outParam (β → γ → Prop)) : Prop where
+  protected eucl {x y z} : (left : r x y) → (right : s x z) → t y z
+
+class Euclidean {α} (r : α → α → Prop) : Prop where
+  protected eucl {x y z} : (left : r x y) → (right : r x z) → r y z
+
+@[defaultInstance]
+instance {α} (r : α → α → Prop) [Euclidean r] : HEuclidean r r r := ⟨Euclidean.eucl⟩
+
+instance [Reflexive r] [Euclidean r] : Symmetric r where
+  symm hxy := Euclidean.eucl hxy (Reflexive.refl _)
+
+instance [Symmetric r] [Transitive r] : Euclidean r where
+  eucl hxy hxz := Transitive.trans (Symmetric.symm hxy) hxz
+
+def Euclidean.toTransitive {α} (r : α → α → Prop) [Symmetric r] [Euclidean r] : Transitive r where
+  trans hxy hyz := Euclidean.eucl (Symmetric.symm hxy) hyz
+
+end Euclidean
 
 section Total
 
@@ -122,16 +166,58 @@ instance {α} (r : α → α → Prop) [Total r] : HTotal r r := ⟨Total.total�
 
 end Total
 
+section Comparison
+
+class HComparison {α} (r : α → α → Prop) (s : α → α → Prop) : Prop where
+  protected compare {x y} : s x y → (z : α) → r x z ∨ r z y
+
+class Comparison {α} (r : α → α → Prop) : Prop where
+  protected compare {x y} : r x y → (z : α) → r x z ∨ r z y
+
+@[defaultInstance]
+instance {α} (r : α → α → Prop) [Comparison r] : HComparison r r := ⟨Comparison.compare⟩
+
+def instComparisonOfTransitive {α} (r : α → α → Prop) [(x y : α) → Complemented (r x y)] [Transitive r] : Comparison (λ x y => ¬ r y x) where
+  compare := by
+    intro x y nxy z
+    match inferInstanceAs (Complemented (r z x)) with
+    | .isFalse nxz =>
+      left
+      exact nxz
+    | .isTrue hxz =>
+      right
+      intro hzy
+      apply nxy
+      exact Transitive.trans hzy hxz
+
+instance {α} (r : α → α → Prop) [Comparison r] : Transitive (λ x y => ¬ r y x) where
+  trans := by
+    intros x y z nxy nyz hxz
+    cases Comparison.compare hxz y with
+    | inl hyz => exact nyz hyz
+    | inr hxy => exact nxy hxy
+
+end Comparison
+
 section Connex
 
 class HConnex {α} (r : α → α → Prop) (s : α → α → Prop) : Prop where
-  protected connex {x y} : s x y → (r x y) ∨ (r y x)
+  protected connex {x y} : s x y → r x y ∨ r y x
 
 class Connex {α} (r : α → α → Prop) : Prop where
-  protected connex {x y} : x ≠ y → (r x y) ∨ (r y x)
+  protected connex {x y} : x ≠ y → r x y ∨ r y x
 
 @[defaultInstance]
 instance {α} (r : α → α → Prop) [Connex r] : HConnex r (.≠.) := ⟨Connex.connex⟩
+
+def instAntisymmOfConnex {α} (r : α → α → Prop) [(x y : α) → Stable (x = y)] [Connex r] : Antisymmetric (λ x y => ¬ r y x) where
+  antisymm := by
+    intro x y nxy nyx
+    by_contradiction
+    | assuming hne =>
+      cases Connex.connex (r:=r) hne with
+      | inl hyx => exact nyx hyx
+      | inr hxy => exact nxy hxy
 
 end Connex
 

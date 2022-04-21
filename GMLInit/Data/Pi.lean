@@ -1,6 +1,5 @@
 import GMLInit.Data.Basic
 import GMLInit.Data.Equiv
-import GMLInit.Logic.Eq
 import GMLInit.Meta.Basic
 
 namespace Function

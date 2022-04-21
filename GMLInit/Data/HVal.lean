@@ -1,5 +1,4 @@
 import GMLInit.Data.Basic
-import GMLInit.Logic.Eq
 
 inductive HVal.{u} : Type u
 | mk {α : Sort u} : α → HVal

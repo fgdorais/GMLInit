@@ -1,9 +1,9 @@
 import GMLInit.Logic.Basic
+import GMLInit.Logic.Cast
 import GMLInit.Logic.Complemented
 import GMLInit.Logic.Congr
 import GMLInit.Logic.Connectives
 import GMLInit.Logic.Decidable
-import GMLInit.Logic.Eq
 import GMLInit.Logic.Function
 import GMLInit.Logic.ListConnectives
 import GMLInit.Logic.Relation
