@@ -29,16 +29,14 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
       cases h
       apply Sigma.eq
       · exact e.rev_fwd x₁
-      · apply dcast_heq_of_heq_of_eq_of_eq
+      · elim_casts
         reflexivity using (.≅.)
-        reflexivity
     · intro h
       cases h
       apply Sigma.eq
       · exact e.fwd_rev x₂
-      · apply dcast_heq_of_heq_of_eq_of_eq
+      · elim_casts
         reflexivity using (.≅.)
-        reflexivity
 
 def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) → Equiv (β₁ x) (β₂ x)) : Equiv ((x : α) × β₁ x) ((x : α) × β₂ x) where
   fwd | ⟨x, y₁⟩ => ⟨x, (e x).fwd y₁⟩
@@ -58,7 +56,6 @@ def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) 
       · rw [(e x₁).fwd_rev]
         reflexivity using (.≅.)
 
-set_option pp.notation false
 protected def equiv (e : Equiv α₁ α₂) (f : (x : α₁) → Equiv (β₁ x) (β₂ (e.fwd x))) : Equiv ((x : α₁) × β₁ x) ((x : α₂) × β₂ x) :=
   Equiv.comp h3 (Equiv.comp h2 h1) where
   h1 := equivFst β₁ e
@@ -74,13 +71,13 @@ protected def equiv (e : Equiv α₁ α₂) (f : (x : α₁) → Equiv (β₁ x)
           cases h
           apply Sigma.eq
           · reflexivity
-          · rw [dcast_trans y₁]
+          · elim_casts
             reflexivity using (.≅.)
         · intro h
           cases h
           apply Sigma.eq
           · reflexivity
-          · rw [dcast_trans y₂]
+          · elim_casts
             reflexivity using (.≅.)
   }
 

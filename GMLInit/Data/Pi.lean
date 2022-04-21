@@ -35,14 +35,15 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
     · intro h
       cases h
       funext x₁
-      apply dcast_eq_of_heq_of_eq
-      clean
+      apply eq_of_heq
+      elim_casts
       rw [e.rev_fwd x₁]
       reflexivity using (.≅.)
     · intro h
       cases h
       funext x₂
-      apply dcast_eq_of_heq_of_eq
+      apply eq_of_heq
+      elim_casts
       rw [e.fwd_rev x₂]
       reflexivity using (.≅.)
 
@@ -76,13 +77,11 @@ protected def equiv {α₁ α₂} {β₁ : α₁ → Sort _} {β₂ : α₂ → 
       · intro h
         rw [←h]
         funext x
-        clean
-        rw [dcast_trans' (h':=(e.fwd_rev x).symm) (h:=(e.fwd_rev x))]
+        elim_casts
       · intro h
         rw [←h]
         funext x
-        clean
-        rw [dcast_trans' (h':=(e.fwd_rev x)) (h:=(e.fwd_rev x).symm)]
+        elim_casts
   }
 
 end Pi
