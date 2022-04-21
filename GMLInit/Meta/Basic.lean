@@ -24,9 +24,9 @@ macro_rules
 | `(tactic|unfold $ids* $[$loc]?) => `(tactic|simp only [$[$ids:ident],*] $[$loc]?)
 
 syntax "elim_casts" (location)? : tactic
-macro_rules
+set_option hygiene false in macro_rules
 | `(tactic|elim_casts $[$loc]?) =>
-  `(tactic|unfold Eq.recOn Eq.ndrec Eq.ndrecOn $[$loc]?; repeat rw [eqrec_eq_cast] $[$loc]?; simp only [cast_refl, cast_trans, cast_heq_eq_heq, heq_cast_eq_heq] $[$loc]?)
+  `(tactic|unfold Eq.recOn Eq.ndrec Eq.ndrecOn $[$loc]?; repeat (rw [Eq.rec_eq_cast] $[$loc]?); simp only [elim_casts] $[$loc]?)
 
 macro "exfalso" : tactic => `(tactic|apply False.elim)
 

@@ -1,3 +1,4 @@
+import Lean
 
 infix:50 " ≅ " => HEq
 
@@ -8,3 +9,5 @@ postfix:max "⁻¹" => Inv.inv
 class Apart (α : Type _) where
   apart : α → α → Prop
 infix:50 " ≶ " => Apart.apart
+
+register_simp_attr elim_casts "simp attribute for `elim_casts` tactic"
