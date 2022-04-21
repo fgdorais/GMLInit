@@ -1,4 +1,5 @@
 import GMLInit.Prelude
+import GMLInit.Logic.Cast
 import Lean
 
 open Lean
@@ -14,7 +15,7 @@ syntax termList := "[" termOrHole,* ("|" termOrHole)? "]"
 
 macro mods:declModifiers "lemma" n:declId sig:declSig val:declVal : command => `($mods:declModifiers theorem $n $sig $val)
 
-syntax "clean" (location)? : tactic
+syntax "clean " (location)? : tactic
 macro_rules
 | `(tactic|clean $[$loc]?) => `(tactic|simp only [] $[$loc]?)
 
@@ -22,11 +23,16 @@ syntax "unfold" withPosition((colGe ident)+) (location)? : tactic
 macro_rules
 | `(tactic|unfold $ids* $[$loc]?) => `(tactic|simp only [$[$ids:ident],*] $[$loc]?)
 
+syntax "elim_casts" (location)? : tactic
+macro_rules
+| `(tactic|elim_casts $[$loc]?) =>
+  `(tactic|unfold Eq.recOn Eq.ndrec Eq.ndrecOn $[$loc]?; repeat rw [eqrec_eq_cast] $[$loc]?; simp only [cast_refl, cast_trans, cast_heq_eq_heq, heq_cast_eq_heq] $[$loc]?)
+
 macro "exfalso" : tactic => `(tactic|apply False.elim)
 
 macro "absurd" h:term : tactic => `(tactic|first |apply absurd _ $h |apply absurd $h)
 
-syntax "whnf" (&"lhs" <|> &"rhs")? (&"at" ident)? : tactic
+syntax "whnf" (&"lhs" <|> &"rhs")? (location)? : tactic
 macro_rules
 | `(tactic|whnf $[at $h:ident]?) => `(tactic|conv $[at $h]? => whnf)
 | `(tactic|whnf lhs $[at $h:ident]?) => `(tactic|conv $[at $h]? => lhs; whnf)
