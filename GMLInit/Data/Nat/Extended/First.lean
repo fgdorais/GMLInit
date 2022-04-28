@@ -26,9 +26,6 @@ theorem first.exists_le_of_isLE (x : Nat) : (first p).isLE x → ∃ y, y ≤ x 
   | zero =>
     intro h
     exists (0:Nat)
-    constr
-    · reflexivity
-    · exact h
   | succ x H =>
     intro h
     unfold first first.isLEAux at h

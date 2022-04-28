@@ -108,9 +108,12 @@ theorem split_eq (n : Nat) : tri (split n).fst + (split n).snd = n := by
     · rw [←Nat.add_assoc (tri (split n).fst) (split n).snd 1, H]
     · symmetry
       unfold split
+      simp only [Nat.add_eq, Nat.add_zero n]
       split
       next h =>
-        rw [dif_pos h]; rfl
+        clean
+        rw [Nat.add_zero n] at h ⊢
+        rw [dif_pos h]
       next h =>
         have heq: (split n).snd.val = (split n).fst := by
           apply Nat.le_antisymm
@@ -119,6 +122,8 @@ theorem split_eq (n : Nat) : tri (split n).fst + (split n).snd = n := by
           · apply Nat.le_of_not_gt
             exact h
         unfold tri
+        clean
+        rw [Nat.add_zero n] at h ⊢
         rw [dif_neg h, ←Nat.add_assoc, heq]; rfl
 
 protected abbrev fst (n : Nat) : Nat := (split n).snd
