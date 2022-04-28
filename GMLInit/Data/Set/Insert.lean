@@ -100,8 +100,6 @@ theorem insert_join (s : Set (Set α)) (t : Set α) : (s.insert t).join = t ∪ 
 
 theorem insertIf_join (s : Set (Set α)) (t : Set α) (p : Prop) : (s.insertIf t p).join = (t ∩ Set.const p) ∪ s.join := insertIf_bind id t p s
 
-set_option pp.analyze false
-
 theorem insert_seq (f : Set (α → β)) (a : α) (s : Set α) : Set.seq f (s.insert a) = f.map (λ f => f a) ∪ Set.seq f s := by
   unfold Set.seq
   apply Set.ext
@@ -111,8 +109,8 @@ theorem insert_seq (f : Set (α → β)) (a : α) (s : Set α) : Set.seq f (s.in
     clean at h
     rw [insert_map] at h
     match h with
-    | Or.inl h => cases h; left; exists f; constr; assumption; rfl
-    | Or.inr ⟨x,hxs,h⟩ => cases h; right; exists f; constr; assumption; exists x; constr; assumption; rfl
+    | Or.inl h => cases h; left; exists f
+    | Or.inr ⟨x,hxs,h⟩ => cases h; right; exists f; constr; assumption; exists x
   · intro
     | Or.inl ⟨f,hf,h⟩ => cases h; exists f; constr; assumption; exists a; constr; left; rfl; rfl
     | Or.inr ⟨f,hf,x,hx,h⟩ => cases h; exists f; constr; assumption; exists x; constr; right; assumption; rfl
@@ -140,9 +138,6 @@ theorem insertIf_seq (f : Set (α → β)) (a : α) (p : Prop) (s : Set α) : Se
       constr
       · exact hf
       · exists x
-        constr
-        · exact hxs
-        · exact h
   · intro
     | Or.inl ⟨⟨f,hf,h⟩,hp⟩ =>
       exists f

@@ -49,9 +49,7 @@ theorem eq_univ_of_univ_subset : Set.univ ⊆ s → s = Set.univ := by
   · exact hs
 
 theorem pure_subset_of_mem {x : α} : x ∈ s → pure x ⊆ s := by
-  intro hs x hx
-  cases hx
-  exact hs
+  intro | hs, _, rfl => exact hs
 
 theorem subset_union_left (s t : Set α) : s ⊆ s ∪ t := by
   intro x hs
@@ -67,11 +65,9 @@ theorem union_subset_of_subset_of_subset : s ⊆ u → t ⊆ u → s ∪ t ⊆ u
   intro hsu htu x
   intro
   | Or.inl hxs =>
-    apply hsu
-    exact hxs
+    exact hsu x hxs
   | Or.inr hxt =>
-    apply htu
-    exact hxt
+    exact htu x hxt
 
 theorem union_subset_union_left : s ⊆ t → (∀ u, u ∪ s ⊆ u ∪ t) := by
   intro hst u x
@@ -81,16 +77,14 @@ theorem union_subset_union_left : s ⊆ t → (∀ u, u ∪ s ⊆ u ∪ t) := by
     exact hu
   | Or.inr hs =>
     right
-    apply hst
-    exact hs
+    exact hst x hs
 
 theorem union_subset_union_right : s ⊆ t → (∀ u, s ∪ u ⊆ t ∪ u) := by
   intro hst u x
   intro
   | Or.inl hs =>
     left
-    apply hst
-    exact hs
+    exact hst x hs
   | Or.inr hu =>
     right
     exact hu
@@ -100,12 +94,10 @@ theorem union_subset_union {s₁ s₂ t₁ t₂ : Set α} : s₁ ⊆ s₂ → t�
   intro
   | Or.inl hs₁ =>
     left
-    apply hs
-    exact hs₁
+    exact hs x hs₁
   | Or.inr ht₁ =>
     right
-    apply ht
-    exact ht₁
+    exact ht x ht₁
 
 theorem inter_subset_left (s t : Set α) : s ∩ t ⊆ s := by
   intro x ⟨hs,_⟩
@@ -118,61 +110,48 @@ theorem inter_subset_right (s t : Set α) : s ∩ t ⊆ t := by
 theorem subset_inter_of_subset_of_subset : u ⊆ s → u ⊆ t → u ⊆ s ∩ t := by
   intro hus hut x hxu
   constr
-  · apply hus
-    exact hxu
-  · apply hut
-    exact hxu
+  · exact hus x hxu
+  · exact hut x hxu
 
 theorem inter_subset_inter_left : s ⊆ t → (∀ u, u ∩ s ⊆ u ∩ t) := by
   intro hst u x ⟨hu, hs⟩
   constr
   · exact hu
-  · apply hst
-    exact hs
+  · exact hst x hs
 
 theorem inter_subset_inter_right : s ⊆ t → (∀ u, s ∩ u ⊆ t ∩ u) := by
   intro hst u x ⟨hs, hu⟩
   constr
-  · apply hst
-    exact hs
+  · exact hst x hs
   · exact hu
 
 theorem inter_subset_inter {s₁ s₂ t₁ t₂ : Set α} : s₁ ⊆ s₂ → t₁ ⊆ t₂ → s₁ ∩ t₁ ⊆ s₂ ∩ t₂ := by
   intro hs ht x ⟨hs₁,ht₁⟩
   constr
-  · apply hs
-    exact hs₁
-  · apply ht
-    exact ht₁
+  · exact hs x hs₁
+  · exact ht x ht₁
 
 theorem map_subset_map (f : α → β) : s ⊆ t → f <$> s ⊆ f <$> t := by
   intro hst y ⟨x,hx,h⟩
   cases h
   exists x
   constr
-  · apply hst
-    exact hx
+  · exact hst x hx
   · rfl
 
 theorem bind_subset_bind (f : α → Set β) : s ⊆ t → s >>= f ⊆ t >>= f := by
   intro hst y ⟨x,hx,h⟩
   exists x
   constr
-  · apply hst
-    exact hx
+  · exact hst x hx
   · exact h
 
 theorem val_subset_bind (f : α → Set β) {x : α} : x ∈ s → f x ⊆ s >>= f := by
   intro hxs y hfxy
   exists x
-  constr
-  · exact hxs
-  · exact hfxy
 
 theorem bind_subset_of_val_subset {t : Set β} {f : α → Set β} : (∀ x, x ∈ s → f x ⊆ t) → s >>= f ⊆ t := by
-  intro h y ⟨x,hxs,hfxy⟩
-  apply h x
-  · exact hxs
-  · exact hfxy
+  intro h y ⟨x, hxs, hfxy⟩
+  exact h x hxs y hfxy
 
 end Set
