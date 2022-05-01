@@ -20,6 +20,8 @@ abbrev StablePred {α} (p : α → Prop) := (x : α) → Stable (p x)
 
 abbrev StableRel {α β} (r : α → β → Prop) := (x : α) → (y : β) → Stable (r x y)
 
+abbrev StableEq (α) := StableRel (@Eq α)
+
 class inductive StableList : List Prop → Prop
 | nil : StableList []
 | cons {a as} : Stable a → StableList as → StableList (a :: as)
@@ -42,14 +44,14 @@ end StableList
 -- Complemented Propositions --
 
 class inductive Complemented (a : Prop) : Prop
-| protected isTrue : a → Complemented a
-| protected isFalse : ¬a → Complemented a
+| isTrue : a → Complemented a
+| isFalse : ¬a → Complemented a
 
 /-- eliminator for `Complemented` -/
 protected def Complemented.by_cases (a : Prop) [inst : Complemented a] {motive : Prop} (isTrue : a → motive) (isFalse : ¬a → motive) : motive :=
   match inst with
-  | Complemented.isTrue h => isTrue h
-  | Complemented.isFalse h => isFalse h
+  | .isTrue h => isTrue h
+  | .isFalse h => isFalse h
 
 /-- excluded middle (EM) -/
 theorem Complemented.em (a : Prop) [Complemented a] : a ∨ ¬a := Complemented.by_cases a Or.inl Or.inr
@@ -57,6 +59,8 @@ theorem Complemented.em (a : Prop) [Complemented a] : a ∨ ¬a := Complemented.
 abbrev ComplementedPred {α} (p : α → Prop) := (x : α) → Complemented (p x)
 
 abbrev ComplementedRel {α β} (r : α → β → Prop) := (x : α) → (y : β) → Complemented (r x y)
+
+abbrev ComplementedEq (α) := ComplementedRel (@Eq α)
 
 class inductive ComplementedList : List Prop → Prop
 | nil : ComplementedList []
@@ -129,6 +133,8 @@ abbrev WeaklyComplementedPred {α} (p : α → Prop) := (x : α) → WeaklyCompl
 
 abbrev WeaklyComplementedRel {α β} (r : α → β → Prop) := (x : α) → (y : β) → WeaklyComplemented (r x y)
 
+abbrev WeaklyComplementedEq (α) := WeaklyComplementedRel (@Eq α)
+
 class inductive WeaklyComplementedList : List Prop → Prop
 | nil : WeaklyComplementedList []
 | cons {a as} : WeaklyComplemented a → WeaklyComplementedList as → WeaklyComplementedList (a :: as)
@@ -173,6 +179,8 @@ class inductive WeaklyDecidable (a : Prop) : Type
 abbrev WeaklyDecidablePred {α} (p : α → Prop) := (x : α) → WeaklyDecidable (p x)
 
 abbrev WeaklyDecidableRel {α β} (r : α → β → Prop) := (x : α) → (y : β) → WeaklyDecidable (r x y)
+
+abbrev WeaklyDecidableEq (α) := WeaklyDecidableRel (@Eq α)
 
 class inductive WeaklyDecidableList : List Prop → Type
 | nil : WeaklyDecidableList []
