@@ -11,6 +11,7 @@ import GMLInit.Data.List1
 import GMLInit.Data.Nat
 import GMLInit.Data.Option
 import GMLInit.Data.Pi
+import GMLInit.Data.Pos
 import GMLInit.Data.Prod
 import GMLInit.Data.Set
 import GMLInit.Data.Sigma
