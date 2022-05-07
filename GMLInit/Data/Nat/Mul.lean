@@ -1,4 +1,5 @@
 import GMLInit.Data.Nat.Basic
+import GMLInit.Data.Nat.IsPos
 import GMLInit.Data.Nat.Order
 import GMLInit.Data.Nat.Succ
 import GMLInit.Data.Nat.Add
@@ -84,7 +85,7 @@ protected theorem lt_mul_of_gt_one_of_pos_left {x y : Nat} : x > 0 → y > 1 →
   | zero => contradiction
   | succ y =>
     rw [Nat.succ_mul]
-    apply Nat.lt_add_of_pos_left
+    apply Nat.lt_add_left
     apply Nat.mul_pos
     · apply Nat.lt_of_succ_lt_succ
       exact hy
@@ -96,7 +97,7 @@ protected theorem lt_mul_of_gt_one_of_pos_right {x y : Nat} : x > 0 → y > 1 �
   | zero => contradiction
   | succ y =>
     rw [Nat.mul_succ]
-    apply Nat.lt_add_of_pos_left
+    apply Nat.lt_add_left
     apply Nat.mul_pos
     · exact hx
     · apply Nat.lt_of_succ_lt_succ

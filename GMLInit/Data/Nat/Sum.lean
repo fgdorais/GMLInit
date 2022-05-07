@@ -108,16 +108,17 @@ def equivSum : Equiv Nat (Sum Nat Nat) where
   rev
   | Sum.inl n => Nat.inl n
   | Sum.inr n => Nat.inr n
-  spec := by
-    intro
+  spec := by intro
     | n, Sum.inl m =>
       clean
       split
       next h =>
-        simp
-        intro hl
-        rw [←not_is_even_eq_is_odd, ←hl, is_even_inl] at h
-        contradiction
+        constr
+        · intro
+          contradiction
+        · intro hl
+          rw [←not_is_even_eq_is_odd, ←hl, is_even_inl] at h
+          contradiction
       next h =>
         cases inl_half_eq_or_inr_half_eq n with
         | inl hl =>

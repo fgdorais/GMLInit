@@ -1,4 +1,5 @@
 import GMLInit.Data.Nat.Basic
+import GMLInit.Data.Nat.IsPos
 import GMLInit.Data.Nat.Order
 import GMLInit.Data.Nat.Succ
 import GMLInit.Data.Nat.Add

@@ -1,4 +1,5 @@
 import GMLInit.Data.Nat.Basic
+import GMLInit.Data.Nat.IsPos
 import GMLInit.Data.Nat.Order
 import GMLInit.Data.Nat.Succ
 
@@ -32,31 +33,27 @@ protected theorem add_cross_comm (x₁ x₂ y₁ y₂ : Nat) : (x₁ + x₂) + (
 
 -- assert theorem le_add_right (x y : Nat) : x ≤ x + y
 
-protected theorem lt_add_of_pos_left (x y : Nat) : y > 0 → x < y + x := by
-  intro hy
+protected theorem lt_add_left (x y : Nat) (h : y > 0 := by nat_is_pos) : x < y + x := by
   transitivity (0 + x) using Eq, LT.lt
   · rw [Nat.zero_add]
   · apply Nat.add_lt_add_right
-    exact hy
+    exact h
 
-protected theorem lt_add_of_pos_right (x y : Nat) : y > 0 → x < x + y := by
-  intro hy
+protected theorem lt_add_right (x y : Nat) (h : y > 0 := by nat_is_pos) : x < x + y := by
   transitivity (x + 0) using Eq, LT.lt
   · rw [Nat.add_zero]
   · apply Nat.add_lt_add_left
-    exact hy
+    exact h
 
-theorem pos_add_of_pos_left (x : Nat) {y : Nat} : y > 0 → y + x > 0 := by
-  intro hy
-  transitivity y using LT.lt, LE.le
-  · exact hy
-  · apply Nat.le_add_right
+theorem pos_add_left (x y : Nat) (h : x > 0 := by nat_is_pos) : x + y > 0 := by
+  transitivity x using LT.lt, LE.le
+  · exact h
+  · exact Nat.le_add_right ..
 
-theorem pos_add_of_pos_right (x : Nat) {y : Nat} : y > 0 → x + y > 0 := by
-  intro hy
+theorem pos_add_right (x y : Nat) (h : y > 0 := by nat_is_pos) : x + y > 0 := by
   transitivity y using LT.lt, LE.le
-  · exact hy
-  · apply Nat.le_add_left
+  · exact h
+  · exact Nat.le_add_left ..
 
 -- assert theorem add_le_add {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ ≤ y₂ → x₁ + y₁ ≤ x₂ + y₂
 
@@ -87,13 +84,12 @@ protected theorem add_lt_add_of_lt_of_le {x₁ x₂ y₁ y₂ : Nat} : x₁ < x�
     exact h₁
 
 protected theorem le_of_add_le_add_left' (x : Nat) {y z : Nat} : x + y ≤ x + z → y ≤ z := by
-  induction x with
+  induction x using Nat.recAux with
   | zero =>
-    simp only [Nat.simp_zero, Nat.zero_add]
-    intro
-    assumption
+    rw [Nat.zero_add, Nat.zero_add]
+    exact id
   | succ x H =>
-    simp only [Nat.simp_succ, Nat.succ_add]
+    rw [Nat.succ_add, Nat.succ_add]
     intro
     apply H
     apply Nat.le_of_succ_le_succ
@@ -103,13 +99,10 @@ protected theorem le_iff_add_le_add_left (x y z : Nat) : x ≤ y ↔ z + x ≤ z
   ⟨λ h => Nat.add_le_add_left h z, Nat.le_of_add_le_add_left' z⟩
 
 protected theorem le_of_add_le_add_right' (x : Nat) {y z : Nat} : y + x ≤ z + x → y ≤ z := by
-  induction x with
+  induction x using Nat.recAux with
   | zero =>
-    simp only [Nat.simp_zero, Nat.zero_add]
-    intro
-    assumption
+    exact id
   | succ x H =>
-    simp only [Nat.simp_succ, Nat.succ_add]
     intro
     apply H
     apply Nat.le_of_succ_le_succ
@@ -119,13 +112,12 @@ protected theorem le_iff_add_le_add_right (x y z : Nat) : x ≤ y ↔ x + z ≤ 
   ⟨λ h => Nat.add_le_add_right h z, Nat.le_of_add_le_add_right' z⟩
 
 protected theorem lt_of_add_lt_add_left (x : Nat) {y z : Nat} : x + y < x + z → y < z := by
-  induction x with
+  induction x using Nat.recAux with
   | zero =>
-    simp only [Nat.simp_zero, Nat.zero_add]
-    intro
-    assumption
+    rw [Nat.zero_add, Nat.zero_add]
+    exact id
   | succ x H =>
-    simp only [Nat.simp_succ, Nat.succ_add]
+    rw [Nat.succ_add, Nat.succ_add]
     intro
     apply H
     apply Nat.lt_of_succ_lt_succ
@@ -135,13 +127,11 @@ protected theorem lt_iff_add_lt_add_left (x y z : Nat) : x < y ↔ z + x < z + y
   ⟨λ h => Nat.add_lt_add_left h z, Nat.lt_of_add_lt_add_left z⟩
 
 protected theorem lt_of_add_lt_add_right (x : Nat) {y z : Nat} : y + x < z + x → y < z := by
-  induction x with
+  induction x using Nat.recAux with
   | zero =>
-    simp only [Nat.simp_zero, Nat.zero_add]
     intro
     assumption
   | succ x H =>
-    simp only [Nat.simp_succ, Nat.succ_add]
     intro
     apply H
     apply Nat.le_of_succ_le_succ

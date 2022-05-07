@@ -1,8 +1,4 @@
 import GMLInit.Data.Nat.Basic
-import GMLInit.Data.Nat.Add
-import GMLInit.Data.Nat.Mul
-import GMLInit.Data.Nat.Pow
-import GMLInit.Data.Nat.Order
 
 namespace Nat
 
@@ -42,6 +38,6 @@ macro "nat_is_nonzero" : tactic => `(tactic| show ((_:Nat) ≠ 0); first | assum
 protected theorem pred_lt_self (n : Nat) (h : n > 0 := by nat_is_pos) : n.pred < n := by
   cases n with
   | zero => contradiction
-  | succ _ => exact Nat.lt_succ_self _
+  | succ _ => exact Nat.lt_succ_self ..
 
 end Nat

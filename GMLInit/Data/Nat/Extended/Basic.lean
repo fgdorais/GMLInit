@@ -50,7 +50,7 @@ protected def ofNat (n : Nat) : ENat where
     rw [Nat.ble_eq] at h ⊢
     transitivity x
     · exact h
-    · exact Nat.le_succ_self x
+    · exact Nat.le_add_right ..
 
 instance : Coe Nat ENat := ⟨ENat.ofNat⟩
 

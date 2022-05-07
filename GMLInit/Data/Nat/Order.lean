@@ -1,4 +1,5 @@
 import GMLInit.Data.Nat.Basic
+import GMLInit.Data.Nat.IsPos
 import GMLInit.Logic.Connectives
 
 namespace Nat

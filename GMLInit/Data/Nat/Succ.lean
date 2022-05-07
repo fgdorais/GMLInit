@@ -1,17 +1,18 @@
 import GMLInit.Meta.Stable
 import GMLInit.Data.Nat.Basic
+import GMLInit.Data.Nat.IsPos
 import GMLInit.Data.Nat.Order
 
 namespace Nat
 
--- assert theorem pred_zero : 0 - 1 = 0 := rfl
+protected theorem pred_zero' : 0 - 1 = 0 := rfl
 
--- assert theorem pred_succ (x : Nat) : (x + 1) - 1 = x := rfl
+protected theorem pred_succ' (x : Nat) : (x + 1) - 1 = x := rfl
 
-protected theorem succ_pred_of_pos {x : Nat} : x > 0 → (x - 1) + 1 = x := by
+protected theorem succ_pred' (x : Nat) (h : x > 0 := by nat_is_pos) : (x - 1) + 1 = x := by
   cases x using Nat.casesAuxOn with
-  | zero => intro; contradiction
-  | succ x => intro; rw [Nat.pred_succ]
+  | zero => contradiction
+  | succ x => rw [Nat.pred_succ']
 
 -- assert theorem zero_lt_succ (x : Nat) : 0 < x + 1
 
