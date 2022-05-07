@@ -44,7 +44,10 @@ private theorem tri_add_self_lt_tri_of_lt {m n : Nat} : m < n → tri m + m < tr
 theorem tri_add_inj {m₁ n₁ m₂ n₂} : m₁ ≤ n₁ → m₂ ≤ n₂ → tri n₁ + m₁ = tri n₂ + m₂ → n₁ = n₂ := by
   intro h₁ h₂ h
   by_cases n₁ ≤ n₂, n₁ ≥ n₂ with
-  | isTrue hle, isTrue hge => antisymmetry using LE.le; exact hle; exact hge
+  | isTrue hle, isTrue hge =>
+    antisymmetry using LE.le
+    · exact hle
+    · exact hge
   | _, isFalse hlt =>
     absurd h
     apply Nat.ne_of_lt
@@ -108,11 +111,10 @@ theorem split_eq (n : Nat) : tri (split n).fst + (split n).snd = n := by
     · rw [←Nat.add_assoc (tri (split n).fst) (split n).snd 1, H]
     · symmetry
       unfold split
-      simp only [Nat.add_eq, Nat.add_zero n]
       split
       next h =>
-        clean
-        rw [Nat.add_zero n] at h ⊢
+        simp [Nat.zero_eq, Nat.add_eq, Nat.add_zero n] at h ⊢
+        rw [Nat.add_zero n] at h
         rw [dif_pos h]
       next h =>
         have heq: (split n).snd.val = (split n).fst := by
@@ -123,7 +125,8 @@ theorem split_eq (n : Nat) : tri (split n).fst + (split n).snd = n := by
             exact h
         unfold tri
         clean
-        rw [Nat.add_zero n] at h ⊢
+        dsimp [Nat.add_eq, Nat.add_zero n] at h ⊢
+        rw [Nat.add_zero n] at h
         rw [dif_neg h, ←Nat.add_assoc, heq]; rfl
 
 protected abbrev fst (n : Nat) : Nat := (split n).snd
@@ -160,14 +163,15 @@ theorem pair_fst_snd (n) : pair n.fst n.snd = n := by
 def prodEquiv : Equiv Nat (Nat × Nat) where
   fwd n := (n.fst, n.snd)
   rev | (n₁,n₂) => pair n₁ n₂
-  spec | n, (n₁,n₂) => by
-    clean
-    constr
-    · intro h
-      cases h
-      rw [pair_fst_snd]
-    · intro h
-      cases h
-      rw [fst_pair, snd_pair]
+  spec := by intro
+    | n, (n₁,n₂) =>
+      clean
+      constr
+      · intro h
+        cases h
+        rw [pair_fst_snd]
+      · intro h
+        cases h
+        rw [fst_pair, snd_pair]
 
 end Nat

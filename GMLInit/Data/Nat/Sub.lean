@@ -150,15 +150,11 @@ protected theorem lt_sub_iff_add_lt (x y z : Nat) : x < y - z ↔ x + z < y := b
   | right z => simp only [Nat.zero_sub, Nat.not_lt_zero]
   | diag y z H => rw [Nat.succ_sub_succ, Nat.add_succ, Nat.simp_succ, Nat.succ_lt_succ_iff_lt]; exact H
 
-protected theorem lt_sub_of_add_lt {x y z : Nat} : x + y < z → x < z - y := by
-  intro h
-  rw [Nat.lt_sub_iff_add_lt]
-  exact h
+theorem add_lt_of_lt_sub' {x y z : Nat} : x < y - z → x + z < y :=
+  (Nat.lt_sub_iff_add_lt _ _ _).mp
 
-protected theorem add_lt_of_lt_sub {x y z : Nat} : x < y - z → x + z < y := by
-  intro h
-  rw [←Nat.lt_sub_iff_add_lt]
-  exact h
+theorem lt_sub_of_add_lt' {x y z : Nat} : x + y < z → x < z - y :=
+  (Nat.lt_sub_iff_add_lt _ _ _).mpr
 
 protected theorem sub_le_right (x y : Nat) : x - y ≤ x := by
   rw [Nat.sub_le_iff_le_add]

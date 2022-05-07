@@ -49,6 +49,7 @@ theorem find_some {α} {xs : List α} {p : Index xs → Bool} (i : Index xs) : I
   | cons x xs H =>
     intro h
     unfold Index.find? at h
+    clean at h
     split at h
     next hh => cases h; exact hh
     next ht => cases h; exact H _ ht
@@ -60,6 +61,7 @@ theorem find_none {α} {xs : List α} {p : Index xs → Bool} (i : Index xs) : I
   | cons x xs H =>
     intro h
     unfold Index.find? at h
+    clean at h
     split at h
     next => contradiction
     next => contradiction
