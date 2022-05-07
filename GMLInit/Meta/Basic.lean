@@ -5,7 +5,7 @@ import Lean
 open Lean
 open Lean.Meta
 open Lean.Elab
-open Lean.Parser.Tactic (location simpLemma)
+open Lean.Parser.Tactic (location)
 
 namespace Meta
 
@@ -13,30 +13,38 @@ syntax termOrHole := term <|> hole <|> syntheticHole
 
 syntax termList := "[" termOrHole,* ("|" termOrHole)? "]"
 
-macro mods:declModifiers "lemma" n:declId sig:declSig val:declVal : command => `($mods:declModifiers theorem $n $sig $val)
+macro mods:declModifiers "lemma" n:declId sig:declSig val:declVal : command =>
+  `($mods:declModifiers theorem $n $sig $val)
 
 syntax "clean " (location)? : tactic
-macro_rules
-| `(tactic|clean $[$loc]?) => `(tactic|simp only [] $[$loc]?)
+set_option hygiene false in macro_rules
+| `(tactic| clean $[$loc]?) =>
+  `(tactic| simp only [clean] $[$loc]?)
 
-syntax "unfold" withPosition((colGe ident)+) (location)? : tactic
+syntax "unfold " withPosition((colGe ident)+) (location)? : tactic
 macro_rules
-| `(tactic|unfold $ids* $[$loc]?) => `(tactic|simp only [$[$ids:ident],*] $[$loc]?)
+| `(tactic| unfold $ids* $[$loc]?) =>
+  `(tactic| simp only [$[$ids:ident],*] $[$loc]?)
 
 syntax "elim_casts" (location)? : tactic
 set_option hygiene false in macro_rules
-| `(tactic|elim_casts $[$loc]?) =>
-  `(tactic|unfold Eq.recOn Eq.ndrec Eq.ndrecOn $[$loc]?; repeat (rw [Eq.rec_eq_cast] $[$loc]?); simp only [elim_casts] $[$loc]?)
+| `(tactic| elim_casts $[$loc]?) =>
+  `(tactic| unfold Eq.recOn Eq.ndrec Eq.ndrecOn $[$loc]?; repeat (rw [Eq.rec_eq_cast] $[$loc]?); simp only [elim_casts] $[$loc]?)
 
-macro "exfalso" : tactic => `(tactic|apply False.elim)
+macro "exfalso" : tactic =>
+  `(tactic| apply False.elim)
 
-macro "absurd" h:term : tactic => `(tactic|first |apply absurd _ $h |apply absurd $h)
+macro "absurd" h:term : tactic =>
+  `(tactic| first |apply absurd _ $h |apply absurd $h)
 
 syntax "whnf" (&"lhs" <|> &"rhs")? (location)? : tactic
 macro_rules
-| `(tactic|whnf $[at $h:ident]?) => `(tactic|conv $[at $h]? => whnf)
-| `(tactic|whnf lhs $[at $h:ident]?) => `(tactic|conv $[at $h]? => lhs; whnf)
-| `(tactic|whnf rhs $[at $h:ident]?) => `(tactic|conv $[at $h]? => rhs; whnf)
+| `(tactic| whnf $[at $h:ident]?) =>
+  `(tactic| conv $[at $h]? => whnf)
+| `(tactic| whnf lhs $[at $h:ident]?) =>
+  `(tactic| conv $[at $h]? => {lhs; whnf})
+| `(tactic| whnf rhs $[at $h:ident]?) =>
+  `(tactic| conv $[at $h]? => {rhs; whnf})
 
 def Tactic.constr (mvarId : MVarId) : MetaM (List MVarId) := do
   withMVarContext mvarId do
