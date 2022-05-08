@@ -24,7 +24,7 @@ theorem tri_mono {m n : Nat} : m ≤ n → tri m ≤ tri n := by
     · exact Nat.le_of_succ_le_succ h
 
 theorem two_tri_eq (n : Nat) : 2 * tri n = n * (n + 1) := by
-  induction n using Nat.recAuxOn with
+  induction n with
   | zero => rfl
   | succ n H => calc
     _ = 2 * (tri n + (n + 1)) := by rfl
@@ -103,7 +103,7 @@ def split : Nat → (t : Nat) × Fin (t+1)
     else ⟨t+1, 0, Nat.zero_lt_succ (t+1)⟩
 
 theorem split_eq (n : Nat) : tri (split n).fst + (split n).snd = n := by
-  induction n using Nat.recAux with
+  induction n with
   | zero => rfl
   | succ n H =>
     symmetry

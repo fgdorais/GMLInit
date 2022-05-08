@@ -41,7 +41,7 @@ protected def inl (n : Nat) := 2 * n
 protected def inr (n : Nat) := 2 * n + 1
 
 theorem is_even_inl (n : Nat) : is_even n.inl := by
-  induction n using Nat.recAux with
+  induction n with
   | zero => rfl
   | succ n ih =>
     unfold Nat.inl at ih ⊢
@@ -49,7 +49,7 @@ theorem is_even_inl (n : Nat) : is_even n.inl := by
     exact ih
 
 theorem is_odd_inr (n : Nat) : is_odd n.inr := by
-  induction n using Nat.recAux with
+  induction n with
   | zero => rfl
   | succ n ih =>
     unfold Nat.inr at ih ⊢
@@ -57,14 +57,14 @@ theorem is_odd_inr (n : Nat) : is_odd n.inr := by
     exact ih
 
 theorem half_inl_eq (n : Nat) : half n.inl = n := by
-  induction n using Nat.recAux with
+  induction n with
   | zero => rfl
   | succ n ih =>
     unfold Nat.inl at ih ⊢
     rw [Nat.mul_succ, Nat.half, ih]
 
 theorem half_inr_eq (n : Nat) : half n.inr = n := by
-  induction n using Nat.recAux with
+  induction n with
   | zero => rfl
   | succ n ih =>
     unfold Nat.inr at ih ⊢

@@ -22,7 +22,7 @@ theorem first.isLE_of (x : Nat) : p x → (first p).isLE x := by
   | x+1 => intro h; simp [first, first.isLEAux, h]
 
 theorem first.exists_le_of_isLE (x : Nat) : (first p).isLE x → ∃ y, y ≤ x ∧ p y := by
-  induction x using Nat.recAux with
+  induction x with
   | zero =>
     intro h
     exists (0:Nat)

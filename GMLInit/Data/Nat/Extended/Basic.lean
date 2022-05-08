@@ -22,7 +22,7 @@ theorem mono (e : ENat) {x y : Nat} : x ≤ y → e.isLE x → e.isLE y := by
   match Nat.le.dest h with
   | ⟨z,hz⟩ =>
     cases hz
-    induction z using Nat.recAux with
+    induction z with
     | zero => exact hx
     | succ z H =>
       apply e.step

@@ -33,7 +33,7 @@ protected def find? : {n : Nat} → (p : Fin n → Bool) → Option (Fin n)
   | false, none => none
 
 def find_some {p : Fin n → Bool} (i) : Fin.find? p = some i → p i = true := by
-  induction n using Nat.recAux with
+  induction n with
   | zero => exact i.elim0
   | succ n H =>
     intro h
@@ -44,7 +44,7 @@ def find_some {p : Fin n → Bool} (i) : Fin.find? p = some i → p i = true := 
     next => contradiction
 
 def find_none {p : Fin n → Bool} (x) : Fin.find? p = none → p x = false := by
-  induction n using Nat.recAux with
+  induction n with
   | zero => absurd x.isLt; apply Nat.not_lt_zero
   | succ n H =>
     intro h

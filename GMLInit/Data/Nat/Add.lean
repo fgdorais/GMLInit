@@ -84,7 +84,7 @@ protected theorem add_lt_add_of_lt_of_le {x₁ x₂ y₁ y₂ : Nat} : x₁ < x�
     exact h₁
 
 protected theorem le_of_add_le_add_left' (x : Nat) {y z : Nat} : x + y ≤ x + z → y ≤ z := by
-  induction x using Nat.recAux with
+  induction x with
   | zero =>
     rw [Nat.zero_add, Nat.zero_add]
     exact id
@@ -99,7 +99,7 @@ protected theorem le_iff_add_le_add_left (x y z : Nat) : x ≤ y ↔ z + x ≤ z
   ⟨λ h => Nat.add_le_add_left h z, Nat.le_of_add_le_add_left' z⟩
 
 protected theorem le_of_add_le_add_right' (x : Nat) {y z : Nat} : y + x ≤ z + x → y ≤ z := by
-  induction x using Nat.recAux with
+  induction x with
   | zero =>
     exact id
   | succ x H =>
@@ -112,7 +112,7 @@ protected theorem le_iff_add_le_add_right (x y z : Nat) : x ≤ y ↔ x + z ≤ 
   ⟨λ h => Nat.add_le_add_right h z, Nat.le_of_add_le_add_right' z⟩
 
 protected theorem lt_of_add_lt_add_left (x : Nat) {y z : Nat} : x + y < x + z → y < z := by
-  induction x using Nat.recAux with
+  induction x with
   | zero =>
     rw [Nat.zero_add, Nat.zero_add]
     exact id
@@ -127,7 +127,7 @@ protected theorem lt_iff_add_lt_add_left (x y z : Nat) : x < y ↔ z + x < z + y
   ⟨λ h => Nat.add_lt_add_left h z, Nat.lt_of_add_lt_add_left z⟩
 
 protected theorem lt_of_add_lt_add_right (x : Nat) {y z : Nat} : y + x < z + x → y < z := by
-  induction x using Nat.recAux with
+  induction x with
   | zero =>
     intro
     assumption

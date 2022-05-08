@@ -5,12 +5,14 @@ import GMLInit.Data.Nat.Order
 
 namespace Nat
 
+attribute [local eliminator] Nat.recDiagAux
+
 protected theorem pred_zero' : 0 - 1 = 0 := rfl
 
 protected theorem pred_succ' (x : Nat) : (x + 1) - 1 = x := rfl
 
 protected theorem succ_pred' (x : Nat) (h : x > 0 := by nat_is_pos) : (x - 1) + 1 = x := by
-  cases x using Nat.casesAuxOn with
+  cases x with
   | zero => contradiction
   | succ x => rw [Nat.pred_succ']
 
@@ -51,7 +53,7 @@ protected theorem succ_lt_succ_iff_lt (x y : Nat) : x + 1 < y + 1 ↔ x < y :=
   ⟨Nat.lt_of_succ_lt_succ, Nat.succ_lt_succ⟩
 
 protected theorem pred_le_iff_le_succ (x y : Nat) : x - 1 ≤ y ↔ x ≤ y + 1 := by
-  cases x, y using Nat.casesDiagAuxOn with
+  cases x, y with
   | left x =>
     cases x with
     | zero =>
@@ -81,7 +83,7 @@ protected theorem succ_lt_iff_lt_pred (x y : Nat) : x + 1 < y ↔ x < y - 1 := b
   exact Nat.pred_le_iff_le_succ y x
 
 protected theorem succ_le_or_eq_zero_iff_le_pred (x y : Nat) : x + 1 ≤ y ∨ x = 0 ↔ x ≤ y - 1 := by
-  cases x, y using Nat.recDiagAuxOn with
+  cases x, y with
   | left x =>
     constr
     · intro

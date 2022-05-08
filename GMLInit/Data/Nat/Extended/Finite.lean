@@ -27,7 +27,7 @@ private def wf (isFinite : Finite e) : WellFounded (Finite.rel e) := by
     match Nat.le.dest this with
     | ⟨y, hxy⟩ =>
       clear this
-      induction y using Nat.recAux generalizing x with
+      induction y generalizing x with
       | zero =>
         rw [hxy]
         apply Acc.intro
@@ -96,7 +96,7 @@ theorem isLE_iff_toNat_le (e : ENat) (isFinite : Finite e) (x : Nat) : e.isLE x 
   antisymmetry using (.≤.:Nat→Nat→Prop)
   · rw [←isLE_iff_toNat_le]
     exact ofNat_isLE_self x
-  · cases x using Nat.casesAuxOn with
+  · cases x with
     | zero => exact Nat.zero_le _
     | succ x =>
       apply Nat.succ_le_of_lt

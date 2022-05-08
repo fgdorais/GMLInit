@@ -4,7 +4,7 @@ import GMLInit.Meta.Relation
 
 namespace Nat
 
-protected def recAux.{u} {motive : Nat → Sort u} (zero : motive 0) (succ : (n : Nat) → motive n → motive (n+1)) : (t : Nat) → motive t
+@[eliminator] protected def recAux.{u} {motive : Nat → Sort u} (zero : motive 0) (succ : (n : Nat) → motive n → motive (n+1)) : (t : Nat) → motive t
 | 0 => zero
 | n+1 => succ n (Nat.recAux zero succ n)
 
@@ -69,7 +69,7 @@ protected def casesDiagOn.{u} {motive : Nat → Nat → Sort u} (x y : Nat)
 
 section clean
 
-attribute [clean] Nat.zero_eq Nat.add_eq Nat.sub_eq Nat.mul_eq Nat.div_eq Nat.mod_eq
+attribute [clean] Nat.zero_eq Nat.add_eq Nat.sub_eq Nat.mul_eq Nat.div_eq Nat.mod_eq Nat.add_zero Nat.mul_zero Nat.pow_zero
 
 @[simp,clean] protected lemma succ_eq (x : Nat) : Nat.succ x = x + 1 := rfl
 

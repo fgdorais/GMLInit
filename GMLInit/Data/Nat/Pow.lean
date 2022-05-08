@@ -8,6 +8,8 @@ import GMLInit.Data.Nat.Mul
 
 namespace Nat
 
+attribute [local eliminator] Nat.recDiagAux
+
 -- assert theorem pow_zero (x : Nat) : x ^ 0 = 1
 
 -- assert theorem pow_succ (x y : Nat) : x ^ (y + 1) = x ^ y * x
@@ -18,7 +20,7 @@ protected theorem pow_one (x : Nat) : x ^ 1 = x := calc
   _ = x := by rw [Nat.one_mul]
 
 protected theorem one_pow (x : Nat) : 1 ^ x = 1 := by
-  induction x using Nat.recAuxOn with
+  induction x with
   | zero => rw [Nat.pow_zero]
   | succ x H => calc
     _ = 1 ^ x * 1 := by rw [Nat.pow_succ]
@@ -30,7 +32,7 @@ protected theorem zero_pow_succ (x : Nat) : 0 ^ (x + 1) = 0 := calc
   _ = 0 := by rw [Nat.mul_zero]
 
 protected theorem zero_pow_of_ne_zero {x : Nat} : x ≠ 0 → 0 ^ x = 0 := by
-  cases x using Nat.casesAuxOn with
+  cases x with
   | zero => intro; contradiction
   | succ x => intro; rw [Nat.zero_pow_succ]
 
@@ -55,7 +57,7 @@ protected theorem pow_right_comm (x y z : Nat) : (x ^ y) ^ z = (x ^ z) ^ y := by
 -- assert theorem pos_pow_of_pos {x : Nat} (y : Nat) : x > 0 → x ^ y > 0
 
 protected theorem le_pow_right_of_pos (x : Nat) {y : Nat} : y > 0 → x ≤ x ^ y := by
-  cases x, y using Nat.casesDiagAuxOn with
+  cases x, y with
   | left x => intro; contradiction
   | right y => intro; apply Nat.zero_le
   | diag x y =>
@@ -75,7 +77,7 @@ protected theorem pow_le_pow_of_pos_left {x y : Nat} (h : x ≤ y) {z : Nat} : z
   λ hz => Nat.pow_le_pow_of_le_right hz h
 
 protected theorem pow_lt_pow_of_pos_right {x y : Nat} (h : x < y) {z : Nat} : z > 0 → x ^ z < y ^ z := by
-  induction z using Nat.recAuxOn with
+  induction z with
   | zero => intro; contradiction
   | succ z H =>
     intro
@@ -91,7 +93,7 @@ protected theorem pow_lt_pow_of_pos_right {x y : Nat} (h : x < y) {z : Nat} : z 
       · exact h
 
 protected theorem pow_lt_pow_of_gt_one_left {x y : Nat} (h : x < y) {z : Nat} : z > 1 → z ^ x < z ^ y := by
-  induction x, y using Nat.recDiagAuxOn with
+  induction x, y with
   | left x => intro; contradiction
   | right y =>
     intro hz

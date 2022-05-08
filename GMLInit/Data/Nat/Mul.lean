@@ -7,6 +7,8 @@ import GMLInit.Data.Nat.Sub
 
 namespace Nat
 
+attribute [local eliminator] Nat.recDiagAux
+
 -- assert theorem mul_zero (x : Nat) : x * 0 = 0
 
 -- assert theorem zero_mul (x : Nat) : 0 * x = 0
@@ -20,12 +22,12 @@ namespace Nat
 -- assert theorem succ_mul (x y : Nat) : (x + 1) * y = x * y + y
 
 protected theorem mul_pred (x y : Nat) : x * (y - 1) = x * y - x := by
-  cases y using Nat.casesAuxOn with
+  cases y with
   | zero => simp only [Nat.pred_zero, Nat.mul_zero, Nat.zero_sub, eq_self]
   | succ y => simp only [Nat.pred_succ, Nat.mul_succ, Nat.add_sub_cancel_right, eq_self]
 
 protected theorem pred_mul (x y : Nat) : (x - 1) * y = x * y - y := by
-  cases x using Nat.casesAuxOn with
+  cases x with
   | zero => simp only [Nat.pred_zero, Nat.zero_mul, Nat.zero_sub, eq_self]
   | succ x => simp only [Nat.pred_succ, Nat.succ_mul, Nat.add_sub_cancel_right, eq_self]
 
@@ -50,7 +52,7 @@ protected theorem mul_cross_comm (x₁ x₂ y₁ y₂ : Nat) : (x₁ * x₂) * (
 -- assert theorem add_mul (x y z : Nat) : (x + y) * z = x * z + y * z
 
 protected theorem mul_sub (x y z : Nat) : x * (y - z) = x * y - x * z := by
-  induction y, z using Nat.recDiagAuxOn with
+  induction y, z with
   | left y => simp only [Nat.sub_zero, Nat.mul_zero, eq_self]
   | right z => simp only [Nat.zero_sub, Nat.mul_zero, eq_self]
   | diag y z H => calc
@@ -60,7 +62,7 @@ protected theorem mul_sub (x y z : Nat) : x * (y - z) = x * y - x * z := by
     _ = x * (y + 1) - x * (z + 1) := by rw [Nat.mul_succ, Nat.mul_succ]
 
 protected theorem sub_mul (x y z : Nat) : (x - y) * z = x * z - y * z := by
-  induction x, y using Nat.recDiagAuxOn with
+  induction x, y with
   | left x => simp only [Nat.sub_zero, Nat.zero_mul, eq_self]
   | right y => simp only [Nat.zero_sub, Nat.zero_mul, eq_self]
   | diag x y H => calc
@@ -70,18 +72,18 @@ protected theorem sub_mul (x y z : Nat) : (x - y) * z = x * z - y * z := by
     _ = (x + 1) * z - (y + 1) * z := by rw [Nat.succ_mul, Nat.succ_mul]
 
 protected theorem le_mul_of_pos_left (x : Nat) {y : Nat} : y > 0 → x ≤ y * x := by
-  cases y using Nat.casesAuxOn with
+  cases y with
   | zero => intro; contradiction
   | succ y => intro; rw [Nat.succ_mul]; apply Nat.le_add_left
 
 protected theorem le_mul_of_pos_right (x : Nat) {y : Nat} : y > 0 → x ≤ x * y := by
-  induction y using Nat.recAuxOn with
+  cases y with
   | zero => intro; contradiction
-  | succ y H => intro; rw [Nat.mul_succ]; apply Nat.le_add_left
+  | succ y => intro; rw [Nat.mul_succ]; apply Nat.le_add_left
 
 protected theorem lt_mul_of_gt_one_of_pos_left {x y : Nat} : x > 0 → y > 1 → x < y * x := by
   intro hx hy
-  cases y using Nat.casesAuxOn with
+  cases y with
   | zero => contradiction
   | succ y =>
     rw [Nat.succ_mul]
@@ -93,7 +95,7 @@ protected theorem lt_mul_of_gt_one_of_pos_left {x y : Nat} : x > 0 → y > 1 →
 
 protected theorem lt_mul_of_gt_one_of_pos_right {x y : Nat} : x > 0 → y > 1 → x < x * y := by
   intro hx hy
-  cases y using Nat.casesAuxOn with
+  cases y with
   | zero => contradiction
   | succ y =>
     rw [Nat.mul_succ]
