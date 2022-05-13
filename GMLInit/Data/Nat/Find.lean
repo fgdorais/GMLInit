@@ -58,4 +58,13 @@ theorem find_minimal (p : Nat → Prop) [DecidablePred p] {h : ∃ n, p n} {x : 
   · match h with | ⟨n, hn⟩ => exists n; exact decide_eq_true hn
   · exact decide_eq_true hx
 
+theorem find_eq : {p₁ p₂ : Nat → Prop} → [DecidablePred p₁] → [DecidablePred p₂] → p₁ = p₂ → {h₁ : ∃ n, p₁ n} → {h₂ : ∃ n, p₂ n} → Nat.find p₁ h₁ = Nat.find p₂ h₂
+| _, _, _, _, rfl, _, _ => congr (congrArg (@find _) (Subsingleton.elim _ _)) (Subsingleton.elim _ _)
+
+theorem find_ext {p₁ p₂ : Nat → Prop} [DecidablePred p₁] [DecidablePred p₂] : (∀ n, p₁ n ↔ p₂ n) → {h₁ : ∃ n, p₁ n} → {h₂ : ∃ n, p₂ n} → Nat.find p₁ h₁ = Nat.find p₂ h₂ :=
+  λ h _ _ => find_eq $ by
+    funext n
+    apply propext
+    exact h n
+
 end Nat
