@@ -33,22 +33,24 @@ instance : LE Pos := ⟨Pos.le⟩
 protected def lt (x y : Pos) : Prop := x.toNat < y.toNat
 instance : LT Pos := ⟨Pos.lt⟩
 
-@[simp] protected lemma add_eq (x y : Pos) : Pos.add x y = x + y := rfl
+@[simp,clean] protected lemma one_eq : Pos.one = 1 := rfl
 
-@[simp] protected lemma mul_eq (x y : Pos) : Pos.mul x y = x * y := rfl
+@[simp,clean] protected lemma add_eq (x y : Pos) : Pos.add x y = x + y := rfl
 
-@[simp] protected lemma pow_eq (x : Pos) (y : Nat) : Pos.pow x y = x ^ y := rfl
+@[simp,clean] protected lemma mul_eq (x y : Pos) : Pos.mul x y = x * y := rfl
 
-@[simp] protected lemma le_eq (x y : Pos) : Pos.le x y = (x ≤ y) := rfl
+@[simp,clean] protected lemma pow_eq (x : Pos) (y : Nat) : Pos.pow x y = x ^ y := rfl
 
-@[simp] protected lemma lt_eq (x y : Pos) : Pos.lt x y = (x < y) := rfl
+@[simp,clean] protected lemma le_eq (x y : Pos) : Pos.le x y = (x ≤ y) := rfl
+
+@[simp,clean] protected lemma lt_eq (x y : Pos) : Pos.lt x y = (x < y) := rfl
 
 instance (n : Nat) : OfNat Pos n.succ := ⟨n.succ, inferInstance⟩
 
 unif_hint succ (x : Pos) (y : Nat) where
   x =?= OfNat.ofNat y.succ ⊢ x + 1 =?= OfNat.ofNat y.succ.succ
 
-protected def recAux {motive : Pos → Sort _} (one : motive 1) (succ : (x : Pos) → motive x → motive (x+1)) : (x : Pos) → motive x
+@[eliminator] protected def recAux {motive : Pos → Sort _} (one : motive 1) (succ : (x : Pos) → motive x → motive (x+1)) : (x : Pos) → motive x
 | ⟨1,_⟩ => one
 | ⟨x+2,_⟩ => succ _ (Pos.recAux one succ ⟨x.succ, inferInstance⟩)
 
@@ -62,14 +64,11 @@ protected def recDiagAux.{u} {motive : Pos → Pos → Sort u}
   (left : (x : Pos) → motive x 1)
   (right : (y : Pos) → motive 1 y)
   (diag : (x y : Pos) → motive x y → motive (x + 1) (y + 1)) :
-  (x y : Pos) → motive x y := by
-  intros x y
-  induction y using Pos.recAux generalizing x with
-  | one => exact left x
-  | succ y H =>
-    cases x using Pos.casesAuxOn with
-    | one => exact right (y+1)
-    | succ x => apply diag; exact H x
+  (x y : Pos) → motive x y :=
+  Pos.recAux (motive := λ x => (y : Pos) → motive x y) right succ
+where
+  succ (x : Pos) (h : (y : Pos) → motive x y) (y : Pos) : motive (x+1) y :=
+    Pos.casesAuxOn y (left (x+1)) (λ y => diag x y (h y))
 
 protected def recDiagAuxOn.{u} {motive : Pos → Pos → Sort u} (x y : Pos)
   (left : (x : Pos) → motive x 1)
@@ -83,23 +82,16 @@ protected def casesDiagAuxOn.{u} {motive : Pos → Pos → Sort u} (x y : Pos)
   (diag : (x y : Pos) → motive (x + 1) (y + 1)) :
   motive x y := Pos.recDiagAux left right (λ x y _ => diag x y) x y
 
-protected def recDiag.{u} {motive : Pos → Pos → Sort u}
+@[local eliminator] protected def recDiag.{u} {motive : Pos → Pos → Sort u}
   (one_one : motive 1 1)
   (succ_one : (x : Pos) → motive x 1 → motive (x + 1) 1)
   (one_succ : (y : Pos) → motive 1 y → motive 1 (y + 1))
   (succ_succ : (x y : Pos) → motive x y → motive (x + 1) (y + 1)) :
-  (x y : Pos) → motive x y := by
-  intros x y
-  induction x, y using Pos.recDiagAux with
-  | left x =>
-    induction x using Pos.recAux with
-    | one => exact one_one
-    | succ x H => exact succ_one x H
-  | right y =>
-    induction y using Pos.recAux with
-    | one => exact one_one
-    | succ y H => exact one_succ y H
-  | diag x y H => exact succ_succ x y H
+  (x y : Pos) → motive x y :=
+  Pos.recDiagAux left right succ_succ
+where
+  left (x : Pos) : motive x 1 := Pos.recAuxOn (motive := λ x => motive x 1) x one_one succ_one
+  right (y : Pos) : motive 1 y := Pos.recAuxOn y one_one one_succ
 
 protected def recDiagOn.{u} {motive : Pos → Pos → Sort u} (x y : Pos)
   (one_one : motive 1 1)
@@ -135,7 +127,7 @@ lemma toNat_lt (x y : Pos) : x < y ↔ x.toNat < y.toNat := Iff.rfl
 
 lemma toNat_gt (x y : Pos) : x > y ↔ x.toNat > y.toNat := Iff.rfl
 
-local macro "by_toNat" : tactic => `(tactic|simp only [toNat_eq, toNat_ge, toNat_gt, toNat_le, toNat_lt, toNat_ne, toNat_one, toNat_add, toNat_mul, toNat_pow])
+local macro "by_toNat" : tactic => `(tactic| simp only [toNat_eq, toNat_ge, toNat_gt, toNat_le, toNat_lt, toNat_ne, toNat_one, toNat_add, toNat_mul, toNat_pow])
 
 protected theorem succ_ne_one (x : Pos) : x + 1 ≠ 1 := by
   by_toNat; intro h; absurd (Nat.succ.inj h); exact Nat.is_nonzero _
@@ -168,7 +160,7 @@ protected theorem add_right_cancel {x y z : Pos} : x + y = z + y → x = z := by
   by_toNat; exact Nat.add_right_cancel
 
 protected theorem ne_add_self_left (x y : Pos) : x ≠ y + x := by
-  induction x using Pos.recAux with
+  induction x with
   | one =>
     symmetry
     exact Pos.succ_ne_one y
@@ -179,7 +171,7 @@ protected theorem ne_add_self_left (x y : Pos) : x ≠ y + x := by
     exact Pos.add_right_cancel h
 
 protected theorem ne_add_self_right (x y : Pos) : x ≠ x + y := by
-  induction x using Pos.recAux with
+  induction x with
   | one =>
     symmetry
     rw [Pos.one_add_eq_add_one]
@@ -222,7 +214,7 @@ protected theorem right_distrib (x y z : Pos) : (x + y) * z = x * z + y * z := b
 
 protected theorem mul_left_cancel {x y z : Pos} : x * y = x * z → y = z := by
   intro h
-  induction y, z using Pos.recDiag with
+  induction y, z with
   | one_one => rfl
   | one_succ z _ =>
     rw [Pos.mul_one, Pos.mul_succ] at h
@@ -238,7 +230,7 @@ protected theorem mul_left_cancel {x y z : Pos} : x * y = x * z → y = z := by
 
 protected theorem mul_right_cancel {x y z : Pos} : x * y = z * y → x = z := by
   intro h
-  induction x, z using Pos.recDiag with
+  induction x, z with
   | one_one => rfl
   | one_succ x _ =>
     rw [Pos.one_mul, Pos.succ_mul] at h
@@ -404,12 +396,12 @@ protected theorem lt_of_succ_lt_succ {x y : Pos} : x + 1 < y + 1 → x < y := by
   by_toNat; exact Nat.lt_of_succ_lt_succ
 
 protected theorem lt_add_right (x y : Pos) : x < x + y := by
-  induction y using Pos.recAux with
+  induction y with
   | one => exact Pos.lt_succ_self x
   | succ y H => apply Pos.lt_trans H; rw [Pos.add_succ]; exact Pos.lt_succ_self (x + y)
 
 protected theorem lt_add_left (x y : Pos) : x < y + x := by
-  induction y using Pos.recAux with
+  induction y with
   | one => rw [Pos.one_add_eq_add_one]; exact Pos.lt_succ_self x
   | succ y H => apply Pos.lt_trans H; rw [Pos.succ_add]; exact Pos.lt_succ_self (y + x)
 
@@ -484,19 +476,17 @@ protected theorem pow_lt_pow_of_pos_left {x y : Pos} : x < y → {z : Nat} → z
 
 protected theorem lt.dest {x y : Pos} : x < y → ∃ z, x + z = y := by
   intro h
-  induction x, y using Pos.recDiagAux with
-  | left x =>
+  induction x, y with
+  | one_one =>
     absurd h
-    exact Pos.not_lt_one x
-  | right y =>
-    cases y using Pos.casesAuxOn with
-    | one =>
-      absurd h
-      exact Pos.lt_irrefl 1
-    | succ y =>
-      exists y
-      exact Pos.one_add_eq_add_one y
-  | diag x y H =>
+    exact Pos.not_lt_one 1
+  | one_succ y =>
+    exists y
+    exact Pos.one_add_eq_add_one y
+  | succ_one x =>
+    absurd h
+    exact Pos.not_lt_one (x+1)
+  | succ_succ x y H =>
     match H (Pos.lt_of_succ_lt_succ h) with
     | ⟨z, hz⟩ =>
       exists z
