@@ -8,19 +8,21 @@ def tri : Nat → Nat
 | n+1 => tri n + n + 1
 
 theorem tri_zero : tri 0 = 0 := rfl
+
 theorem tri_succ (n) : tri (n+1) = tri n + n + 1 := rfl
 
 theorem tri_mono {m n : Nat} : m ≤ n → tri m ≤ tri n := by
   induction m, n using Nat.recDiag with
   | zero_zero => intro; reflexivity
-  | zero_succ n => intro; exact Nat.zero_le _
+  | zero_succ n => intro; exact Nat.zero_le ..
   | succ_zero m => intro; contradiction
   | succ_succ m n H =>
     intro h
     rw [tri_succ, tri_succ]
     apply Nat.add_le_add_right
     apply Nat.add_le_add
-    · exact H (Nat.le_of_succ_le_succ h)
+    · apply H
+      exact Nat.le_of_succ_le_succ h
     · exact Nat.le_of_succ_le_succ h
 
 theorem two_tri_eq (n : Nat) : 2 * tri n = n * (n + 1) := by
@@ -35,11 +37,10 @@ theorem two_tri_eq (n : Nat) : 2 * tri n = n * (n + 1) := by
 
 private theorem tri_add_self_lt_tri_of_lt {m n : Nat} : m < n → tri m + m < tri n := by
   intro h
-  transitivity (tri (m+1)) using (.<.), (.≤.)
-  · exact Nat.lt_succ_self _
+  transitivity (tri (m+1)) using LT.lt, LE.le
+  · exact Nat.lt_succ_self ..
   · apply Nat.tri_mono
-    apply Nat.succ_le_of_lt
-    exact h
+    exact Nat.succ_le_of_lt h
 
 theorem tri_add_inj {m₁ n₁ m₂ n₂} : m₁ ≤ n₁ → m₂ ≤ n₂ → tri n₁ + m₁ = tri n₂ + m₂ → n₁ = n₂ := by
   intro h₁ h₂ h
@@ -96,9 +97,10 @@ theorem pair_succ_left (x y : Nat) : pair (x+1) y = pair x y + (x + y) + 2 := ca
 
 def split : Nat → (t : Nat) × Fin (t+1)
 | 0 => ⟨0,0⟩
-| n+1 => match split n with
+| n+1 =>
+  match split n with
   | ⟨t,s,hs⟩ =>
-    if h: s < t
+    if h : s < t
     then ⟨t, s+1, Nat.succ_lt_succ h⟩
     else ⟨t+1, 0, Nat.zero_lt_succ (t+1)⟩
 
@@ -113,19 +115,16 @@ theorem split_eq (n : Nat) : tri (split n).fst + (split n).snd = n := by
       unfold split
       split
       next h =>
-        simp [Nat.zero_eq, Nat.add_eq, Nat.add_zero n] at h ⊢
-        rw [Nat.add_zero n] at h
+        dsimp only [Nat.add_eq] at h ⊢
+        rw [Nat.add_zero n] at h ⊢
         rw [dif_pos h]
       next h =>
-        have heq: (split n).snd.val = (split n).fst := by
+        have heq : (split n).snd.val = (split n).fst := by
           apply Nat.le_antisymm
-          · apply Nat.le_of_lt_succ
-            exact (split n).snd.isLt
-          · apply Nat.le_of_not_gt
-            exact h
+          · exact Nat.le_of_lt_succ (split n).snd.isLt
+          · exact Nat.le_of_not_gt h
         unfold tri
-        clean
-        dsimp [Nat.add_eq, Nat.add_zero n] at h ⊢
+        clean at h
         rw [Nat.add_zero n] at h
         rw [dif_neg h, ←Nat.add_assoc, heq]; rfl
 
@@ -134,7 +133,7 @@ protected abbrev fst (n : Nat) : Nat := (split n).snd
 protected abbrev snd (n : Nat) : Nat := (split n).fst - (split n).snd
 
 private theorem split_pair_fst (x y) : (split (pair x y)).fst = x + y := by
-  match h: (split (pair x y)) with
+  match h : split (pair x y) with
   | ⟨t,⟨s,hs⟩⟩ =>
     apply Nat.tri_add_inj (Nat.le_of_lt_succ hs) (Nat.le_add_right x y)
     transitivity (tri (split (pair x y)).fst + (split (pair x y)).snd)
@@ -155,14 +154,14 @@ theorem snd_pair (x y) : (pair x y).snd = y := by
 
 theorem pair_fst_snd (n) : pair n.fst n.snd = n := by
   unfold pair Nat.fst Nat.snd
-  match h: (split n) with
+  match h : split n with
   | ⟨t,⟨s,hs⟩⟩ =>
     rw [Nat.add_comm s, Nat.sub_add_cancel (Nat.le_of_lt_succ hs)]
     rw [←split_eq n, h]
 
 def prodEquiv : Equiv Nat (Nat × Nat) where
   fwd n := (n.fst, n.snd)
-  rev | (n₁,n₂) => pair n₁ n₂
+  rev p := pair p.fst p.snd
   spec := by intro
     | n, (n₁,n₂) =>
       clean

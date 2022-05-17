@@ -17,19 +17,25 @@ attribute [local eliminator] Nat.recDiagAux
 
 -- assert theorem one_mul (x : Nat) : 1 * x = x
 
--- assert theorem mul_succ (x y : Nat) : x * (y + 1) = x * y + x
+protected theorem mul_two (x : Nat) : x * 2 = x + x := by
+  rw [Nat.mul_succ, Nat.mul_one]
 
--- assert theorem succ_mul (x y : Nat) : (x + 1) * y = x * y + y
+protected theorem two_mul (x : Nat) : 2 * x = x + x := by
+  rw [Nat.succ_mul, Nat.one_mul]
+
+protected theorem mul_succ' (x y : Nat) : x * (y + 1) = x * y + x := Nat.mul_succ x y
+
+protected theorem succ_mul' (x y : Nat) : (x + 1) * y = x * y + y := Nat.succ_mul x y
 
 protected theorem mul_pred (x y : Nat) : x * (y - 1) = x * y - x := by
   cases y with
-  | zero => simp only [Nat.pred_zero, Nat.mul_zero, Nat.zero_sub, eq_self]
-  | succ y => simp only [Nat.pred_succ, Nat.mul_succ, Nat.add_sub_cancel_right, eq_self]
+  | zero => rw [Nat.pred_zero', Nat.mul_zero, Nat.zero_sub]
+  | succ y => rw [Nat.pred_succ', Nat.mul_succ, Nat.add_sub_cancel_right]
 
 protected theorem pred_mul (x y : Nat) : (x - 1) * y = x * y - y := by
   cases x with
-  | zero => simp only [Nat.pred_zero, Nat.zero_mul, Nat.zero_sub, eq_self]
-  | succ x => simp only [Nat.pred_succ, Nat.succ_mul, Nat.add_sub_cancel_right, eq_self]
+  | zero => rw [Nat.pred_zero', Nat.zero_mul, Nat.zero_sub]
+  | succ x => rw [Nat.pred_succ', Nat.succ_mul, Nat.add_sub_cancel_right]
 
 -- assert theorem mul_comm (x y : Nat) : x * y = y * x
 
@@ -53,8 +59,8 @@ protected theorem mul_cross_comm (x₁ x₂ y₁ y₂ : Nat) : (x₁ * x₂) * (
 
 protected theorem mul_sub (x y z : Nat) : x * (y - z) = x * y - x * z := by
   induction y, z with
-  | left y => simp only [Nat.sub_zero, Nat.mul_zero, eq_self]
-  | right z => simp only [Nat.zero_sub, Nat.mul_zero, eq_self]
+  | left y => rw [Nat.sub_zero, Nat.mul_zero, Nat.sub_zero]
+  | right z => rw [Nat.zero_sub, Nat.mul_zero, Nat.zero_sub]
   | diag y z H => calc
     _ = x * (y - z) := by rw [Nat.succ_sub_succ]
     _ = x * y - x * z := by rw [H]
@@ -63,8 +69,8 @@ protected theorem mul_sub (x y z : Nat) : x * (y - z) = x * y - x * z := by
 
 protected theorem sub_mul (x y z : Nat) : (x - y) * z = x * z - y * z := by
   induction x, y with
-  | left x => simp only [Nat.sub_zero, Nat.zero_mul, eq_self]
-  | right y => simp only [Nat.zero_sub, Nat.zero_mul, eq_self]
+  | left x => rw [Nat.sub_zero, Nat.zero_mul, Nat.sub_zero]
+  | right y => rw [Nat.zero_sub, Nat.zero_mul, Nat.zero_sub]
   | diag x y H => calc
     _ = (x - y) * z := by rw [Nat.succ_sub_succ]
     _ = x * z - y * z := by rw [H]
@@ -81,29 +87,27 @@ protected theorem le_mul_of_pos_right (x : Nat) {y : Nat} : y > 0 → x ≤ x * 
   | zero => intro; contradiction
   | succ y => intro; rw [Nat.mul_succ]; apply Nat.le_add_left
 
-protected theorem lt_mul_of_gt_one_of_pos_left {x y : Nat} : x > 0 → y > 1 → x < y * x := by
-  intro hx hy
+protected theorem lt_mul_of_gt_one_of_pos_left {x y : Nat} (h : x > 0 := by nat_is_pos) : y > 1 → x < y * x := by
+  intro hy
   cases y with
   | zero => contradiction
   | succ y =>
     rw [Nat.succ_mul]
     apply Nat.lt_add_left
     apply Nat.mul_pos
-    · apply Nat.lt_of_succ_lt_succ
-      exact hy
-    · exact hx
+    · exact Nat.lt_of_succ_lt_succ hy
+    · exact h
 
-protected theorem lt_mul_of_gt_one_of_pos_right {x y : Nat} : x > 0 → y > 1 → x < x * y := by
-  intro hx hy
+protected theorem lt_mul_of_gt_one_right {x y : Nat} (h : x > 0 := by nat_is_pos) : y > 1 → x < x * y := by
+  intro hy
   cases y with
   | zero => contradiction
   | succ y =>
     rw [Nat.mul_succ]
     apply Nat.lt_add_left
     apply Nat.mul_pos
-    · exact hx
-    · apply Nat.lt_of_succ_lt_succ
-      exact hy
+    · exact h
+    · exact Nat.lt_of_succ_lt_succ hy
 
 -- assert theorem mul_le_mul {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ ≤ y₂ → x₁ * y₁ ≤ x₂ * y₂
 
@@ -113,37 +117,34 @@ protected theorem lt_mul_of_gt_one_of_pos_right {x y : Nat} : x > 0 → y > 1 �
 
 -- assert theorem mul_lt_mul_of_pos_left {x y z : Nat} : x < y → z > 0 → z * x < z * y
 
--- assert theorem mul_lt_mul_of_pos_right {x y z : Nat} : x < y → z > 0 → z * x < z * y
+-- assert theorem mul_lt_mul_of_pos_right {x y z : Nat} : x < y → z > 0 → x * z < y * z
+
+protected theorem mul_lt_mul_left {x y z : Nat} : x < y → (h : z > 0 := by nat_is_pos) → z * x < z * y := Nat.mul_lt_mul_of_pos_left
+
+protected theorem mul_lt_mul_right {x y z : Nat} : x < y → (h : z > 0 := by nat_is_pos) → x * z < y * z := Nat.mul_lt_mul_of_pos_right
 
 protected theorem mul_lt_mul {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ < y₂ → x₁ * y₁ < x₂ * y₂ := by
   intro hx hy
   transitivity (x₂ * y₁) using LE.le, LT.lt
   · apply Nat.mul_le_mul_right
-    apply Nat.le_of_lt
-    exact hx
+    exact Nat.le_of_lt hx
   · apply Nat.mul_lt_mul_of_pos_left
     · exact hy
     · transitivity x₁ using LE.le, LT.lt
       · apply Nat.zero_le
       · exact hx
 
-protected theorem mul_lt_mul_of_le_of_lt_of_pos {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → x₂ > 0 → x₁ * y₁ < x₂ * y₂ := by
-  intro hx hy hpos
+protected theorem mul_lt_mul_of_le_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → (h : x₂ > 0 := by nat_is_pos) → x₁ * y₁ < x₂ * y₂ := by
+  intro hx hy h
   transitivity (x₂ * y₁) using LE.le, LT.lt
-  · apply Nat.mul_le_mul_right
-    exact hx
-  · apply Nat.mul_lt_mul_of_pos_left
-    · exact hy
-    · exact hpos
+  · exact Nat.mul_le_mul_right _ hx
+  · exact Nat.mul_lt_mul_left hy
 
-protected theorem mul_lt_mul_of_lt_of_le_of_pos {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ ≤ y₂ → y₂ > 0 → x₁ * y₁ < x₂ * y₂ := by
-  intro hx hy hpos
+protected theorem mul_lt_mul_of_lt_of_le {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ ≤ y₂ → (h : y₂ > 0 := by nat_is_pos) → x₁ * y₁ < x₂ * y₂ := by
+  intro hx hy h
   transitivity (x₁ * y₂) using LE.le, LT.lt
-  · apply Nat.mul_le_mul_left
-    exact hy
-  · apply Nat.mul_lt_mul_of_pos_right
-    · exact hx
-    · exact hpos
+  · exact Nat.mul_le_mul_left _ hy
+  · exact Nat.mul_lt_mul_right hx
 
 protected theorem le_of_mul_le_mul_of_pos_left {x y z : Nat} : x > 0 → x * y ≤ x * z → y ≤ z := by
   intro hx hxyz
@@ -151,25 +152,23 @@ protected theorem le_of_mul_le_mul_of_pos_left {x y z : Nat} : x > 0 → x * y �
   | isTrue h =>
     absurd hxyz
     apply Nat.not_le_of_gt
-    apply Nat.mul_lt_mul_of_pos_left
-    · exact h
-    · exact hx
+    exact Nat.mul_lt_mul_left h
   | isFalse h =>
-    apply Nat.le_of_not_gt
-    exact h
+    exact Nat.le_of_not_gt h
 
-protected theorem le_of_mul_le_mul_of_pos_right {x y z} : x > 0 → y * x ≤ z * x → y ≤ z := by
+protected theorem le_of_mul_le_mul_of_pos_right {x y z : Nat} : x > 0 → y * x ≤ z * x → y ≤ z := by
   intro hx hxyz
   by_cases y > z with
   | isTrue h =>
     absurd hxyz
     apply Nat.not_le_of_gt
-    apply Nat.mul_lt_mul_of_pos_right
-    · exact h
-    · exact hx
+    exact Nat.mul_lt_mul_right h
   | isFalse h =>
-    apply Nat.le_of_not_gt
-    exact h
+    exact Nat.le_of_not_gt h
+
+protected theorem le_of_mul_le_mul_left' (x : Nat) {y z : Nat} : (h : x > 0 := by nat_is_pos) → x * y ≤ x * z → y ≤ z := Nat.le_of_mul_le_mul_of_pos_left
+
+protected theorem le_of_mul_le_mul_right' (x : Nat) {y z : Nat} : (h : x > 0 := by nat_is_pos) → y * x ≤ z * x → y ≤ z := Nat.le_of_mul_le_mul_of_pos_right
 
 protected theorem lt_of_mul_lt_mul_left (x : Nat) {y z : Nat} : x * y < x * z → y < z := by
   intro h

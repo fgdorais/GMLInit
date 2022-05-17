@@ -16,29 +16,29 @@ protected theorem succ_pred' (x : Nat) (h : x > 0 := by nat_is_pos) : (x - 1) + 
   | zero => contradiction
   | succ x => rw [Nat.pred_succ']
 
--- assert theorem zero_lt_succ (x : Nat) : 0 < x + 1
+protected theorem zero_lt_succ' (x : Nat) : 0 < x + 1 := Nat.zero_lt_succ x
 
--- assert theorem not_succ_le_zero (x : Nat) : ¬ x + 1 ≤ 0
+protected theorem not_succ_le_zero' (x : Nat) : ¬ x + 1 ≤ 0 := Nat.not_succ_le_zero x
 
--- assert theorem lt_succ_self (x : Nat) : x < x + 1
+protected theorem lt_succ_self' (x : Nat) : x < x + 1 := Nat.lt_succ_self x
 
--- assert theorem not_succ_le_self (x : Nat) : ¬ x + 1 ≤ x
+protected theorem not_succ_le_self' (x : Nat) : ¬ x + 1 ≤ x := Nat.not_succ_le_self x
 
--- assert theorem succ_le_succ {x y : Nat} : x ≤ y → x + 1 ≤ y + 1
+protected theorem succ_le_succ' {x y : Nat} : x ≤ y → x + 1 ≤ y + 1 := Nat.succ_le_succ
 
--- assert theorem le_of_succ_le_succ {x y : Nat} : x + 1 ≤ y + 1 → x ≤ y
+protected theorem le_of_succ_le_succ' {x y : Nat} : x + 1 ≤ y + 1 → x ≤ y := Nat.le_of_succ_le_succ
 
--- assert theorem succ_lt_succ {x y : Nat} : x < y → x + 1 < y + 1
+protected theorem succ_lt_succ' {x y : Nat} : x < y → x + 1 < y + 1 := Nat.succ_lt_succ
 
--- assert theorem lt_of_succ_lt_succ {x y : Nat} : x + 1 < y + 1 → x < y
+protected theorem lt_of_succ_lt_succ' {x y : Nat} : x + 1 < y + 1 → x < y := Nat.lt_of_succ_lt_succ
 
--- assert theorem succ_le_of_lt {x y : Nat} : x + 1 ≤ y → x < y
+protected theorem succ_le_of_lt' {x y : Nat} : x + 1 ≤ y → x < y := Nat.succ_le_of_lt
 
--- assert theorem lt_of_succ_le {x y : Nat} : x + 1 ≤ y → x < y
+protected theorem lt_of_succ_le' {x y : Nat} : x + 1 ≤ y → x < y := Nat.lt_of_succ_le
 
--- assert theorem lt_succ_of_le {x y : Nat} : x ≤ y → x < y + 1
+protected theorem lt_succ_of_le' {x y : Nat} : x ≤ y → x < y + 1 := Nat.lt_succ_of_le
 
--- assert theorem le_of_lt_succ {x y : Nat} : x < y + 1 → x ≤ y
+protected theorem le_of_lt_succ' {x y : Nat} : x < y + 1 → x ≤ y := Nat.le_of_lt_succ
 
 protected theorem succ_le_iff_lt (x y : Nat) : x + 1 ≤ y ↔ x < y :=
   ⟨Nat.lt_of_succ_le, Nat.succ_le_of_lt⟩

@@ -9,23 +9,29 @@ attribute [local eliminator] Nat.recDiagAux
 
 -- assert theorem sub_zero (x : Nat) : x - 0 = x
 
--- assert theorem sub_succ (x y : Nat) : x - (y + 1) = (x - y) - 1
+protected theorem sub_succ' (x y : Nat) : x - (y + 1) = (x - y) - 1 := Nat.sub_succ x y
 
 -- assert theorem zero_sub (x : Nat) : 0 - x = 0
 
 -- assert theorem sub_self (x : Nat) : x - x = 0
 
--- assert theorem succ_sub_succ (x y : Nat) : (x + 1) - (y + 1) = x - y
+protected theorem succ_sub_succ' (x y : Nat) : (x + 1) - (y + 1) = x - y := Nat.succ_sub_succ x y
 
 protected theorem add_sub_add (x y z : Nat) : (x + z) - (y + z) = x - y := by
   induction z with
   | zero => rfl
-  | succ z H => simp only [Nat.add_succ, Nat.succ_sub_succ]; rw [H]
+  | succ z H => calc
+    _ = (x + z + 1) - (y + z + 1) := rfl
+    _ = (x + z) - (y + z) := by rw [Nat.succ_sub_succ']
+    _ = x - y := by rw [H]
 
 protected theorem sub_assoc (x y z : Nat) : (x - y) - z = x - (y + z) := by
   induction z with
   | zero => rfl
-  | succ z H => simp only [Nat.add_succ, Nat.sub_succ]; rw [H]
+  | succ z H => calc
+    _ = x - y - z - 1  := by rw [Nat.sub_succ']
+    _ = (x - (y + z)) - 1  := by rw [H]
+    _ = x - (y + z + 1) := by rw [←Nat.sub_succ']
 
 protected theorem sub_right_comm (x y z : Nat) : (x - y) - z = (x - z) - y := by
   rw [Nat.sub_assoc, Nat.add_comm, ←Nat.sub_assoc]
@@ -34,7 +40,7 @@ protected theorem sub_right_comm (x y z : Nat) : (x - y) - z = (x - z) - y := by
 
 protected theorem add_sub_cancel_right (x y : Nat) : (x + y) - y = x := by
   induction y with
-  | zero => simp only [Nat.add_zero, Nat.sub_zero, eq_self]
+  | zero => rw [Nat.add_zero, Nat.sub_zero]
   | succ y H => calc
     _ = ((x + y) + 1) - (y + 1) := by rw [Nat.add_assoc]
     _ = (x + y) - y := by rw [Nat.add_sub_add]
@@ -42,19 +48,43 @@ protected theorem add_sub_cancel_right (x y : Nat) : (x + y) - y = x := by
 
 protected theorem add_sub_comm (x y : Nat) : x + (y - x) = y + (x - y) := by
   induction x, y with
-  | left x => simp only [Nat.sub_zero, Nat.zero_sub, Nat.add_zero, Nat.zero_add, eq_self]
-  | right y => simp only [Nat.sub_zero, Nat.zero_sub, Nat.add_zero, Nat.zero_add, eq_self]
+  | left x => calc
+    _ = x + 0 := by rw [Nat.zero_sub]
+    _ = 0 + x := by rw [Nat.add_comm]
+    _ = 0 + (x - 0) := by rw [Nat.sub_zero]
+  | right y => calc
+    _ = 0 + y := by rw [Nat.sub_zero]
+    _ = y + 0 := by rw [Nat.add_comm]
+    _ = y + (0 - y) := by rw [Nat.zero_sub]
   | diag x y H => calc
-    _ = (x + 1) + (y - x) := by rw [Nat.succ_sub_succ]
-    _ = (x + (y - x)) + 1 := by rw [Nat.succ_add, Nat.succ_eq]
+    _ = (x + 1) + (y - x) := by rw [Nat.succ_sub_succ']
+    _ = (x + (y - x)) + 1 := by rw [Nat.succ_add']
     _ = (y + (x - y)) + 1 := by rw [H]
-    _ = (y + 1) + (x - y) := by rw [Nat.succ_add, Nat.succ_eq]
-    _ = (y + 1) + ((x + 1) - (y + 1)) := by rw [Nat.succ_sub_succ]
+    _ = (y + 1) + (x - y) := by rw [Nat.succ_add']
+    _ = (y + 1) + ((x + 1) - (y + 1)) := by rw [Nat.succ_sub_succ']
+
+protected theorem sub_sub_comm (x y : Nat) : x - (x - y) = y - (y - x) :=
+  Nat.add_left_cancel' (y + (x - y)) $ calc
+  _ = y + (x - y) + (x - (x - y)) := rfl
+  _ = y + ((x - y) + (x - (x - y))) := by rw [Nat.add_assoc]
+  _ = y + (x + ((x - y) - x)) := by rw [Nat.add_sub_comm]
+  _ = y + (x + ((x - x) - y)) := by rw [Nat.sub_right_comm]
+  _ = y + (x + (0 - y)) := by rw [Nat.sub_self]
+  _ = y + (x + 0) := by rw [Nat.zero_sub]
+  _ = y + x := by rw [Nat.add_zero]
+  _ = x + y := by rw [Nat.add_comm]
+  _ = x + (y + 0) := by rw [Nat.add_zero]
+  _ = x + (y + (0 - x)) := by rw [Nat.zero_sub]
+  _ = x + (y + ((y - y) - x)) := by rw [Nat.sub_self]
+  _ = x + (y + ((y - x) - y)) := by rw [Nat.sub_right_comm]
+  _ = x + ((y - x) + (y - (y - x))) := by rw [Nat.add_sub_comm]
+  _ = (x + (y - x)) + (y - (y - x)) := by rw [Nat.add_assoc]
+  _ = (y + (x - y)) + (y - (y - x)) := by rw [Nat.add_sub_comm]
 
 protected theorem le_iff_sub_eq_zero (x y : Nat) : x - y = 0 ↔ x ≤ y := by
   induction x, y with
   | left x => rw [Nat.sub_zero, Nat.eq_zero_iff_le_zero]; reflexivity
-  | right y => simp [Nat.zero_sub, Nat.zero_le]
+  | right y => rw [Nat.zero_sub, Nat.eq_zero_iff_le_zero]; constr <;> (intro; apply Nat.zero_le)
   | diag x y H => rw [Nat.succ_sub_succ, Nat.succ_le_succ_iff_le]; exact H
 
 protected theorem le_of_sub_eq_zero {x y : Nat} : x - y = 0 → x ≤ y :=
@@ -65,7 +95,7 @@ protected theorem le_of_sub_eq_zero {x y : Nat} : x - y = 0 → x ≤ y :=
 protected theorem gt_iff_sub_pos (x y : Nat) : x > y ↔ x - y > 0 := by
   induction x, y with
   | left x => rw [Nat.sub_zero]; reflexivity
-  | right y => simp [Nat.zero_sub]; apply Nat.not_lt_zero
+  | right y => rw [Nat.zero_sub]; constr <;> (intro; contradiction)
   | diag x y H => calc
     _ ↔ y < x := Nat.succ_lt_succ_iff_lt y x
     _ ↔ x - y > 0 := H
@@ -79,9 +109,9 @@ protected theorem sub_pos_of_gt {x y : Nat} : x > y → x - y > 0 :=
 
 protected theorem sub_le_iff_le_add (x y z : Nat) : x - y ≤ z ↔ x ≤ y + z := by
   induction x, y with
-  | left x => simp only [Nat.sub_zero, Nat.zero_add]; reflexivity
-  | right y => simp only [Nat.zero_sub, Nat.zero_le]
-  | diag x y H => simp only [Nat.succ_sub_succ, Nat.succ_add, Nat.succ_le_succ_iff_le, Nat.succ_eq]; exact H
+  | left x => rw [Nat.sub_zero, Nat.zero_add]; reflexivity
+  | right y => rw [Nat.zero_sub]; constr <;> (intro; apply Nat.zero_le)
+  | diag x y H => rw [Nat.succ_sub_succ, Nat.succ_add', Nat.succ_le_succ_iff_le]; exact H
 
 protected theorem sub_le_of_le_add' {x y z : Nat} : x ≤ y + z → x - y ≤ z :=
   (Nat.sub_le_iff_le_add x y z).mpr
@@ -98,10 +128,9 @@ protected theorem le_sub_iff_add_le_of_ge (x y z : Nat) (h : y ≥ z) : x ≤ y 
     rw [Nat.zero_sub, Nat.eq_zero_of_le_zero h, Nat.add_zero]
     reflexivity
   | diag y z H =>
-    rw [Nat.succ_sub_succ, Nat.add_succ, Nat.succ_eq, Nat.succ_le_succ_iff_le]
+    rw [Nat.succ_sub_succ', Nat.add_succ', Nat.succ_le_succ_iff_le]
     apply H
-    apply Nat.le_of_succ_le_succ
-    exact h
+    exact Nat.le_of_succ_le_succ' h
 
 -- assert theorem le_sub_of_add_le {x y z : Nat} : x + y ≤ z → x ≤ z - y := by
 
@@ -122,7 +151,7 @@ protected theorem sub_lt_iff_lt_add_of_pos (x y z : Nat) (hz : z > 0) : x - y < 
     · intro
       transitivity z using LT.lt, LE.le
       · exact hz
-      · apply Nat.le_add_left
+      · exact Nat.le_add_left ..
     · intro
       exact hz
   | diag x y H =>
@@ -145,12 +174,12 @@ protected theorem lt_add_of_sub_lt {x y z : Nat} : x - y < z → x < y + z := by
     intro h
     rw [←Nat.sub_lt_iff_lt_add_of_pos]
     · exact h
-    · apply Nat.zero_lt_succ
+    · exact Nat.zero_lt_succ ..
 
 protected theorem lt_sub_iff_add_lt (x y z : Nat) : x < y - z ↔ x + z < y := by
   induction y, z with
   | left y => rw [Nat.sub_zero, Nat.add_zero]; reflexivity
-  | right z => simp only [Nat.zero_sub, Nat.not_lt_zero]
+  | right z => rw [Nat.zero_sub]; constr <;> (intro; contradiction)
   | diag y z H => rw [Nat.succ_sub_succ, Nat.add_succ, Nat.succ_eq, Nat.succ_lt_succ_iff_lt]; exact H
 
 theorem add_lt_of_lt_sub' {x y z : Nat} : x < y - z → x + z < y :=
@@ -161,7 +190,7 @@ theorem lt_sub_of_add_lt' {x y z : Nat} : x + y < z → x < z - y :=
 
 protected theorem sub_le_right (x y : Nat) : x - y ≤ x := by
   rw [Nat.sub_le_iff_le_add]
-  apply Nat.le_add_left
+  exact Nat.le_add_left ..
 
 protected theorem sub_lt_of_pos_of_pos_right {x y : Nat} : x > 0 → y > 0 → x - y < x := by
   intro hx hy
@@ -184,10 +213,8 @@ protected theorem sub_le_sub_of_ge_right {x y : Nat} (h : x ≥ y) (z : Nat) : z
 protected theorem sub_le_sub_of_le_of_ge {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ ≥ y₂ → x₁ - y₁ ≤ x₂ - y₂ := by
   intro hx hy
   transitivity (x₂ - y₁)
-  · apply Nat.sub_le_sub_left
-    exact hx
-  · apply Nat.sub_le_sub_of_ge_right
-    exact hy
+  · exact Nat.sub_le_sub_left hx ..
+  · exact Nat.sub_le_sub_of_ge_right hy ..
 
 protected theorem sub_lt_sub_of_lt_left {x y z : Nat} : x < y → z < y → x - z < y - z := by
   intro hx hz
@@ -202,9 +229,8 @@ protected theorem sub_lt_sub_of_gt_of_lt_right {x y z : Nat} (hx : x > y) (hz : 
     exact hz
   · transitivity (y + (z - y)) using LE.le, LT.lt
     · rw [Nat.add_sub_comm]
-      apply Nat.le_add_right
+      exact Nat.le_add_right ..
     · rw [Nat.add_comm]
-      apply Nat.add_lt_add_left
-      exact hx
+      exact Nat.add_lt_add_left hx ..
 
 end Nat

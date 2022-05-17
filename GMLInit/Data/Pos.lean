@@ -427,10 +427,10 @@ protected theorem add_lt_add_right {x y : Pos} : x < y → ∀ z, x + z < y + z 
   by_toNat; intro h z; apply Nat.add_lt_add_right h
 
 protected theorem lt_of_add_lt_add_left {x y z : Pos} : z + x < z + y → x < y := by
-  by_toNat; exact Nat.lt_of_add_lt_add_left _
+  by_toNat; exact Nat.lt_of_add_lt_add_left
 
 protected theorem lt_of_add_lt_add_right {x y z : Pos} : x + z < y + z → x < y := by
-  by_toNat; exact Nat.lt_of_add_lt_add_right _
+  by_toNat; exact Nat.lt_of_add_lt_add_right
 
 protected theorem add_lt_add {x₁ y₁ x₂ y₂ : Pos} : x₁ < y₁ → x₂ < y₂ → x₁ + x₂ < y₁ + y₂ := by
   by_toNat; exact Nat.add_lt_add

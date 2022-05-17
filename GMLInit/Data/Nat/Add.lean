@@ -9,9 +9,9 @@ namespace Nat
 
 -- assert theorem zero_add (x : Nat) : 0 + x = x
 
--- assert theorem add_succ (x y : Nat) : x + (y + 1) = (x + y) + 1
+protected theorem add_succ' (x y : Nat) : x + (y + 1) = (x + y) + 1 := Nat.add_succ x y
 
--- assert theorem succ_add (x y : Nat) : (x + 1) + y = (x + y) + 1
+protected theorem succ_add' (x y : Nat) : (x + 1) + y = (x + y) + 1 := Nat.succ_add x y
 
 protected theorem one_add (x : Nat) : 1 + x = x + 1 := by
   rw [Nat.succ_add, Nat.zero_add]
@@ -29,31 +29,29 @@ protected theorem add_cross_comm (x₁ x₂ y₁ y₂ : Nat) : (x₁ + x₂) + (
   _ = x₁ + (y₁ + (x₂ + y₂)) := by rw [Nat.add_left_comm x₂ y₁ y₂]
   _ = (x₁ + y₁) + (x₂ + y₂) := by rw [Nat.add_assoc]
 
+protected theorem add_left_cancel' (x : Nat) {y z : Nat} : x + y = x + z → y = z := Nat.add_left_cancel
+
+protected theorem add_right_cancel' (x : Nat) {y z : Nat} : y + x = z + x → y = z := Nat.add_right_cancel
+
 -- assert theorem le_add_left (x y : Nat) : x ≤ y + x
 
 -- assert theorem le_add_right (x y : Nat) : x ≤ x + y
 
-protected theorem lt_add_left (x y : Nat) (h : y > 0 := by nat_is_pos) : x < y + x := by
-  transitivity (0 + x) using Eq, LT.lt
-  · rw [Nat.zero_add]
-  · apply Nat.add_lt_add_right
-    exact h
+protected theorem lt_add_left (x y : Nat) (h : y > 0 := by nat_is_pos) : x < y + x := calc
+  _ = 0 + x := by rw [Nat.zero_add]
+  _ < y + x := by apply Nat.add_lt_add_right h
 
-protected theorem lt_add_right (x y : Nat) (h : y > 0 := by nat_is_pos) : x < x + y := by
-  transitivity (x + 0) using Eq, LT.lt
-  · rw [Nat.add_zero]
-  · apply Nat.add_lt_add_left
-    exact h
+protected theorem lt_add_right (x y : Nat) (h : y > 0 := by nat_is_pos) : x < x + y := calc
+  _ = x + 0 := by rw [Nat.add_zero]
+  _ < x + y := by apply Nat.add_lt_add_left h
 
-theorem pos_add_left (x y : Nat) (h : x > 0 := by nat_is_pos) : x + y > 0 := by
-  transitivity x using LT.lt, LE.le
-  · exact h
-  · exact Nat.le_add_right ..
+theorem pos_add_left (x y : Nat) (h : x > 0 := by nat_is_pos) : x + y > 0 := calc
+  0 ≤ y := by apply Nat.zero_le
+  _ < x + y := by apply Nat.lt_add_left _ _
 
-theorem pos_add_right (x y : Nat) (h : y > 0 := by nat_is_pos) : x + y > 0 := by
-  transitivity y using LT.lt, LE.le
-  · exact h
-  · exact Nat.le_add_left ..
+theorem pos_add_right (x y : Nat) (h : y > 0 := by nat_is_pos) : x + y > 0 := calc
+  0 ≤ x := by apply Nat.zero_le
+  _ < x + y := by apply Nat.lt_add_right _ _
 
 -- assert theorem add_le_add {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ ≤ y₂ → x₁ + y₁ ≤ x₂ + y₂
 
@@ -70,74 +68,53 @@ theorem pos_add_right (x y : Nat) (h : y > 0 := by nat_is_pos) : x + y > 0 := by
 protected theorem add_lt_add_of_le_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → x₁ + y₁ < x₂ + y₂ := by
   intro h₁ h₂
   transitivity (x₁ + y₂) using LT.lt, LE.le
-  · apply Nat.add_lt_add_left
-    exact h₂
-  · apply Nat.add_le_add_right
-    exact h₁
+  · apply Nat.add_lt_add_left h₂
+  · apply Nat.add_le_add_right h₁
 
 protected theorem add_lt_add_of_lt_of_le {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ ≤ y₂ → x₁ + y₁ < x₂ + y₂ := by
   intro h₁ h₂
   transitivity (x₁ + y₂) using LE.le, LT.lt
-  · apply Nat.add_le_add_left
-    exact h₂
-  · apply Nat.add_lt_add_right
-    exact h₁
+  · apply Nat.add_le_add_left h₂
+  · apply Nat.add_lt_add_right h₁
 
-protected theorem le_of_add_le_add_left' (x : Nat) {y z : Nat} : x + y ≤ x + z → y ≤ z := by
-  induction x with
-  | zero =>
-    rw [Nat.zero_add, Nat.zero_add]
-    exact id
-  | succ x H =>
-    rw [Nat.succ_add, Nat.succ_add]
-    intro
-    apply H
-    apply Nat.le_of_succ_le_succ
-    assumption
+protected theorem le_of_add_le_add_left' (x : Nat) {y z : Nat} : x + y ≤ x + z → y ≤ z := Nat.le_of_add_le_add_left
 
 protected theorem le_iff_add_le_add_left (x y z : Nat) : x ≤ y ↔ z + x ≤ z + y :=
-  ⟨λ h => Nat.add_le_add_left h z, Nat.le_of_add_le_add_left' z⟩
+  ⟨λ h => Nat.add_le_add_left h z, Nat.le_of_add_le_add_left⟩
 
-protected theorem le_of_add_le_add_right' (x : Nat) {y z : Nat} : y + x ≤ z + x → y ≤ z := by
-  induction x with
-  | zero =>
-    exact id
-  | succ x H =>
-    intro
-    apply H
-    apply Nat.le_of_succ_le_succ
-    assumption
+protected theorem le_of_add_le_add_right' (x : Nat) {y z : Nat} : y + x ≤ z + x → y ≤ z := Nat.le_of_add_le_add_right
 
 protected theorem le_iff_add_le_add_right (x y z : Nat) : x ≤ y ↔ x + z ≤ y + z :=
-  ⟨λ h => Nat.add_le_add_right h z, Nat.le_of_add_le_add_right' z⟩
+  ⟨λ h => Nat.add_le_add_right h z, Nat.le_of_add_le_add_right⟩
 
-protected theorem lt_of_add_lt_add_left (x : Nat) {y z : Nat} : x + y < x + z → y < z := by
+protected theorem lt_of_add_lt_add_left {x y z : Nat} : x + y < x + z → y < z := by
   induction x with
   | zero =>
     rw [Nat.zero_add, Nat.zero_add]
     exact id
   | succ x H =>
     rw [Nat.succ_add, Nat.succ_add]
-    intro
+    intro h
     apply H
-    apply Nat.lt_of_succ_lt_succ
-    assumption
+    exact Nat.lt_of_succ_lt_succ h
+
+protected theorem lt_of_add_lt_add_left' (x : Nat) {y z : Nat} : x + y < x + z → y < z := Nat.lt_of_add_lt_add_left
 
 protected theorem lt_iff_add_lt_add_left (x y z : Nat) : x < y ↔ z + x < z + y :=
-  ⟨λ h => Nat.add_lt_add_left h z, Nat.lt_of_add_lt_add_left z⟩
+  ⟨λ h => Nat.add_lt_add_left h z, Nat.lt_of_add_lt_add_left⟩
 
-protected theorem lt_of_add_lt_add_right (x : Nat) {y z : Nat} : y + x < z + x → y < z := by
+protected theorem lt_of_add_lt_add_right {x y z : Nat} : y + x < z + x → y < z := by
   induction x with
   | zero =>
-    intro
-    assumption
+    exact id
   | succ x H =>
-    intro
+    intro h
     apply H
-    apply Nat.le_of_succ_le_succ
-    assumption
+    apply Nat.le_of_succ_le_succ h
+
+protected theorem lt_of_add_lt_add_right' (x : Nat) {y z : Nat} : y + x < z + x → y < z := Nat.lt_of_add_lt_add_right
 
 protected theorem lt_iff_add_lt_add_right (x y z : Nat) : x < y ↔ x + z < y + z :=
-  ⟨λ h => Nat.add_lt_add_right h z, Nat.lt_of_add_lt_add_right z⟩
+  ⟨λ h => Nat.add_lt_add_right h z, Nat.lt_of_add_lt_add_right⟩
 
 end Nat
