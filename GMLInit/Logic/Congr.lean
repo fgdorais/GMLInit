@@ -30,8 +30,8 @@ instance {α β} (f₁ f₂ : α → β) (x₁ x₂ : α) [inst : CongrRefl f₁
   hyps := [x₁ = x₂]
   eq h := inst.eq ▸ (All.head h) ▸ rfl
 
-syntax "congrArgs" (term:max <|> hole <|> syntheticHole)+ : term
+syntax "congr_args" (term:max <|> hole <|> syntheticHole)+ : term
 macro_rules
-| `(congrArgs $hs*) => `(CongrArgs.eq (All.intro [$hs,*]))
+| `(congr_args $hs*) => `(CongrArgs.eq (All.intro [$hs,*]))
 
 end CongrArgs
