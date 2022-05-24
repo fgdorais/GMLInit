@@ -147,7 +147,7 @@ private def matchQuot (x : α) (n : Nat) : Prop :=
   | none => False
   | some y => Setoid.r x y
 
-instance matchQuotDec (x : α) (n : Nat) : Decidable (matchQuot s x n) :=
+local instance matchQuotDec (x : α) (n : Nat) : Decidable (matchQuot s x n) :=
   match h: enum (α:=α) n with
   | none =>
     Decidable.isFalse $ by
@@ -218,5 +218,67 @@ instance instEnumQuot (α) [Enum α] (s : Setoid α) [DecidableRel s.r] : Enum (
     apply specQuot
 
 end Quotient
+
+def search {α} [Enum α] (p : α → Bool) (h : ∃ x, p x) : α :=
+  let q (n : Nat) : Bool :=
+    match enum (α:=α) n with
+    | some x => p x
+    | none => false
+  have : (∃ n, q n) := by
+    match h with
+    | ⟨x, hx⟩ =>
+      exists find x
+      clean
+      split
+      next hsome =>
+        rw [spec] at hsome
+        cases hsome
+        exact hx
+      next hnone =>
+        rw [spec] at hnone
+        contradiction
+  match henum : enum (Nat.bfind q this) with
+  | some x => x
+  | none => False.elim $ by
+    absurd (Nat.bfind_prop q this)
+    intro h
+    clean at h
+    rw [henum] at h
+    split at h
+    next => contradiction
+    next => contradiction
+
+theorem search_prop {α} [Enum α] (p : α → Bool) (h : ∃ x, p x = true) : p (search p h) = true := by
+  let q (n : Nat) : Bool :=
+    match enum (α:=α) n with
+    | some x => p x
+    | none => false
+  have hq : (∃ n, q n) := by
+    match h with
+    | ⟨x, hx⟩ =>
+      exists find x
+      clean
+      split
+      next hsome =>
+        rw [spec] at hsome
+        cases hsome
+        exact hx
+      next hnone =>
+        rw [spec] at hnone
+        contradiction
+  have := Nat.bfind_prop q hq
+  clean at this
+  split at this
+  next x' hsome =>
+    unfold search
+    split
+    next h =>
+      rw [hsome] at h
+      cases h
+      exact this
+    next h =>
+      rw [hsome] at h
+      contradiction
+  next => contradiction
 
 end Enum
