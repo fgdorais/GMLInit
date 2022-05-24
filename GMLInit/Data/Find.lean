@@ -11,7 +11,7 @@ class Find (α : Sort _) where
 
 namespace Find
 
-theorem findIsSome_iff_exists {α} [Find α] (p : α → Bool) : (find? p).isSome ↔ ∃ x, p x = true := by
+theorem find_is_some_iff_exists_true {α} [Find α] (p : α → Bool) : (find? p).isSome ↔ ∃ x, p x = true := by
   constr
   · match hp : find? p with
     | some x =>
@@ -29,6 +29,33 @@ theorem findIsSome_iff_exists {α} [Find α] (p : α → Bool) : (find? p).isSom
       | none =>
         rw [find_none x hp] at hx
         contradiction
+
+theorem find_is_none_iff_forall_false {α} [Find α] (p : α → Bool) : (find? p).isNone ↔ ∀ x, p x = false := by
+  constr
+  · match hp : find? p with
+    | some x =>
+      intro _
+      contradiction
+    | none =>
+      intro _ x
+      exact find_none x hp
+  · intro h
+    match hp : find? p with
+    | some x =>
+      absurd find_some x hp
+      rw [h]
+      intro
+      contradiction
+    | none =>
+      rfl
+
+instance [Find α] [Nonempty α] : Inhabited α where
+  default :=
+    match h : find? (λ _ => true) with
+    | some x => x
+    | none => Bool.noConfusion $ show true = false by
+      cases inferInstanceAs (Nonempty α) with
+      | intro x => rw [←find_none x h]
 
 protected def ofEquiv {α β} [Find α] (e : Equiv α β) : Find β where
   find? p :=
