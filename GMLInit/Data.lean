@@ -7,6 +7,7 @@ import GMLInit.Data.Find
 import GMLInit.Data.HList
 import GMLInit.Data.HVal
 import GMLInit.Data.Index
+import GMLInit.Data.Int
 import GMLInit.Data.List
 import GMLInit.Data.List1
 import GMLInit.Data.Nat
