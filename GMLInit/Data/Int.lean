@@ -7,20 +7,22 @@ namespace Int
 
 attribute [local eliminator] Nat.recDiag
 
-scoped infix:55 " ⊖ " => Int.subNatNat
+protected abbrev mk := Int.subNatNat
+
+scoped infix:55 " ⊖ " => Int.mk
 
 theorem zero_mk_zero : 0 ⊖ 0 = 0 := rfl
 
 theorem zero_mk_succ (n) : (0 ⊖ n + 1) = Int.negSucc n := rfl
 
 theorem succ_mk_zero (m) : (m + 1 ⊖ 0) = Int.ofNat (m+1) := by
-  rw [subNatNat, Nat.zero_sub, Nat.sub_zero]
+  rw [Int.mk, Int.subNatNat, Nat.zero_sub, Nat.sub_zero]
 
 theorem succ_mk_succ (m n) : (m + 1 ⊖ n + 1) = (m ⊖ n) := by
-  rw [subNatNat, subNatNat, Nat.succ_sub_succ, Nat.succ_sub_succ]
+  rw [Int.mk, Int.subNatNat, Int.subNatNat, Nat.succ_sub_succ, Nat.succ_sub_succ]
 
 theorem mk_zero (m) : (m ⊖ 0) = m := by
-  rw [subNatNat, Nat.zero_sub, Nat.sub_zero]
+  rw [Int.mk, Int.subNatNat, Nat.zero_sub, Nat.sub_zero]
 
 theorem zero_mk (n) : (0 ⊖ n) = negOfNat n :=
   match n with
@@ -42,7 +44,7 @@ protected theorem add_zero (x : Int) : x + 0 = x :=
 
 protected theorem zero_add (x : Int) : 0 + x = x :=
   match x with
-  | ofNat _ => calc ofNat _ = ofNat _ := by rw [Nat.zero_add]
+  | ofNat _ => show ofNat _ = ofNat _ by rw [Nat.zero_add]
   | negSucc _ => rfl
 
 theorem mk_self (m) : (m ⊖ m) = 0 := by
@@ -109,6 +111,21 @@ protected theorem add_comm (i j : Int) : i + j = j + i := by
       repeat rw [mk_add_mk]
       rw [Nat.add_comm mi mj, Nat.add_comm ni nj]
 
+protected theorem add_left_comm (i j k : Int) : i + (j + k) = j + (i + k) := calc
+  _ = (i + j) + k := by rw [Int.add_assoc]
+  _ = (j + i) + k := by rw [Int.add_comm i j]
+  _ = j + (i + k) := by rw [Int.add_assoc]
+
+protected theorem add_right_comm (i j k : Int) : (i + j) + k = (i + k) + j := calc
+  _ = i + (j + k) := by rw [Int.add_assoc]
+  _ = i + (k + j) := by rw [Int.add_comm j k]
+  _ = (i + k) + j := by rw [Int.add_assoc]
+
+protected theorem add_cross_comm (i₁ i₂ j₁ j₂ : Int) : (i₁ + i₂) + (j₁ + j₂) = (i₁ + j₁) + (i₂ + j₂) := calc
+  _ = i₁ + (i₂ + (j₁ + j₂)) := by rw [Int.add_assoc]
+  _ = i₁ + (j₁ + (i₂ + j₂)) := by rw [Int.add_left_comm i₂ j₁ j₂]
+  _ = (i₁ + j₁) + (i₂ + j₂) := by rw [Int.add_assoc]
+
 protected theorem add_neg (i : Int) : i + -i = 0 := by
   cases i using Int.casesMkOn with
   | mk mi ni => rw [neg_mk, mk_add_mk, Nat.add_comm mi ni, mk_self]
@@ -124,18 +141,18 @@ protected theorem mul_zero (i : Int) : i * 0 = 0 :=
 
 protected theorem zero_mul (i : Int) : 0 * i = 0 :=
   match i with
-  | ofNat _ => calc ofNat _ = ofNat _ := by rw [Nat.zero_mul]
-  | negSucc _ => calc negOfNat _ = ofNat _ := by rw [Nat.zero_mul]; rfl
+  | ofNat _ => show ofNat _ = ofNat _ by simp_arith
+  | negSucc _ => show negOfNat _ = ofNat _ by simp_arith
 
 protected theorem mul_one (i : Int) : i * 1 = i :=
   match i with
-  | ofNat _ => calc ofNat _ = ofNat _ := by rw [Nat.mul_one]
-  | negSucc _ => calc negSucc _ = negSucc _ := by clean; rw [Nat.zero_add]
+  | ofNat _ => show ofNat _ = ofNat _ by simp_arith
+  | negSucc _ => show negSucc _ = negSucc _ by simp_arith
 
 protected theorem one_mul (i : Int) : 1 * i = i :=
   match i with
-  | ofNat _ => calc ofNat _ = ofNat _ := by rw [Nat.one_mul]
-  | negSucc _ => calc negSucc _ = negSucc _ := by clean; rw [Nat.one_mul]
+  | ofNat _ => show ofNat _ = ofNat _ by simp_arith
+  | negSucc _ => show negSucc _ = negSucc _ by simp_arith
 
 theorem mk_mul_ofNat (m n k) : (m ⊖ n) * ofNat k = (m * k ⊖ n * k) := by
   induction m, n with
@@ -177,19 +194,34 @@ protected theorem mul_comm (i j : Int) : i * j = j * i := by
       repeat rw [mk_mul_mk]
       simp only [Nat.add_comm, Nat.mul_comm]
 
+protected theorem mul_left_comm (i j k : Int) : i * (j * k) = j * (i * k) := calc
+  _ = (i * j) * k := by rw [Int.mul_assoc]
+  _ = (j * i) * k := by rw [Int.mul_comm i j]
+  _ = j * (i * k) := by rw [Int.mul_assoc]
+
+protected theorem mul_right_comm (i j k : Int) : (i * j) * k = (i * k) * j := calc
+  _ = i * (j * k) := by rw [Int.mul_assoc]
+  _ = i * (k * j) := by rw [Int.mul_comm j k]
+  _ = (i * k) * j := by rw [Int.mul_assoc]
+
+protected theorem mul_cross_comm (i₁ i₂ j₁ j₂ : Int) : (i₁ * i₂) * (j₁ * j₂) = (i₁ * j₁) * (i₂ * j₂) := calc
+  _ = i₁ * (i₂ * (j₁ * j₂)) := by rw [Int.mul_assoc]
+  _ = i₁ * (j₁ * (i₂ * j₂)) := by rw [Int.mul_left_comm i₂ j₁ j₂]
+  _ = (i₁ * j₁) * (i₂ * j₂) := by rw [Int.mul_assoc]
+
 protected theorem mul_neg (i j : Int) : i * (-j) = -(i * j) := by
   cases i using Int.casesMkOn with
   | mk mi ni =>
     cases j using Int.casesMkOn with
     | mk mj nj =>
-      simp only [neg_mk, mk_mul_mk]
+      rw [neg_mk, mk_mul_mk, mk_mul_mk, neg_mk]
 
 protected theorem neg_mul (i j : Int) : (-i) * j = -(i * j) := by
   cases i using Int.casesMkOn with
   | mk mi ni =>
     cases j using Int.casesMkOn with
     | mk mj nj =>
-      simp only [neg_mk, mk_mul_mk, Nat.add_comm]
+      rw [neg_mk, mk_mul_mk, mk_mul_mk, neg_mk, Nat.add_comm (mi * nj), Nat.add_comm (ni * nj)]
 
 protected theorem mul_add (i j k : Int) : i * (j + k) = i * j + i * k := by
   cases i using Int.casesMkOn with
