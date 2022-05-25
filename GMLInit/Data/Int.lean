@@ -1,7 +1,5 @@
 import GMLInit.Data.Basic
 import GMLInit.Data.Nat
-import GMLInit.Meta.Congr
-import GMLInit.Meta.PrintPrefix
 
 namespace Int
 
