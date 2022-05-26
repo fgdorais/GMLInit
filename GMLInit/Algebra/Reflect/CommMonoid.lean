@@ -12,11 +12,11 @@ namespace Expr
 
 instance instDecidableEq {α} : {xs : List α} → DecidableEq (Expr xs)
 | [], nil, nil => Decidable.isTrue rfl
-| _::_, cons m a, cons n b => match instDecidableEq a b with
-  | Decidable.isTrue h => if h': m = n
-    then Decidable.isTrue (by rw [h, h'])
-    else Decidable.isFalse (by intro H; injection H; apply h'; assumption)
-  | Decidable.isFalse h => Decidable.isFalse (by intro H; injection H; apply h; assumption)
+| _::_, cons m a, cons n b =>
+  match instDecidableEq a b, inferDecidable (m = n) with
+  | isTrue rfl, isTrue rfl => isTrue rfl
+  | isFalse h, _ => isFalse fun | rfl => h rfl
+  | _, isFalse h => isFalse fun | rfl => h rfl
 
 abbrev lift {α} (x : α) {xs : List α} : Expr xs → Expr (x :: xs) := cons 0
 

@@ -13,17 +13,17 @@ namespace Expr
 variable {α} {xs : List α}
 
 instance instDecidableEq : DecidableEq (Expr xs)
-| var i, var j => if h: i = j
-  then Decidable.isTrue (by rw [h])
-  else Decidable.isFalse (by intro H; injection H; apply h; assumption)
+| var i, var j =>
+  match inferInstanceAs (Decidable (i = j)) with
+  | isTrue rfl => isTrue rfl
+  | isFalse h => isFalse fun | rfl => h rfl
+| var _, app _ _ => isFalse Expr.noConfusion
+| app _ _, var _ => isFalse Expr.noConfusion
 | app a i, app b j =>
-  match instDecidableEq a b with
-  | Decidable.isTrue h => if h': i = j
-    then Decidable.isTrue (by rw [h, h'])
-    else Decidable.isFalse (by intro H; injection H; apply h'; assumption)
-  | Decidable.isFalse h => Decidable.isFalse (by intro H; injection H; apply h; assumption)
-| app _ _, var _ => Decidable.isFalse (by intro H; injection H)
-| var _, app _ _ => Decidable.isFalse (by intro H; injection H)
+  match instDecidableEq a b, inferInstanceAs (Decidable (i = j)) with
+  | isTrue rfl, isTrue rfl => isTrue rfl
+  | _, isFalse h => isFalse fun | rfl => h rfl
+  | isFalse h, _ => isFalse fun | rfl => h rfl
 
 def lift (x : α) : Expr xs → Expr (x :: xs)
 | var i => var (Index.tail i)

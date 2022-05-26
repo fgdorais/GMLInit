@@ -13,12 +13,13 @@ namespace Expr
 variable {α} {xs : List α}
 
 instance instDecidableEq : DecidableEq (Expr xs)
-| ofSemigroup a, ofSemigroup b => if h: a = b
-  then Decidable.isTrue (by rw [h])
-  else Decidable.isFalse (by intro H; injection H; apply h; assumption)
+| ofSemigroup a, ofSemigroup b =>
+  match inferDecidable (a = b) with
+  | isTrue rfl => isTrue rfl
+  | isFalse h => isFalse fun | rfl => h rfl
+| ofSemigroup _, id => Decidable.isFalse Expr.noConfusion
+| id, ofSemigroup _ => Decidable.isFalse Expr.noConfusion
 | id, id => Decidable.isTrue rfl
-| ofSemigroup _, id => Decidable.isFalse (by intro H; injection H)
-| id, ofSemigroup _ => Decidable.isFalse (by intro H; injection H)
 
 def lift (x : α) {xs : List α} : Expr xs → Expr (x :: xs)
 | ofSemigroup e => ofSemigroup (e.lift x)
