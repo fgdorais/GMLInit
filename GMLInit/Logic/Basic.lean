@@ -5,6 +5,8 @@ import GMLInit.Prelude
 class inductive Stable (a : Prop) : Prop
 | protected intro : (¬¬a → a) → Stable a
 
+abbrev inferStable (a : Prop) [inst : Stable a] := inst
+
 protected def Stable.by_contradiction {a : Prop} [inst : Stable a] : ¬¬a → a :=
   match inst with | Stable.intro h => h
 
@@ -46,6 +48,8 @@ end StableList
 class inductive Complemented (a : Prop) : Prop
 | isTrue : a → Complemented a
 | isFalse : ¬a → Complemented a
+
+abbrev inferComplemented (a : Prop) [inst : Complemented a] := inst
 
 /-- eliminator for `Complemented` -/
 protected def Complemented.by_cases (a : Prop) [inst : Complemented a] {motive : Prop} (isTrue : a → motive) (isFalse : ¬a → motive) : motive :=
@@ -91,6 +95,8 @@ instance (a : Prop) : [Complemented a] → Stable a
 
 -- Decidable Propositions --
 
+abbrev inferDecidable (a : Prop) [inst : Decidable a] := inst
+
 class inductive DecidableList : List Prop → Type
 | nil : DecidableList []
 | cons {a as} : Decidable a → DecidableList as → DecidableList (a :: as)
@@ -123,6 +129,8 @@ instance (a : Prop) : [Decidable a] → Complemented a
 class inductive WeaklyComplemented (a : Prop) : Prop
 | protected isFalse : ¬a → WeaklyComplemented a
 | protected isIrrefutable : ¬¬a → WeaklyComplemented a
+
+abbrev inferWeaklyComplemented (a : Prop) [inst : WeaklyComplemented a] := inst
 
 /-- weak excluded middle (WEM) -/
 theorem WeaklyComplemented.wem (a : Prop) : [WeaklyComplemented a] → ¬¬a ∨ ¬a
@@ -175,6 +183,8 @@ instance (a : Prop) : [WeaklyComplemented a] → Complemented (¬a)
 class inductive WeaklyDecidable (a : Prop) : Type
 | protected isFalse : ¬a → WeaklyDecidable a
 | protected isIrrefutable : ¬¬a → WeaklyDecidable a
+
+abbrev inferWeaklyDecidable (a : Prop) [inst : WeaklyDecidable a] := inst
 
 abbrev WeaklyDecidablePred {α} (p : α → Prop) := (x : α) → WeaklyDecidable (p x)
 
