@@ -70,4 +70,38 @@ theorem find_none {α} {xs : List α} {p : Index xs → Bool} (i : Index xs) : I
       | head => exact hh
       | tail i => exact H _ ht
 
+def search {α} {xs : List α} {p : Index xs → Prop} [DecidablePred p] (h : ∃ i, p i) : Index xs :=
+  match hi : Index.find? λ i => p i with
+  | some i => i
+  | none => absurd h $ by
+    intro ⟨j, hj⟩
+    have := find_none j hi
+    rw [decide_eq_true hj] at this
+    contradiction
+
+theorem search_prop {α} {xs : List α} {p : Index xs → Prop} [DecidablePred p] (h : ∃ i, p i) : p (search h) := by
+  unfold search
+  split
+  next h =>
+    apply of_decide_eq_true
+    apply find_some _ h
+  next f =>
+    absurd h
+    intro ⟨j, hj⟩
+    have := find_none j f
+    rw [decide_eq_true hj] at this
+    contradiction
+
+theorem search_eq {α} {xs : List α} {p q : Index xs → Prop} [ip : DecidablePred p] [iq : DecidablePred q] {hp : ∃ i, p i} {hq : ∃ j, q j}  (h : p = q) : search hp = search hq := by
+  cases h
+  cases Subsingleton.elim ip iq
+  cases Subsingleton.elim hp hq
+  rfl
+
+theorem search_ext {α} {xs : List α} {p q : Index xs → Prop} [DecidablePred p] [DecidablePred q] {hp : ∃ i, p i} {hq : ∃ j, q j} : (∀ i, p i ↔ q i) → search hp = search hq := by
+  intro h
+  apply search_eq
+  funext i
+  exact propext (h i)
+
 end Index

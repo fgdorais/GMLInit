@@ -112,5 +112,4 @@ lemma any_eq_false {α} (p : α → Bool) (xs : List α) : xs.any p = false ↔ 
   | nil => rw [any_nil, nil_map, All.nil_eq]; simp
   | cons x xs H => rw [any_cons, cons_map, All.cons_eq, ←H, Bool.or_eq_false_iff]; simp
 
-
 end List
