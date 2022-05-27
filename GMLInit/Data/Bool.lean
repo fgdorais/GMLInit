@@ -1,10 +1,11 @@
 import GMLInit.Data.Basic
 import GMLInit.Logic.Relation
+import GMLInit.Meta.Basic
 
 instance : LE Bool := leOfOrd
 instance : LT Bool := ltOfOrd
 
-def xor : Bool → Bool → Bool
+@[reducible] def xor : Bool → Bool → Bool
 | true, true => false
 | true, false => true
 | false, true => true
@@ -16,9 +17,9 @@ variable (x y z : Bool)
 
 syntax "bool_tt" (&"using" tactic)? term:max* : tactic
 macro_rules
-| `(tactic|bool_tt) => `(tactic|rfl)
-| `(tactic|bool_tt using $tac) => `(tactic|$tac)
-| `(tactic|bool_tt $[using $tac]? $x:term $xs:term*) => `(tactic|cases ($x : Bool) <;> bool_tt $[using $tac]? $xs*)
+| `(tactic| bool_tt) => `(tactic| rfl)
+| `(tactic| bool_tt using $tac) => `(tactic| $tac)
+| `(tactic| bool_tt $[using $tac]? $x:term $xs:term*) => `(tactic| cases ($x : Bool) <;> bool_tt $[using $tac]? $xs*)
 
 -- assert not_not : !(!x) = x := by bool_tt x
 theorem not_and : !(x && y) = (!x || !y) := by bool_tt x y
@@ -40,6 +41,8 @@ theorem and_or_distrib_right : ((x || y) && z) = ((x && z) || (y && z)) := by bo
 theorem and_xor_distrib_left : (x && (y ^^ z)) = ((x && y) ^^ (x && z)) := by bool_tt x y z
 theorem and_xor_distrib_right : ((x ^^ y) && z) = ((x && z) ^^ (y && z)) := by bool_tt x y z
 theorem and_deMorgan : !(x && y) = (!x || !y) := by bool_tt x y
+theorem and_eq_true_iff : (x && y) = true ↔ x = true ∧ y = true := by bool_tt using simp x y
+theorem and_eq_false_iff : (x && y) = false ↔ x = false ∨ y = false := by bool_tt using simp x y
 
 theorem or_false_left : (false || x) = x := by bool_tt x
 theorem or_false_right : (x || false) = x := by bool_tt x
@@ -55,6 +58,8 @@ theorem or_assoc : ((x || y) || z) = (x || (y || z)) := by bool_tt x y z
 theorem or_and_distrib_left : (x || (y && z)) = ((x || y) && (x || z)) := by bool_tt x y z
 theorem or_and_distrib_right : ((x && y) || z) = ((x || z) && (y || z)) := by bool_tt x y z
 theorem or_deMorgan : !(x || y) = (!x && !y) := by bool_tt x y
+theorem or_eq_true_iff : (x || y) = true ↔ x = true ∨ y = true := by bool_tt using simp x y
+theorem or_eq_false_iff : (x || y) = false ↔ x = false ∧ y = false := by bool_tt using simp x y
 
 theorem xor_false_left : (false ^^ x) = x := by bool_tt x
 theorem xor_false_right : (x ^^ false) = x := by bool_tt x
