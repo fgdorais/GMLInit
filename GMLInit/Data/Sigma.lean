@@ -25,12 +25,12 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
         | rfl =>
           apply Sigma.eq
           · exact e.rev_fwd x₁
-          · elim_casts; reflexivity using (.≅.)
+          · clean; reflexivity using (.≅.)
       · intro
         | rfl =>
           apply Sigma.eq
           · exact e.fwd_rev x₂
-          · elim_casts; reflexivity using (.≅.)
+          · clean; reflexivity using (.≅.)
 
 def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) → Equiv (β₁ x) (β₂ x)) : Equiv ((x : α) × β₁ x) ((x : α) × β₂ x) where
   fwd | ⟨x, y₁⟩ => ⟨x, (e x).fwd y₁⟩
@@ -64,12 +64,12 @@ where
           | rfl =>
             apply Sigma.eq
             · reflexivity
-            · elim_casts; reflexivity using (.≅.)
+            · clean; reflexivity using (.≅.)
         · intro
           | rfl =>
             apply Sigma.eq
             · reflexivity
-            · elim_casts; reflexivity using (.≅.)
+            · clean; reflexivity using (.≅.)
   }
 
 protected def equivProd (α β): Equiv (α × β) (Sigma (λ _ : α => β)) where

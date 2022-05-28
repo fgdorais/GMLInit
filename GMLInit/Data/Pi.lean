@@ -29,20 +29,20 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
   fwd f₁ x₂ := f₁ (e.rev x₂)
   rev f₂ x₁ := e.rev_fwd x₁ ▸ f₂ (e.fwd x₁)
   spec := by
-    intros
+    intro f x
     constr
     · intro
       | rfl =>
         funext x₁
         apply eq_of_heq
-        elim_casts
+        clean
         rw [e.rev_fwd x₁]
         reflexivity using (.≅.)
     · intro
       | rfl =>
         funext x₂
         apply eq_of_heq
-        elim_casts
+        clean
         rw [e.fwd_rev x₂]
         reflexivity using (.≅.)
 
@@ -64,9 +64,7 @@ protected def equiv {α₁ α₂} {β₁ : α₁ → Sort _} {β₂ : α₂ → 
     fwd := λ n x => (e.fwd_rev x) ▸ n x
     spec := by
       intros
-      constr
-      · intro | rfl => funext x; elim_casts
-      · intro | rfl => funext x; elim_casts
+      constr <;> (intro | rfl => funext x; rw [eqNdrec_symm])
   }
 
 end Pi

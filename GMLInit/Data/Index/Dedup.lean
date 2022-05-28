@@ -106,10 +106,10 @@ theorem val_undedup (i : Index (xs.dedup s)) : (i.undedup s).val = i.val := by
     next ha =>
       split
       next h =>
-        rw [Eq.ndrec_symm] at h
+        rw [eqNdrec_symm] at h
         rw [h, val_ndrec]
       next h =>
-        rw [Eq.ndrec_symm] at h
+        rw [eqNdrec_symm] at h
         rw [h, val_ndrec, val_tail, val_tail, ih]
 
 theorem dedup_undedup {xs : List α} (i : Index (xs.dedup s)) : (i.undedup s).dedup s = i := by
@@ -122,16 +122,17 @@ theorem dedup_undedup {xs : List α} (i : Index (xs.dedup s)) : (i.undedup s).de
       unfold dedup
       rw [dif_pos ha]
       rw [ih]
-      elim_casts
+      rw [eqNdrec_symm]
+      rfl
     next ha =>
       split
       next h =>
         unfold dedup
-        rw [dif_neg ha, Eq.ndrec_symm, ←h]
+        rw [dif_neg ha, eqNdrec_symm, ←h]
         rfl
       next h =>
         unfold dedup
-        rw [dif_neg ha, Eq.ndrec_symm, ih, ←h]
+        rw [dif_neg ha, eqNdrec_symm, ih, ←h]
         rfl
 
 theorem undedup_dedup {xs : List α} (i : Index xs) : s.r ((i.dedup s).undedup s).val i.val := by
@@ -149,7 +150,7 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
       unfold dedup
       split
       next ha =>
-        rw [Eq.ndrec_symm]
+        rw [eqNdrec_symm]
         apply ih
         rw [val_ndrec]
         transitivity x
@@ -159,12 +160,12 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
         · exact h
       next ha =>
         have : (x :: xs).dedup s = x :: xs.dedup s := if_neg ha
-        rw [Eq.ndrec_symm]
+        rw [eqNdrec_symm]
         match hj : this ▸ j with
         | head =>
           rw [←hj]
         | tail j =>
-          rw [Eq.ndrec_symm] at hj
+          rw [eqNdrec_symm] at hj
           rw [hj, val_ndrec, val_tail] at h
           absurd ha
           apply Any.introIdx ((j.undedup s).map (s.r x))
@@ -175,16 +176,16 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
       unfold dedup
       split
       next ha =>
-        rw [Eq.ndrec_symm]
+        rw [eqNdrec_symm]
         apply ih
         rw [val_ndrec]
         exact h
       next ha =>
         have : (x :: xs).dedup s = x :: xs.dedup s := if_neg ha
-        rw [Eq.ndrec_symm]
+        rw [eqNdrec_symm]
         match hj : this ▸ j with
         | head =>
-          rw [Eq.ndrec_symm] at hj
+          rw [eqNdrec_symm] at hj
           rw [hj, val_ndrec, val_head] at h
           absurd ha
           apply Any.introIdx (i.map (s.r x))
@@ -192,13 +193,11 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
           symmetry
           exact h
         | tail j =>
-          rw [Eq.ndrec_symm] at hj
+          rw [eqNdrec_symm] at hj
           rw [hj, val_ndrec, val_tail] at h
           rw [hj]
+          rw [ih h]
           elim_casts
-          apply congrArg tail
-          apply ih
-          exact h
 
 theorem dedup_eq_iff_rel {xs : List α} (i : Index xs) (j : Index (xs.dedup s)) : i.dedup s = j ↔ s.r i.val j.val := by
   constr

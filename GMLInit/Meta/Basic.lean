@@ -1,5 +1,7 @@
 import GMLInit.Prelude
 import GMLInit.Logic.Cast
+import GMLInit.Logic.Congr
+import GMLInit.Logic.HEq
 import Lean
 
 open Lean
@@ -29,13 +31,11 @@ macro_rules
 syntax "elim_casts" (location)? : tactic
 set_option hygiene false in macro_rules
 | `(tactic| elim_casts $[$loc]?) =>
-  `(tactic| unfold Eq.recOn Eq.ndrec Eq.ndrecOn $[$loc]?; repeat (rw [Eq.rec_eq_cast] $[$loc]?); simp only [elim_casts] $[$loc]?)
+  `(tactic| first | rw [←heq_iff_eq] $[$loc]?; simp only [elim_casts] $[$loc]?; rw [heq_iff_eq] $[$loc]? | simp only [elim_casts] $[$loc]?)
 
-macro "exfalso" : tactic =>
-  `(tactic| apply False.elim)
+macro "exfalso" : tactic => `(tactic| apply False.elim)
 
-macro "absurd" h:term : tactic =>
-  `(tactic| first |apply absurd _ $h |apply absurd $h)
+macro "absurd " h:term : tactic => `(tactic| first | apply absurd _ $h | apply absurd $h)
 
 syntax "whnf" (&"lhs" <|> &"rhs")? (location)? : tactic
 macro_rules
