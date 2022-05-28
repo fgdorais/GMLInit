@@ -2,7 +2,10 @@ import GMLInit.Data.Basic
 import GMLInit.Data.Equiv
 import GMLInit.Data.Index
 import GMLInit.Data.Fin
+import GMLInit.Data.Finite
+import GMLInit.Data.Option
 import GMLInit.Data.Sigma
+import GMLInit.Data.Subtype
 
 class Find (α : Sort _) where
   find? : (α → Bool) → Option α
@@ -81,71 +84,13 @@ protected def ofEquiv {α β} [Find α] (e : Equiv α β) : Find β where
       rw [←e.fwd_rev x]
       apply find_none _ h'
 
-instance : Find Empty where
-  find? _ := none
-  find_some x h := by contradiction
-  find_none x h := by cases x
-
-instance : Find PUnit where
-  find? p :=
-    match p () with
-    | true => some ()
-    | false => none
-  find_some := by intro
-    | p, (), h =>
-      clean at h
-      split at h
-      next => assumption
-      next => contradiction
-  find_none := by intro
-    | p, (), h =>
-      clean at h
-      split at h
-      next => contradiction
-      next => assumption
-
-instance : Find Bool where
-  find? p :=
-    match p true, p false with
-    | true, _ => some true
-    | _, true => some false
-    | _, _ => none
-  find_some := by intro
-    | p, true, h =>
-      clean at h
-      split at h
-      next => assumption
-      next h => cases h
-      next h => cases h
-    | p, false, h =>
-      clean at h
-      split at h
-      next h => cases h
-      next => assumption
-      next h => cases h
-  find_none := by intro
-    | p, true, h =>
-      clean at h
-      split at h
-      next h => cases h
-      next h => cases h
-      next => rw [←Bool.not_eq_true]; assumption
-    | p, false, h =>
-      clean at h
-      split at h
-      next h => cases h
-      next h => cases h
-      next => rw [←Bool.not_eq_true]; assumption
-
-instance (n) : Find (Fin n) where
-  find? := Fin.find?
-  find_some := Fin.find_some
-  find_none := Fin.find_none
-
 instance {α} (xs : List α) : Find (Index xs) where
   find? := Index.find?
   find_some := Index.find_some
   find_none := Index.find_none
+
+instance (α) [Finite α] : Find α :=
+  Find.ofEquiv (Finite.equivIndex α).inv
 
 instance [Find α] : Find (Option α) where
   find? p :=
