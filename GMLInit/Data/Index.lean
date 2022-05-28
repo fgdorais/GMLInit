@@ -1,1 +1,14 @@
 import GMLInit.Data.Index.Basic
+import GMLInit.Data.Index.Append
+import GMLInit.Data.Index.Arr
+import GMLInit.Data.Index.Bind
+import GMLInit.Data.Index.Dedup
+import GMLInit.Data.Index.Iota
+import GMLInit.Data.Index.Join
+import GMLInit.Data.Index.Map
+import GMLInit.Data.Index.Option
+import GMLInit.Data.Index.Pi
+import GMLInit.Data.Index.Prod
+import GMLInit.Data.Index.Sigma
+import GMLInit.Data.Index.Sublist
+import GMLInit.Data.Index.Sum
