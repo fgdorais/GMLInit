@@ -13,15 +13,9 @@ def get {α} : (a : Option α) → a.isSome → α
 
 @[simp] lemma some_map {α β} (f : α → β) (a : α) : (some a).map f = some (f a) := rfl
 
-@[simp] lemma id_map {α} (a : Option α) : a.map id = a := by
-  cases a with
-  | none => rfl
-  | some => rfl
+@[simp] lemma id_map {α} (a : Option α) : a.map id = a := by cases a <;> rfl
 
-lemma comp_map {α β γ} (g : β → γ) (f : α → β) (a : Option α) : a.map (g ∘ f) = (a.map f).map g := by
-  cases a with
-  | none => rfl
-  | some => rfl
+lemma comp_map {α β γ} (g : β → γ) (f : α → β) (a : Option α) : a.map (g ∘ f) = (a.map f).map g := by cases a <;> rfl
 
 @[simp] lemma none_bind {α β} (f : α → Option β) : none.bind f = none := rfl
 
@@ -33,16 +27,20 @@ lemma bind_assoc {α β γ} (f : α → Option β) (g : β → Option γ) (a : O
   | some => rfl
 
 def equiv {α β} (e : Equiv α β) : Equiv (Option α) (Option β) where
-  fwd := Option.map e.fwd
-  rev := Option.map e.rev
+  fwd
+  | some x => some (e.fwd x)
+  | none => none
+  rev
+  | some x => some (e.rev x)
+  | none => none
   spec := by
-    intros
-    constr
-    · intro h
-      cases h
-      rw [←comp_map, e.comp_rev_fwd, id_map]
-    · intro h
-      cases h
-      rw [←comp_map, e.comp_fwd_rev, id_map]
+    intro
+    | some _, some _ =>
+      constr
+      · intro | rfl => clean; rw [e.rev_fwd]
+      · intro | rfl => clean; rw [e.fwd_rev]
+    | some _, none => constr <;> (intro h; cases h)
+    | none, some _ => constr <;> (intro h; cases h)
+    | none, none => constr <;> intro | rfl => rfl
 
 end Option

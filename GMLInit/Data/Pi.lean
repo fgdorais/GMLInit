@@ -10,16 +10,16 @@ def equiv {α₁ α₂ β₁ β₂} (e : Equiv α₁ α₂) (f : Equiv β₁ β�
   spec := by
     intros
     constr
-    · intro H
-      rw [←H]
-      funext x₁
-      unfold Function.comp
-      rw [e.rev_fwd, f.rev_fwd]
-    · intro H
-      rw [←H]
-      funext x₂
-      unfold Function.comp
-      rw [e.fwd_rev, f.fwd_rev]
+    · intro
+      | rfl =>
+        funext x₁
+        unfold Function.comp
+        rw [e.rev_fwd, f.rev_fwd]
+    · intro
+      | rfl =>
+        funext x₂
+        unfold Function.comp
+        rw [e.fwd_rev, f.fwd_rev]
 
 end Function
 
@@ -31,20 +31,20 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
   spec := by
     intros
     constr
-    · intro h
-      cases h
-      funext x₁
-      apply eq_of_heq
-      elim_casts
-      rw [e.rev_fwd x₁]
-      reflexivity using (.≅.)
-    · intro h
-      cases h
-      funext x₂
-      apply eq_of_heq
-      elim_casts
-      rw [e.fwd_rev x₂]
-      reflexivity using (.≅.)
+    · intro
+      | rfl =>
+        funext x₁
+        apply eq_of_heq
+        elim_casts
+        rw [e.rev_fwd x₁]
+        reflexivity using (.≅.)
+    · intro
+      | rfl =>
+        funext x₂
+        apply eq_of_heq
+        elim_casts
+        rw [e.fwd_rev x₂]
+        reflexivity using (.≅.)
 
 def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) → Equiv (β₁ x) (β₂ x)) : Equiv ((x : α) → β₁ x) ((x : α) → β₂ x) where
   fwd f₁ x := (e x).fwd (f₁ x)
@@ -52,16 +52,8 @@ def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) 
   spec := by
     intros
     constr
-    · intro h
-      cases h
-      funext x
-      clean
-      rw [(e x).rev_fwd]
-    · intro h
-      cases h
-      funext x
-      clean
-      rw [(e x).fwd_rev]
+    · intro | rfl => funext x; exact (e x).rev_fwd ..
+    · intro | rfl => funext x; exact (e x).fwd_rev ..
 
 protected def equiv {α₁ α₂} {β₁ : α₁ → Sort _} {β₂ : α₂ → Sort _} (e : Equiv α₁ α₂) (f : (x₁ : α₁) → Equiv (β₁ x₁) (β₂ (e.fwd x₁))) : Equiv ((x₁ : α₁) → β₁ x₁) ((x₂ : α₂) → β₂ x₂) :=
   Equiv.comp h3 (Equiv.comp h2 h1) where
@@ -73,14 +65,8 @@ protected def equiv {α₁ α₂} {β₁ : α₁ → Sort _} {β₂ : α₂ → 
     spec := by
       intros
       constr
-      · intro h
-        rw [←h]
-        funext x
-        elim_casts
-      · intro h
-        rw [←h]
-        funext x
-        elim_casts
+      · intro | rfl => funext x; elim_casts
+      · intro | rfl => funext x; elim_casts
   }
 
 end Pi

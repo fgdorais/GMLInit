@@ -11,15 +11,7 @@ protected def equiv (e : Equiv α₁ α₂) (h : ∀ x, p₁ x ↔ p₂ (e.fwd x
   spec := by intro
     | ⟨x₁, h₁⟩, ⟨x₂,h₂⟩ =>
       constr
-      · intro heq
-        cases heq
-        apply Subtype.eq
-        clean
-        rw [e.rev_fwd]
-      · intro heq
-        cases heq
-        apply Subtype.eq
-        clean
-        rw [e.fwd_rev]
+      · intro | rfl => apply Subtype.eq; clean; rw [e.rev_fwd]
+      · intro | rfl => apply Subtype.eq; clean; rw [e.fwd_rev]
 
 end Subtype

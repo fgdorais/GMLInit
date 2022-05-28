@@ -13,16 +13,13 @@ inductive Index.{u} {α : Type u} : List α → Type u where
 deriving Repr
 
 instance Index.instDecidableEq {α} : {xs : List α} → DecidableEq (Index xs)
-| _::_, head, head =>
-  Decidable.isTrue rfl
-| _::_, head, tail _ =>
-  Decidable.isFalse Index.noConfusion
-| _::_, tail _, head =>
-  Decidable.isFalse Index.noConfusion
+| _::_, head, head => isTrue rfl
+| _::_, head, tail _ => isFalse Index.noConfusion
+| _::_, tail _, head => isFalse Index.noConfusion
 | _::_, tail i, tail j =>
   match instDecidableEq i j with
-  | Decidable.isTrue h => Decidable.isTrue (h ▸ rfl)
-  | Decidable.isFalse h => Decidable.isFalse λ f => h (tail.inj f)
+  | isTrue rfl => isTrue rfl
+  | isFalse h => isFalse fun | rfl => h rfl
 
 @[reducible] def Index.val {α} : {as : List α} → Index as → α
 | a::_, head => a
