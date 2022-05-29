@@ -14,13 +14,13 @@ variable {α} {xs : List α}
 
 instance instDecidableEq : DecidableEq (Expr xs)
 | var i, var j =>
-  match inferInstanceAs (Decidable (i = j)) with
+  match inferDecidable (i = j) with
   | isTrue rfl => isTrue rfl
   | isFalse h => isFalse fun | rfl => h rfl
 | var _, app _ _ => isFalse Expr.noConfusion
 | app _ _, var _ => isFalse Expr.noConfusion
 | app a i, app b j =>
-  match instDecidableEq a b, inferInstanceAs (Decidable (i = j)) with
+  match instDecidableEq a b, inferDecidable (i = j) with
   | isTrue rfl, isTrue rfl => isTrue rfl
   | _, isFalse h => isFalse fun | rfl => h rfl
   | isFalse h, _ => isFalse fun | rfl => h rfl
