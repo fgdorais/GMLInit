@@ -18,13 +18,14 @@ lemma val_head {α} (a : α) (as : List α) : (@head α a as).val = a := rfl
 
 @[simp] lemma val_ndrec {xs ys : List α} (i : Index xs) : (h : xs = ys) → val (h ▸ i : Index ys) = i.val | rfl => rfl
 
-open Ordering in instance instOrd : (xs : List α) → Ord (Index xs)
-| [] => ⟨fun _ _ => eq⟩
-| x::xs => Ord.mk $ fun
-  | head, head => eq
-  | head, tail _ => lt
-  | tail _, head => gt
-  | tail i, tail j => Ord.compare (self:=instOrd xs) i j
+open Ordering in
+protected def compare : Index xs → Index xs → Ordering
+| head, head => eq
+| head, tail _ => lt
+| tail _, head => gt
+| tail i, tail j => Index.compare i j
+
+instance instOrd (xs : List α) : Ord (Index xs) := ⟨Index.compare⟩
 
 open Ordering in instance instLawfulOrd : (xs : List α) → Ord.LawfulOrd (Index xs)
 | [] => {
