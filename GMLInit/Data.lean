@@ -13,6 +13,7 @@ import GMLInit.Data.List
 import GMLInit.Data.List1
 import GMLInit.Data.Nat
 import GMLInit.Data.Option
+import GMLInit.Data.Ord
 import GMLInit.Data.Pi
 import GMLInit.Data.Pos
 import GMLInit.Data.Prod

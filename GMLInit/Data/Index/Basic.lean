@@ -1,4 +1,5 @@
 import GMLInit.Data.Basic
+import GMLInit.Data.Ord
 import GMLInit.Meta.Basic
 import GMLInit.Meta.Decidable
 import GMLInit.Meta.Relation
@@ -16,6 +17,48 @@ lemma val_head {α} (a : α) (as : List α) : (@head α a as).val = a := rfl
 @[simp] lemma val_tail {α} (a : α) (as : List α) (i : Index as) : (@tail α a as i).val = i.val := rfl
 
 @[simp] lemma val_ndrec {xs ys : List α} (i : Index xs) : (h : xs = ys) → val (h ▸ i : Index ys) = i.val | rfl => rfl
+
+open Ordering in instance instOrd : (xs : List α) → Ord (Index xs)
+| [] => ⟨fun _ _ => eq⟩
+| x::xs => Ord.mk $ fun
+  | head, head => eq
+  | head, tail _ => lt
+  | tail _, head => gt
+  | tail i, tail j => Ord.compare (self:=instOrd xs) i j
+
+open Ordering in instance instLawfulOrd : (xs : List α) → Ord.LawfulOrd (Index xs)
+| [] => {
+  eq_refl := (nomatch .)
+  eq_tight := (nomatch .)
+  lt_trans := (nomatch .)
+  gt_trans := (nomatch .)
+}
+| x::xs => {
+  eq_refl := fun
+  | head => rfl
+  | tail i => (instLawfulOrd xs).eq_refl i
+  eq_tight := fun {i j} h => match i, j, h with
+  | head, head, _ => rfl
+  | head, tail _, h => Ordering.noConfusion h
+  | tail _, head, h => Ordering.noConfusion h
+  | tail i, tail j, h => congrArg tail ((instLawfulOrd xs).eq_tight h)
+  lt_trans := fun {i j k} hij hjk => match i, j, k, hij, hjk with
+  | head, _, tail _, _, _ => rfl
+  | head, head, _, h, _ => Ordering.noConfusion h
+  | tail _, head, _, h, _ => Ordering.noConfusion h
+  | _, tail _, head, _, h => Ordering.noConfusion h
+  | tail _, tail _, tail _, hij, hjk => (instLawfulOrd xs).lt_trans hij hjk
+  gt_trans := fun {i j k} hij hjk => match i, j, k, hij, hjk with
+  | tail _, _, head, _, _ => rfl
+  | head, head, _, h, _ => Ordering.noConfusion h
+  | head, tail _, _, h, _ => Ordering.noConfusion h
+  | _, head, tail _, _, h => Ordering.noConfusion h
+  | tail _, tail _, tail _, hij, hjk => (instLawfulOrd xs).gt_trans hij hjk
+}
+
+instance : LE (Index xs) := open Ord in inferInstance
+
+instance : LT (Index xs) := open Ord in inferInstance
 
 protected def head? {α} : (as : List α) → Option (Index as)
 | [] => none
