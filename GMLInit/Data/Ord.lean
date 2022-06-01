@@ -129,6 +129,12 @@ theorem le_antisymm {x y : α} (nxy : x ≤ y) (nyx : x ≥ y) : x = y :=
 
 instance : Relation.Antisymmetric (α:=α) (.≤.) := ⟨le_antisymm⟩
 
+instance : DecidableEq α := fun x y =>
+  match h : compare x y with
+  | lt => isFalse fun | rfl => Ordering.noConfusion (eq_refl x ▸ h)
+  | eq => isTrue (eq_tight h)
+  | gt => isFalse fun | rfl => Ordering.noConfusion (eq_refl x ▸ h)
+
 end LawfulOrd
 
 end Ord
