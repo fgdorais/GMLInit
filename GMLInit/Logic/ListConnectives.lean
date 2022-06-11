@@ -70,16 +70,16 @@ namespace Any
     | Or.inr h => exact Any.tail h
 
 protected def elimAll {motive : Prop} : {as : List Prop} → Any as → All (as.map λ a => a → motive) → motive
-| _::_, Any.head hh, All.cons h _ => h hh
-| _::_, Any.tail ht, All.cons _ h => Any.elimAll ht h
+| _, Any.head hh, All.cons h _ => h hh
+| _, Any.tail ht, All.cons _ h => Any.elimAll ht h
 
 protected def introIdx : {as : List Prop} → (i : Index as) → i.val → Any as
-| _::_, Index.head, h => Any.head h
-| _::_, Index.tail i, h => Any.tail (Any.introIdx i h)
+| _, Index.head, h => Any.head h
+| _, Index.tail i, h => Any.tail (Any.introIdx i h)
 
 protected def elimIdx : {as : List Prop} → Any as → (∃ (i : Index as), i.val)
-| _::_, Any.head h => ⟨Index.head, h⟩
-| _::_, Any.tail h => Exists.elim (Any.elimIdx h) (λ i h => ⟨Index.tail i, h⟩)
+| _, Any.head h => ⟨Index.head, h⟩
+| _, Any.tail h => Exists.elim (Any.elimIdx h) (λ i h => ⟨Index.tail i, h⟩)
 
 syntax "Any.elim" term:max termList : term
 macro_rules
@@ -97,12 +97,12 @@ end Any
 
 theorem all_not_of_not_any : {as : List Prop} → ¬Any as → All (as.map (¬.))
 | [], _ => All.nil
-| a::as, h => All.cons (λ hh => h (Any.head hh)) $
+| _::_, h => All.cons (λ hh => h (Any.head hh)) $
   all_not_of_not_any λ ht => h (Any.tail ht)
 
 theorem not_any_of_all_not : {as : List Prop} → All (as.map (¬.)) → ¬Any as
-| a::as, All.cons na _, Any.head ha => na ha
-| a::as, All.cons _ nas, Any.tail has => not_any_of_all_not nas has
+| _::_, All.cons na _, Any.head ha => na ha
+| _::_, All.cons _ nas, Any.tail has => not_any_of_all_not nas has
 
 theorem not_any_iff_all_not (as : List Prop) : ¬Any as ↔ All (as.map (¬.)) :=
   Iff.intro all_not_of_not_any not_any_of_all_not
@@ -110,8 +110,8 @@ theorem not_any_iff_all_not (as : List Prop) : ¬Any as ↔ All (as.map (¬.)) :
 theorem Any.deMorgan {as : List Prop} : ¬Any as ↔ All (as.map (¬.)) := not_any_iff_all_not as
 
 theorem not_all_of_any_not : {as : List Prop} → Any (as.map (¬.)) → ¬All as
-| a::as, Any.head na, All.cons ha _ => na ha
-| a::as, Any.tail nas, All.cons _ has => not_all_of_any_not nas has
+| _::_, Any.head na, All.cons ha _ => na ha
+| _::_, Any.tail nas, All.cons _ has => not_all_of_any_not nas has
 
 theorem any_not_of_not_all : {as : List Prop} → [WeaklyComplementedList as] → ¬All as → Any (as.map (¬.))
 | [], _, h => absurd All.nil h

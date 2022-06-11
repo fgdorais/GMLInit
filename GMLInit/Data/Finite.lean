@@ -56,11 +56,11 @@ protected def ofEquiv (α' : Type _) (e : Equiv α α') : Finite α' where
 instance : Finite Empty where
   list := []
   find x := nomatch x
-  spec x i := nomatch x
+  spec x _ := nomatch x
 
 instance : Finite Unit where
   list := [()]
-  find x := Index.head
+  find _ := Index.head
   spec | (), Index.head => by simp
 
 instance : Finite Bool where

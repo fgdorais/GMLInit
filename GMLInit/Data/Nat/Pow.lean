@@ -81,9 +81,9 @@ protected theorem pow_le_pow_of_pos_left {x y : Nat} (h : x ≤ y) {z : Nat} : z
   λ hz => Nat.pow_le_pow_of_le_right hz h
 
 protected theorem pow_lt_pow_of_pos_right {x y : Nat} (h : x < y) {z : Nat} : z > 0 → x ^ z < y ^ z := by
-  induction z with
+  cases z with
   | zero => intro; contradiction
-  | succ z H =>
+  | succ z =>
     intro
     rw [Nat.pow_succ, Nat.pow_succ]
     apply Nat.mul_lt_mul_of_le_of_lt

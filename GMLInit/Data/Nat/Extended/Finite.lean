@@ -48,7 +48,7 @@ private def toNatAux {e : ENat} (isFinite : Finite e) (x : Nat) : Nat :=
 termination_by' ⟨Finite.rel e, Finite.wf e isFinite⟩
 decreasing_by trivial
 
-private theorem toNatAux_eq {e : ENat} (isFinite : Finite e) (x : Nat) : toNatAux isFinite x = if h : e.isLE x then x else toNatAux isFinite (x+1) :=
+private theorem toNatAux_eq {e : ENat} (isFinite : Finite e) (x : Nat) : toNatAux isFinite x = if e.isLE x then x else toNatAux isFinite (x+1) :=
   WellFounded.fix_eq _ _ _
 
 private theorem isLE_toNatAux {e : ENat} (isFinite : Finite e) (x : Nat) : e.isLE (toNatAux isFinite x) := by

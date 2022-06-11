@@ -5,11 +5,11 @@ namespace Index
 variable {α β} (f : α → List β)
 
 def bind : {xs : List α} → (i : Index xs) × (Index (f i.val)) → Index (xs.bind f)
-| x::xs, ⟨head, j⟩ => append_inl j
-| x::xs, ⟨tail i, j⟩ => append_inr (bind ⟨i, j⟩)
+| _::_, ⟨head, j⟩ => append_inl j
+| _::_, ⟨tail i, j⟩ => append_inr (bind ⟨i, j⟩)
 
 def unbind : {xs : List α} → (k : Index (xs.bind f)) → (i : Index xs) × (Index (f i.val))
-| x::xs, k =>
+| _::_, k =>
   match unappend k with
   | .inl j => ⟨head, j⟩
   | .inr k => ⟨tail (unbind k).fst, (unbind k).snd⟩

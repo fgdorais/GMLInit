@@ -45,7 +45,7 @@ protected theorem dext {αs βs : List (Sort _)} (as : HList αs) (bs : HList β
 
 protected def mk : {αs : List (Sort _)} → ((i : Index αs) → i.val) → HList αs
 | [], _ => []
-| α::αs, v => v .head :: HList.mk λ i => v (.tail i)
+| _::_, v => v .head :: HList.mk λ i => v (.tail i)
 
 protected def ofList {α} : (as : List α) → HList (as.map λ _ => α)
 | [] => []
@@ -56,7 +56,7 @@ protected def ofListHVal : (vs : List HVal) → HList (vs.map HVal.sort)
 | v::vs => v.val :: HList.ofListHVal vs
 
 def append : {αs βs : List (Sort _)} → HList αs → HList βs → HList (αs ++ βs)
-| [], βs, [], bs => bs
+| [], _, [], bs => bs
 | α :: αs, βs, a::as, bs => List.cons_append α αs βs ▸ cons a (append as bs)
 
 def eval : {αs : List (Sort _)} → HList αs → (i : Index αs) → i.val

@@ -4,19 +4,19 @@ import GMLInit.Data.Index.Map
 
 protected def List.pi {α} {β : α → Type _} : (xs : List α) → (f : (i : Index xs) → List (β i.val)) → List ((i : Index xs) → β i.val)
 | [], _ => [(nomatch .)]
-| x::xs, f => (List.pi xs fun i => f i.tail).bind (λ ys => (f .head).map (λ y i => match i with | .head => y | .tail i => ys i))
+| _::xs, f => (List.pi xs fun i => f i.tail).bind (λ ys => (f .head).map (λ y i => match i with | .head => y | .tail i => ys i))
 
 namespace Index
 variable {α} {β : α → Type _} {xs : List α} {f : (i : Index xs) → List (β i.val)}
 
 def pi : {xs : List α} → {f : (i : Index xs) → List (β i.val)} → ((i : Index xs) → Index (f i)) → Index (xs.pi f)
 | [], _, _ => head
-| x::xs, f, y => bind _ ⟨pi fun i => y i.tail, map _ (y head)⟩
+| _::_, _, y => bind _ ⟨pi fun i => y i.tail, map _ (y head)⟩
 
 def unpi : {xs : List α} → {f : (i : Index xs) → List (β i.val)} → (Index (xs.pi f)) → (i : Index xs) → Index (f i)
-| x::xs, f, k, head =>
+| _::_, _, k, head =>
   match unbind _ k with | ⟨_, k⟩ => unmap _ k
-| x::xs, f, k, tail i =>
+| _::_, _, k, tail i =>
   match unbind _ k with | ⟨k, _⟩ => unpi k i
 
 theorem unpi_pi (h : (i : Index xs) → Index (f i)) : unpi (pi h) = h := by

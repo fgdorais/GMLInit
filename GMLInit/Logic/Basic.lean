@@ -85,7 +85,7 @@ protected def tail (a as) : [ComplementedList (a :: as)] → ComplementedList as
 
 instance instMap {α} (a : α → Prop) [ComplementedPred a] : (xs : List α) → ComplementedList (xs.map a)
 | [] => ComplementedList.nil
-| x::xs => ComplementedList.cons inferInstance (instMap a xs)
+| _::xs => ComplementedList.cons inferInstance (instMap a xs)
 
 end ComplementedList
 
@@ -116,7 +116,7 @@ protected def tail (a as) : [DecidableList (a :: as)] → DecidableList as
 
 instance instMap {α} (a : α → Prop) [DecidablePred a] : (xs : List α) → DecidableList (xs.map a)
 | [] => DecidableList.nil
-| x::xs => DecidableList.cons inferInstance (instMap a xs)
+| _::xs => DecidableList.cons inferInstance (instMap a xs)
 
 end DecidableList
 
@@ -162,7 +162,7 @@ protected def tail (a as) : [WeaklyComplementedList (a :: as)] → WeaklyComplem
 
 instance instMap {α} (a : α → Prop) [WeaklyComplementedPred a] : (xs : List α) → WeaklyComplementedList (xs.map a)
 | [] => WeaklyComplementedList.nil
-| x::xs => WeaklyComplementedList.cons inferInstance (instMap a xs)
+| _::xs => WeaklyComplementedList.cons inferInstance (instMap a xs)
 
 end WeaklyComplementedList
 
@@ -211,7 +211,7 @@ protected def tail (a as) : [WeaklyDecidableList (a :: as)] → WeaklyDecidableL
 
 instance instMap {α} (a : α → Prop) [WeaklyDecidablePred a] : (xs : List α) → WeaklyDecidableList (xs.map a)
 | [] => WeaklyDecidableList.nil
-| x::xs => WeaklyDecidableList.cons inferInstance (instMap a xs)
+| _::xs => WeaklyDecidableList.cons inferInstance (instMap a xs)
 
 end WeaklyDecidableList
 

@@ -58,7 +58,7 @@ instance : Enum Bool where
 instance : Enum Nat where
   enum n := some n
   find n := n
-  spec n := rfl
+  spec _ := rfl
 
 instance (n) : Enum (Fin n) where
   enum m := if h : m < n then some ⟨m,h⟩ else none
@@ -68,7 +68,7 @@ instance (n) : Enum (Fin n) where
 instance (α) [Enum α] : Enum (Option α) where
   enum
   | 0 => some none
-  | n+1 => (enum n).map some
+  | n+1 => some (enum n)
   find
   | none => 0
   | some x => find x + 1
@@ -76,9 +76,7 @@ instance (α) [Enum α] : Enum (Option α) where
   | none => rfl
   | some x => by
     clean
-    split
-    next => contradiction
-    next h => cases h; simp [spec x]
+    rw [spec x]
 
 instance (α β) [Enum α] [Enum β] : Enum (Sum α β) where
   enum n := if n.is_even then (enum n.half).map Sum.inl else (enum n.half).map Sum.inr

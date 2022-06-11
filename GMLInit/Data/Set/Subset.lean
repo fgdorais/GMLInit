@@ -39,7 +39,7 @@ theorem eq_empty_of_subset_empty : s ⊆ Set.empty → s = Set.empty := by
   · exact empty_subset s
 
 theorem subset_univ (s : Set α) : s ⊆ Set.univ := by
-  intro x h
+  intro _ _
   trivial
 
 theorem eq_univ_of_univ_subset : Set.univ ⊆ s → s = Set.univ := by

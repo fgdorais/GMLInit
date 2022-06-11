@@ -9,7 +9,7 @@ variable {n : Nat}
 protected theorem eq : {i j : Fin n} → i.val = j.val → i = j
 | ⟨_,_⟩, ⟨_,_⟩, rfl => rfl
 
-protected abbrev modulus (i : Fin n) := n
+protected abbrev modulus (_ : Fin n) := n
 
 instance (i : Fin n) : Nat.IsPos i.modulus where
   is_pos := Nat.lt_of_le_of_lt (Nat.zero_le i.val) i.isLt

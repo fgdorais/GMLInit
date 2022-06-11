@@ -10,11 +10,11 @@ namespace Index
 variable {α} {β : α → Type _} {xs : List α} {f : (i : Index xs) → List (β i.val)}
 
 def sigma : {xs : List α} → {f : (i : Index xs) → List (β i.val)} → (i : Index xs) × Index (f i) → Index (xs.sigma f)
-| x::xs, f, ⟨head, j⟩ => append (.inl (j.map (Sigma.mk x)))
-| x::xs, f, ⟨tail i, j⟩ => append (.inr (sigma ⟨i, j⟩))
+| x::_, _, ⟨head, j⟩ => append (.inl (j.map (Sigma.mk x)))
+| _::_, _, ⟨tail i, j⟩ => append (.inr (sigma ⟨i, j⟩))
 
 def unsigma : {xs : List α} → {f : (i : Index xs) → List (β i.val)} → Index (xs.sigma f) → (i : Index xs) × Index (f i)
-| x::xs, f, k =>
+| x::_, _, k =>
   match unappend k with
   | .inl j => ⟨head, j.unmap (Sigma.mk x)⟩
   | .inr k => ⟨tail (unsigma k).fst, (unsigma k).snd⟩

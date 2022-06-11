@@ -42,7 +42,7 @@ instance (α) : HAppend (List1 α) (List α) (List1 α) := ⟨List1.append⟩
 instance (α) : Append (List1 α) := ⟨λ xs ys => List1.append xs ys.toList⟩
 
 @[scoped simp] theorem append_toList_left (xs : List1 α) (ys : List α) : (xs ++ ys).toList = xs.toList ++ ys :=
-  match xs with | cons x xs => rfl
+  match xs with | cons _ _ => rfl
 
 @[scoped simp] theorem append_toList (xs ys : List1 α) : (xs ++ ys).toList = xs.toList ++ ys.toList :=
   append_toList_left xs (ys.toList)

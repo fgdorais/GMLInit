@@ -4,12 +4,12 @@ namespace Index
 variable {α β} (f : α → β)
 
 def map : {xs : List α} → Index xs → Index (xs.map f)
-| x::xs, Index.head => Index.head
-| x::xs, Index.tail i => Index.tail (map i)
+| _, Index.head => Index.head
+| _, Index.tail i => Index.tail (map i)
 
 def unmap : {xs : List α} → Index (xs.map f) → Index xs
-| x::xs, Index.head => Index.head
-| x::xs, Index.tail i => Index.tail (unmap i)
+| _::_, Index.head => Index.head
+| _::_, Index.tail i => Index.tail (unmap i)
 
 theorem unmap_map {xs : List α} (i : Index xs) : (i.map f).unmap f = i := by
   induction i with
@@ -46,7 +46,7 @@ def mapEquiv (xs : List α) : Equiv (Index xs) (Index (xs.map f)) where
 theorem val_map {xs : List α} (i : Index xs) : (i.map f).val = f i.val := by
   induction i with
   | head => rfl
-  | tail i ih => exact ih
+  | tail _ ih => exact ih
 
 theorem val_unmap {xs : List α} (i : Index (xs.map f)) : i.val = f (i.unmap f).val := by
   rw [←map_unmap f i, val_map, unmap_map]

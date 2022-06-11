@@ -26,14 +26,14 @@ instance [Complemented a] [Complemented b] : Complemented (a ↔ b) :=
 
 instance instComplementedAll : (as : List Prop) → [ComplementedList as] → Complemented (All as)
 | [], _ => Complemented.isTrue All.nil
-| a::as, inst => match inst.head, @instComplementedAll as inst.tail with
+| _::as, inst => match inst.head, @instComplementedAll as inst.tail with
   | Complemented.isFalse hh, _ => Complemented.isFalse λ h => absurd h.head hh
   | _, Complemented.isFalse ht => Complemented.isFalse λ h => absurd h.tail ht
   | Complemented.isTrue hh, Complemented.isTrue ht => Complemented.isTrue (All.cons hh ht)
 
 instance instComplementedAny : (as : List Prop) → [ComplementedList as] → Complemented (Any as)
 | [], _ => Complemented.isFalse (λ h => nomatch h)
-| a::as, inst => match inst.head, @instComplementedAny as inst.tail with
+| _::as, inst => match inst.head, @instComplementedAny as inst.tail with
   | Complemented.isTrue hh, _ => Complemented.isTrue (Any.head hh)
   | _, Complemented.isTrue ht => Complemented.isTrue (Any.tail ht)
   | Complemented.isFalse hh, Complemented.isFalse ht =>

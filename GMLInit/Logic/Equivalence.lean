@@ -93,7 +93,7 @@ instance : Comparison r := ⟨Apartness.compare⟩
 
 instance : Equivalence (λ x y => ¬ r x y) where
   refl := Irreflexive.irrefl
-  eucl {x y z} (nxy nxz hyz) :=
+  eucl {x _ _} (nxy nxz hyz) :=
     match Comparison.compare hyz x with
     | .inl hyx => nxy (Symmetric.symm hyx)
     | .inr hxz => nxz hxz
@@ -130,7 +130,7 @@ variable {α} (r : α → α → Prop) [TightApartness r]
 
 theorem eq_iff_not_apart : x = y ↔ ¬ r x y := ⟨λ | rfl => Irreflexive.irrefl _, TightApartness.tight⟩
 
-instance : StableEq α := λ x y => Iff.subst (eq_iff_not_apart r).symm inferInstance
+instance : StableEq α := λ _ _ => Iff.subst (eq_iff_not_apart r).symm inferInstance
 
 instance [WeaklyComplementedEq α] : TightApartness (α:=α) (.≠.) where
   irrefl := Irreflexive.irrefl

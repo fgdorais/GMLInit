@@ -26,7 +26,7 @@ instance [Stable a] [Stable b] : Stable (a ∧ b) :=
   And.intro ha hb
 
 instance (α) (β : α → Sort _) [(x : α) → StableEq (β x)] : StableEq ((x : α) → β x) :=
-  fun f g => Stable.intro λ hnn => funext λ x => Stable.by_contradiction λ hn => hnn λ | rfl => hn rfl
+  fun _ _ => Stable.intro λ hnn => funext λ _ => Stable.by_contradiction λ hn => hnn λ | rfl => hn rfl
 
 instance (α β) [StableEq β] : StableEq (α → β) := inferInstance
 

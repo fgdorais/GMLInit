@@ -30,14 +30,14 @@ instance [WeaklyDecidable a] [WeaklyDecidable b] : WeaklyDecidable (a ↔ b) :=
 
 instance instWeaklyDecidableAll : (as : List Prop) → [WeaklyDecidableList as] → WeaklyDecidable (All as)
 | [], _ => WeaklyDecidable.isIrrefutable (absurd All.nil)
-| a::as, inst => match inst.head, @instWeaklyDecidableAll as inst.tail with
+| _::as, inst => match inst.head, @instWeaklyDecidableAll as inst.tail with
   | WeaklyDecidable.isFalse hh, _ => WeaklyDecidable.isFalse λ h => absurd h.head hh
   | _, WeaklyDecidable.isFalse ht => WeaklyDecidable.isFalse λ h => absurd h.tail ht
   | WeaklyDecidable.isIrrefutable hh, WeaklyDecidable.isIrrefutable ht => WeaklyDecidable.isIrrefutable λ h => hh λ hh => ht λ ht => h (All.cons hh ht)
 
 instance instWeaklyDecidableAny : (as : List Prop) → [WeaklyDecidableList as] → WeaklyDecidable (Any as)
 | [], _ => WeaklyDecidable.isFalse (λ h => nomatch h)
-| a::as, inst => match inst.head, @instWeaklyDecidableAny as inst.tail with
+| _::as, inst => match inst.head, @instWeaklyDecidableAny as inst.tail with
   | WeaklyDecidable.isIrrefutable hh, _ => WeaklyDecidable.isIrrefutable λ h => hh λ hh => h (Any.head hh)
   | _, WeaklyDecidable.isIrrefutable ht => WeaklyDecidable.isIrrefutable λ h => ht λ ht => h (Any.tail ht)
   | WeaklyDecidable.isFalse hh, WeaklyDecidable.isFalse ht => WeaklyDecidable.isFalse λ | Any.head h => absurd h hh | Any.tail h => absurd h ht

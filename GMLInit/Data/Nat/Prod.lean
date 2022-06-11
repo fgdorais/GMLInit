@@ -99,7 +99,7 @@ def split : Nat → (t : Nat) × Fin (t+1)
 | 0 => ⟨0,0⟩
 | n+1 =>
   match split n with
-  | ⟨t,s,hs⟩ =>
+  | ⟨t,s,_⟩ =>
     if h : s < t
     then ⟨t, s+1, Nat.succ_lt_succ h⟩
     else ⟨t+1, 0, Nat.zero_lt_succ (t+1)⟩

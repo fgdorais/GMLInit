@@ -52,7 +52,7 @@ def Tactic.constr (mvarId : MVarId) : MetaM (List MVarId) := do
     let target ← getMVarType' mvarId
     matchConstStruct target.getAppFn
       (fun _ => throwTacticEx `constr mvarId "target is not an inductive datatype with one constructor")
-      fun ival us cval => do
+      fun _ us cval => do
         let ctor := mkAppN (Lean.mkConst cval.name us) target.getAppArgs[:cval.numParams]
         let ctorType ← inferType ctor
         let (mvars, _, _) ← forallMetaTelescopeReducing ctorType (some cval.numFields)

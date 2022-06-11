@@ -5,11 +5,11 @@ namespace Index
 variable {α} {xss : List (List α)}
 
 def join : {xss : List (List α)} → (i : Index xss) × (Index i.val) → Index xss.join
-| xs::xss, ⟨head, j⟩ => append (.inl j)
-| xs::xss, ⟨tail i, j⟩ => append (.inr (join ⟨i, j⟩))
+| _, ⟨head, j⟩ => append (.inl j)
+| _, ⟨tail i, j⟩ => append (.inr (join ⟨i, j⟩))
 
 def unjoin : {xss : List (List α)} → Index xss.join → (i : Index xss) × (Index i.val)
-| xs::xss, k =>
+| _::_, k =>
   match unappend k with
   | .inl j => ⟨head, j⟩
   | .inr k => ⟨tail (unjoin k).fst, (unjoin k).snd⟩

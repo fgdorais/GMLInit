@@ -6,17 +6,17 @@ namespace Index
 variable {α} {xs ys : List α}
 
 def append : {xs ys : List α} → Sum (Index xs) (Index ys) → Index (xs ++ ys)
-| [], ys, inr i => i
-| x::xs, ys, inr i => tail (append (inr i))
-| x::xs, ys, inl head => head
-| x::xs, ys, inl (tail i) => tail (append (inl i))
+| [], _, inr i => i
+| _::_, _, inr i => tail (append (inr i))
+| _::_, _, inl head => head
+| _::_, _, inl (tail i) => tail (append (inl i))
 
 abbrev append_inl (i : Index xs) : Index (xs ++ ys) := append (inl i)
 
 abbrev append_inr (j : Index ys) : Index (xs ++ ys) := append (inr j)
 
 def unappend : {xs ys : List α} → Index (xs ++ ys) → Sum (Index xs) (Index ys)
-| [], ys, i => inr i
+| [], _, i => inr i
 | x::xs, ys, i =>
   match (i : Index (x :: (xs ++ ys))) with
   | head => inl head
@@ -72,12 +72,12 @@ def appendEquiv (xs ys : List α) : Equiv (Sum (Index xs) (Index ys)) (Index (xs
 theorem val_append_inl (i : Index xs) : (append_inl (ys:=ys) i).val = i.val := by
   induction i with
   | head => rfl
-  | tail i ih => exact ih
+  | tail _ ih => exact ih
 
 theorem val_append_inr (j : Index ys) : (append_inr (xs:=xs) j).val = j.val := by
   induction xs with
   | nil => rfl
-  | cons x xs ih => exact ih
+  | cons _ _ ih => exact ih
 
 theorem val_append (i : Sum (Index xs) (Index ys)) : (append i).val = match i with | inl i => i.val | inr j => j.val := by
   match i with

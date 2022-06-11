@@ -63,8 +63,8 @@ theorem add_mk_add_right (k m n) : (m + k ⊖ n + k) = (m ⊖ n) := by
 theorem mk_add_ofNat (m n k) : (m ⊖ n) + ofNat k = (m + k ⊖ n) := by
   induction m, n with
   | zero_zero => rw [zero_mk_zero, Int.zero_add, Nat.zero_add, mk_zero]
-  | zero_succ n ih => rw [zero_mk_succ, Nat.zero_add]; rfl
-  | succ_zero m ih => rw [succ_mk_zero, mk_zero]; rfl
+  | zero_succ n => rw [zero_mk_succ, Nat.zero_add]; rfl
+  | succ_zero m => rw [succ_mk_zero, mk_zero]; rfl
   | succ_succ m n ih => rw [succ_mk_succ, Nat.succ_add', succ_mk_succ, ih]
 
 theorem mk_add_negSucc (m n k) : (m ⊖ n) + negSucc k = (m ⊖ n + k + 1) := by
@@ -169,8 +169,8 @@ theorem mk_mul_negSucc (m n k) : (m ⊖ n) * negSucc k = (n * (k + 1) ⊖ m * (k
 theorem mk_mul_mk (m₁ n₁ m₂ n₂) : (m₁ ⊖ n₁) * (m₂ ⊖ n₂) = (m₁ * m₂ + n₁ * n₂ ⊖ m₁ * n₂ + n₁ * m₂) := by
   induction m₂, n₂ with
   | zero_zero => simp only [Nat.zero_mul, Nat.mul_zero, Nat.add_zero, Nat.zero_add, zero_mk_zero, Int.mul_zero]
-  | zero_succ n₂ ih => simp only [Nat.zero_mul, Nat.mul_zero, Nat.add_zero, Nat.zero_add, zero_mk_succ, mk_mul_negSucc]
-  | succ_zero m₂ ih => simp only [Nat.zero_mul, Nat.mul_zero, Nat.add_zero, Nat.zero_add, succ_mk_zero, mk_mul_ofNat, Nat.mul_comm]
+  | zero_succ n₂ => simp only [Nat.zero_mul, Nat.mul_zero, Nat.add_zero, Nat.zero_add, zero_mk_succ, mk_mul_negSucc]
+  | succ_zero m₂ => simp only [Nat.zero_mul, Nat.mul_zero, Nat.add_zero, Nat.zero_add, succ_mk_zero, mk_mul_ofNat, Nat.mul_comm]
   | succ_succ m₂ n₂ ih => simp only [Nat.mul_succ, Nat.succ_mul]; rw [succ_mk_succ, Nat.add_cross_comm _ m₁ _ n₁, Nat.add_cross_comm _ m₁ _ n₁, add_mk_add_right]; exact ih
 
 protected theorem mul_assoc (i j k : Int) : (i * j) * k = i * (j * k) := by

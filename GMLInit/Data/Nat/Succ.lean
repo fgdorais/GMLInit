@@ -108,7 +108,7 @@ protected theorem succ_le_or_eq_zero_iff_le_pred (x y : Nat) : x + 1 ≤ y ∨ x
       exact Nat.succ_le_succ h
 
 protected theorem pred_lt_or_eq_zero_iff_lt_succ (x y : Nat) : x - 1 < y ∨ x = 0 ↔ x < y + 1 := by
-  induction x, y using Nat.recDiagAuxOn with
+  cases x, y using Nat.casesDiagAuxOn with
   | left x =>
     constr
     · intro
@@ -126,7 +126,7 @@ protected theorem pred_lt_or_eq_zero_iff_lt_succ (x y : Nat) : x - 1 < y ∨ x =
     · intro
       right
       reflexivity
-  | diag x y H =>
+  | diag x y =>
     constr
     · intro
       | Or.inl h => exact Nat.succ_lt_succ h

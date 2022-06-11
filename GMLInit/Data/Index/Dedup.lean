@@ -7,8 +7,8 @@ import GMLInit.Logic.ListConnectives
 namespace Any
 
 protected def get : {ps : List Prop} → [DecidableList ps] → Any ps → Index ps
-| p :: ps, .cons (isTrue hh) _, _ => .head
-| p :: ps, .cons (isFalse fh) inst, h =>
+| _, .cons (isTrue _) _, _ => .head
+| _::ps, .cons (isFalse fh) inst, h =>
   have : Any ps :=
     match h with
     | .head hh => absurd hh fh
@@ -16,13 +16,11 @@ protected def get : {ps : List Prop} → [DecidableList ps] → Any ps → Index
   .tail (@Any.get ps inst this)
 
 theorem get_prop : {ps : List Prop} → [DecidableList ps] → (h : Any ps) → h.get.val
-| p :: ps, .cons (isTrue hh) _, _ => hh
-| p :: ps, .cons (isFalse fh) inst, h =>
-  have : Any ps :=
-    match h with
+| _, .cons (isTrue hh) _, _ => hh
+| _, .cons (isFalse fh) _, h =>
+  get_prop $ match h with
     | .head hh => absurd hh fh
     | .tail ht => ht
-  get_prop this
 
 end Any
 

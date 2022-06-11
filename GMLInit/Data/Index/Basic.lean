@@ -34,7 +34,7 @@ open Ordering in instance instLawfulOrd : (xs : List α) → Ord.LawfulOrd (Inde
   lt_trans := (nomatch .)
   gt_trans := (nomatch .)
 }
-| x::xs => {
+| _::xs => {
   eq_refl := fun
   | head => rfl
   | tail i => (instLawfulOrd xs).eq_refl i
@@ -42,7 +42,7 @@ open Ordering in instance instLawfulOrd : (xs : List α) → Ord.LawfulOrd (Inde
   | head, head, _ => rfl
   | head, tail _, h => Ordering.noConfusion h
   | tail _, head, h => Ordering.noConfusion h
-  | tail i, tail j, h => congrArg tail ((instLawfulOrd xs).eq_tight h)
+  | tail _, tail _, h => congrArg tail ((instLawfulOrd xs).eq_tight h)
   lt_trans := fun {i j k} hij hjk => match i, j, k, hij, hjk with
   | head, _, tail _, _, _ => rfl
   | head, head, _, h, _ => Ordering.noConfusion h

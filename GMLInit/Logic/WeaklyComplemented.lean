@@ -25,14 +25,14 @@ instance instWeaklyComplementedIff [WeaklyComplemented a] [WeaklyComplemented b]
 
 instance instWeaklyComplementedAll : (as : List Prop) → [WeaklyComplementedList as] → WeaklyComplemented (All as)
 | [], _ => WeaklyComplemented.isIrrefutable (absurd All.nil)
-| a::as, inst => match inst.head, @instWeaklyComplementedAll as inst.tail with
+| _::as, inst => match inst.head, @instWeaklyComplementedAll as inst.tail with
   | WeaklyComplemented.isFalse hh, _ => WeaklyComplemented.isFalse λ h => absurd h.head hh
   | _, WeaklyComplemented.isFalse ht => WeaklyComplemented.isFalse λ h => absurd h.tail ht
   | WeaklyComplemented.isIrrefutable hh, WeaklyComplemented.isIrrefutable ht => WeaklyComplemented.isIrrefutable λ h => hh λ hh => ht λ ht => h (All.cons hh ht)
 
 instance instWeaklyComplementedAny : (as : List Prop) → [WeaklyComplementedList as] → WeaklyComplemented (Any as)
 | [], _ => WeaklyComplemented.isFalse (λ h => nomatch h)
-| a::as, inst => match inst.head, @instWeaklyComplementedAny as inst.tail with
+| _::as, inst => match inst.head, @instWeaklyComplementedAny as inst.tail with
   | WeaklyComplemented.isIrrefutable hh, _ => WeaklyComplemented.isIrrefutable λ h => hh λ hh => h (Any.head hh)
   | _, WeaklyComplemented.isIrrefutable ht => WeaklyComplemented.isIrrefutable λ h => ht λ ht => h (Any.tail ht)
   | WeaklyComplemented.isFalse hh, WeaklyComplemented.isFalse ht =>

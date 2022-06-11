@@ -17,13 +17,13 @@ instance decEq {xs : List α} : DecidableEq (BDD xs) :=
   | [], tt, ff => isFalse BDD.noConfusion
   | [], ff, tt => isFalse BDD.noConfusion
   | [], ff, ff => isTrue rfl
-  | x::xs, lift a, lift b =>
+  | _::_, lift a, lift b =>
     match decEq a b with
     | isTrue rfl => isTrue rfl
     | isFalse h => isFalse fun | rfl => h rfl
-  | x::xs, lift _, case _ _ => isFalse BDD.noConfusion
-  | x::xs, case _ _, lift _ => isFalse BDD.noConfusion
-  | x::xs, case ta fa, case tb fb =>
+  | _::_, lift _, case _ _ => isFalse BDD.noConfusion
+  | _::_, case _ _, lift _ => isFalse BDD.noConfusion
+  | _::_, case ta fa, case tb fb =>
     match decEq ta tb, decEq fa fb with
     | isTrue rfl, isTrue rfl => isTrue rfl
     | isFalse h, _ => isFalse fun | rfl => h rfl
@@ -77,7 +77,7 @@ theorem eval_var {xs : List α} (i : Index xs) (v : Index xs → Bool) : (BDD.va
     match v .head with
     | true => simp [eval_true]
     | false => simp [eval_false]
-  | tail i ih => exact ih ..
+  | tail _ ih => exact ih ..
 
 protected def not {xs : List α} (a : BDD xs) : BDD xs :=
   match xs, a with
@@ -300,17 +300,17 @@ theorem reduce_reduce {xs : List α} (a : BDD xs) : a.reduce.reduce = a.reduce :
 theorem true_isReduced {xs : List α} : isReduced (BDD.true (xs:=xs)) := by
   induction xs with
   | nil => rfl
-  | cons x xs ih => exact ih ..
+  | cons _ _ ih => exact ih ..
 
 theorem false_isReduced {xs : List α} : isReduced (BDD.false (xs:=xs)) := by
   induction xs with
   | nil => rfl
-  | cons x xs ih => exact ih ..
+  | cons _ _ ih => exact ih ..
 
 theorem var_isReduced {xs : List α} (i : Index xs) : isReduced (BDD.var i) := by
   induction i with
   | head => simp [BDD.var, isReduced, true_isReduced, false_isReduced, true_ne_false]
-  | tail i ih => exact ih ..
+  | tail _ ih => exact ih ..
 
 theorem eval_reduce {xs : List α} (a : BDD xs) (v : Index xs → Bool) : a.reduce.eval v = a.eval v := by
   induction xs with
@@ -463,7 +463,6 @@ theorem eval_eq_iff_reduce_eq {xs : List α} (a b : BDD xs) : a.eval = b.eval �
   · intro heq
     by_contradiction
     | assuming hne =>
-      let v := delta a.reduce b.reduce a.reduce_isReduced b.reduce_isReduced hne
       apply eval_delta a.reduce b.reduce a.reduce_isReduced b.reduce_isReduced hne
       rw [eval_reduce, eval_reduce, heq]
   · intro heq
