@@ -1,6 +1,7 @@
 import Lake
 open Lake DSL
 
-package GMLInit {
-  defaultFacet := PackageFacet.oleans
-}
+package GMLInit {}
+
+@[defaultTarget]
+lean_lib GMLInit {}
