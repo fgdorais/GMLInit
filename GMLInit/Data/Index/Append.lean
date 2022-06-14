@@ -34,8 +34,8 @@ theorem unappend_append (i : Sum (Index xs) (Index ys)) : unappend (append i) = 
   | cons x xs ih =>
     match i with
     | .inl .head => rfl
-    | .inl (.tail i) => unfold append unappend; rw [ih]
-    | .inr j => unfold append unappend; rw [ih]
+    | .inl (.tail i) => rw [append, unappend]; clean; rw [ih]
+    | .inr j => rw [append, unappend]; clean; rw [ih]
 
 theorem append_unappend (k : Index (xs ++ ys)) : append (unappend k) = k := by
   induction xs generalizing ys with
@@ -44,21 +44,21 @@ theorem append_unappend (k : Index (xs ++ ys)) : append (unappend k) = k := by
     match k with
     | .head => rfl
     | .tail k =>
-      unfold unappend
+      rw [unappend]
+      clean
       split
-      next h => unfold append; rw [←h, ih]
-      next h => unfold append; rw [←h, ih]
+      next h => rw [append, ←h, ih]
+      next h => rw [append, ←h, ih]
 
 theorem append_eq_iff_eq_unappend (i : Sum (Index xs) (Index ys)) (j : Index (xs ++ ys)) : append i = j ↔ i = unappend j := by
   constr
-  · intro h; cases h; rw [unappend_append]
-  · intro h; cases h; rw [append_unappend]
+  · intro h; rw [←h, unappend_append]
+  · intro h; rw [h, append_unappend]
 
 theorem unappend_eq_iff_eq_append (i : Index (xs ++ ys)) (j : Sum (Index xs) (Index ys)) : unappend i = j ↔ i = append j := by
   constr
-  · intro h; cases h; rw [append_unappend]
-  · intro h; cases h
-    rw [unappend_append]
+  · intro h; rw [←h, append_unappend]
+  · intro h; rw [h, unappend_append]
 
 def appendEquiv (xs ys : List α) : Equiv (Sum (Index xs) (Index ys)) (Index (xs ++ ys)) where
   fwd := append

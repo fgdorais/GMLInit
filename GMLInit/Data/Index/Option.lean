@@ -25,13 +25,13 @@ theorem option_unoption : (k : Index (List.option xs)) → option (unoption k) =
 
 theorem option_eq_iff_eq_unoption (i : Option (Index xs)) (k : Index (List.option xs)) : option i = k ↔ i = unoption k := by
   constr
-  · intro h; cases h; rw [unoption_option]
-  · intro h; cases h; rw [option_unoption]
+  · intro h; rw [←h, unoption_option]
+  · intro h; rw [h, option_unoption]
 
 theorem unoption_eq_iff_eq_option (k : Index (List.option xs)) (i : Option (Index xs)) : unoption k = i ↔ k = option i := by
   constr
-  · intro h; cases h; rw [option_unoption]
-  · intro h; cases h; rw [unoption_option]
+  · intro h; rw [←h, option_unoption]
+  · intro h; rw [h, unoption_option]
 
 def optionEquiv (xs : List α) : Equiv (Option (Index xs)) (Index (List.option xs)) where
   fwd := option
@@ -45,7 +45,7 @@ def optionEquiv (xs : List α) : Equiv (Option (Index xs)) (Index (List.option x
 theorem val_option (i : Option (Index xs)) : (match i with | none => none | some i => some i.val) = (option i).val := by
   match i with
   | none => rfl
-  | some i => unfold option; rw [val_map]
+  | some i => rw [option, val_map]
 
 theorem val_unoption (k : Index (List.option xs)) : k.val = (match k.unoption with | none => none | some k => some k.val) := by
   rw [←option_unoption k, val_option, unoption_option]

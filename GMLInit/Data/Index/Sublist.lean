@@ -90,30 +90,28 @@ theorem sublist_eq_iff_eq_unsublist {xs : List α} (i : Index xs) (hi : p i.val)
       | head =>
         rw [sublist_pos_head hx]
         constr
-        · intro heq
-          cases heq
-          rw [unsublist_pos_head]
-        · intro heq
-          simp [unsublist, hx] at heq
-          split at heq
-          next h => rw [←h, eqNdrec_symm]
+        · intro h
+          rw [←h, unsublist_pos_head]
+        · intro h
+          rw [unsublist, dif_pos hx] at h
+          split at h
+          next hh => rw [←hh, eqNdrec_symm]
           next => contradiction
       | tail i =>
         rw [sublist_pos_tail hx]
         constr
-        · intro heq
-          cases heq
-          rw [unsublist_pos_tail]
+        · intro h
+          rw [←h, unsublist_pos_tail]
           apply congrArg
           rw [←ih]
-        · intro heq
-          simp [unsublist, hx] at heq
-          split at heq
+        · intro h
+          simp [unsublist, hx] at h
+          split at h
           next => contradiction
-          next j h =>
-            cases heq
-            rw [eqNdrec_symm] at h
+          next j ht =>
             cases h
+            rw [eqNdrec_symm] at ht
+            cases ht
             elim_casts
             apply congrArg
             rw [ih]

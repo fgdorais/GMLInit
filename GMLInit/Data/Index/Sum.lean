@@ -19,23 +19,23 @@ def unsum (k : Index (List.sum xs ys)) : Sum (Index xs) (Index ys) :=
   | inr j => inr (j.unmap inr)
 
 theorem unsum_sum : (i : Sum (Index xs) (Index ys)) → unsum (sum i) = i
-| inl _ => by unfold unsum sum; rw [unappend_append]; clean; rw [unmap_map]
-| inr _ => by unfold unsum sum; rw [unappend_append]; clean; rw [unmap_map]
+| inl _ => by rw [unsum, sum, unappend_append]; clean; rw [unmap_map]
+| inr _ => by rw [unsum, sum, unappend_append]; clean; rw [unmap_map]
 
 theorem sum_unsum (k : Index (List.sum xs ys)) : sum (unsum k) = k := by
   match h : unappend k with
-  | inl i => rw [unappend_eq_iff_eq_append] at h; cases h; rw [unsum, unappend_append, sum]; clean; rw [map_unmap]
-  | inr j => rw [unappend_eq_iff_eq_append] at h; cases h; rw [unsum, unappend_append, sum]; clean; rw [map_unmap]
+  | inl i => rw [unappend_eq_iff_eq_append] at h; rw [h, unsum, unappend_append, sum]; clean; rw [map_unmap]
+  | inr j => rw [unappend_eq_iff_eq_append] at h; rw [h, unsum, unappend_append, sum]; clean; rw [map_unmap]
 
 theorem sum_eq_iff_eq_unsum (i : Sum (Index xs) (Index ys)) (k : Index (List.sum xs ys)) : sum i = k ↔ i = unsum k := by
   constr
-  · intro h; cases h; rw [unsum_sum]
-  · intro h; cases h; rw [sum_unsum]
+  · intro h; rw [←h, unsum_sum]
+  · intro h; rw [h, sum_unsum]
 
 theorem unsum_eq_iff_eq_sum (k : Index (List.sum xs ys)) (i : Sum (Index xs) (Index ys)) : unsum k = i ↔ k = sum i := by
   constr
-  · intro h; cases h; rw [sum_unsum]
-  · intro h; cases h; rw [unsum_sum]
+  · intro h; rw [←h, sum_unsum]
+  · intro h; rw [h, unsum_sum]
 
 def sumEquiv (xs : List α) (ys : List β) : Equiv (Sum (Index xs) (Index ys)) (Index (List.sum xs ys)) where
   fwd := sum
@@ -48,8 +48,8 @@ def sumEquiv (xs : List α) (ys : List β) : Equiv (Sum (Index xs) (Index ys)) (
 
 theorem val_sum (i : Sum (Index xs) (Index ys)) : (match i with | inl i => inl i.val | inr j => inr j.val) = (sum i).val := by
   match i with
-  | inl i => unfold sum; rw [val_append]; clean; rw [val_map]
-  | inr j => unfold sum; rw [val_append]; clean; rw [val_map]
+  | inl i => rw [sum, val_append]; clean; rw [val_map]
+  | inr j => rw [sum, val_append]; clean; rw [val_map]
 
 theorem val_unsum (k : Index (List.sum xs ys)) : k.val = (match k.unsum with | inl i => inl i.val | inr j => inr j.val) := by
   rw [←sum_unsum k, val_sum, unsum_sum]

@@ -26,13 +26,13 @@ theorem map_unmap {xs : List α} (i : Index (xs.map f)) : (i.unmap f).map f = i 
 
 theorem map_eq_iff_eq_unmap {xs : List α} (i : Index xs) (j : Index (xs.map f)) : i.map f = j ↔ i = j.unmap f := by
   constr
-  · intro h; cases h; rw [unmap_map]
-  · intro h; cases h; rw [map_unmap]
+  · intro h; rw [←h, unmap_map]
+  · intro h; rw [h, map_unmap]
 
 theorem unmap_eq_iff_eq_map {xs : List α} (i : Index (xs.map f)) (j : Index xs) : i.unmap f = j ↔ i = j.map f := by
   constr
-  · intro h; cases h; rw [map_unmap]
-  · intro h; cases h; rw [unmap_map]
+  · intro h; rw [←h, map_unmap]
+  · intro h; rw [h, unmap_map]
 
 def mapEquiv (xs : List α) : Equiv (Index xs) (Index (xs.map f)) where
   fwd := map f

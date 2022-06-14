@@ -22,8 +22,8 @@ def unpi : {xs : List α} → {f : (i : Index xs) → List (β i.val)} → (Inde
 theorem unpi_pi (h : (i : Index xs) → Index (f i)) : unpi (pi h) = h := by
   funext i
   induction i with
-  | head => unfold pi unpi; rw [unbind_bind, unmap_map]
-  | tail i ih => unfold pi unpi; rw [unbind_bind, ih]
+  | head => rw [pi, unpi]; clean; rw [unbind_bind, unmap_map]
+  | tail i ih => rw [pi, unpi]; clean; rw [unbind_bind, ih]
 
 theorem pi_unpi (k : Index (xs.pi f)) : pi (unpi k) = k := by
   induction xs with
@@ -38,13 +38,13 @@ theorem pi_unpi (k : Index (xs.pi f)) : pi (unpi k) = k := by
 
 theorem pi_eq_iff_eq_unpi (h : (i : Index xs) → Index (f i)) (k : Index (xs.pi f)) : pi h = k ↔ h = unpi k := by
   constr
-  · intro h; cases h; rw [unpi_pi]
-  · intro h; cases h; rw [pi_unpi]
+  · intro h; rw [←h, unpi_pi]
+  · intro h; rw [h, pi_unpi]
 
 theorem unpi_eq_iff_eq_pi (k : Index (xs.pi f)) (h : (i : Index xs) → Index (f i)) : unpi k = h ↔ k = pi h := by
   constr
-  · intro h; cases h; rw [pi_unpi]
-  · intro h; cases h; rw [unpi_pi]
+  · intro h; rw [←h, pi_unpi]
+  · intro h; rw [h, unpi_pi]
 
 def piEquiv (xs : List α) (f : (i : Index xs) → List (β i.val)) : Equiv ((i : Index xs) → Index (f i)) (Index (xs.pi f)) where
   fwd := pi

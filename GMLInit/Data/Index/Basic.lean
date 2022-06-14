@@ -94,19 +94,19 @@ protected def find? {α} : {xs : List α} → (p : Index xs → Bool) → Option
 theorem find_some {α} {xs : List α} {p : Index xs → Bool} (i : Index xs) : Index.find? p = some i → p i = true := by
   induction xs with
   | nil => cases i
-  | cons x xs H =>
+  | cons x xs ih =>
     intro h
     unfold Index.find? at h
     clean at h
     split at h
-    next hh => cases h; exact hh
-    next ht => cases h; exact H _ ht
+    next hh => injection h with h; rw [←h, hh]
+    next ht => injection h with h; rw [←h, ih _ ht]
     next => contradiction
 
 theorem find_none {α} {xs : List α} {p : Index xs → Bool} (i : Index xs) : Index.find? p = none → p i = false := by
   induction xs with
   | nil => cases i
-  | cons x xs H =>
+  | cons x xs ih =>
     intro h
     unfold Index.find? at h
     clean at h
@@ -116,7 +116,7 @@ theorem find_none {α} {xs : List α} {p : Index xs → Bool} (i : Index xs) : I
     next hh ht =>
       cases i with
       | head => exact hh
-      | tail i => exact H _ ht
+      | tail i => exact ih _ ht
 
 def search {α} {xs : List α} {p : Index xs → Prop} [DecidablePred p] (h : ∃ i, p i) : Index xs :=
   match hi : Index.find? λ i => p i with
@@ -132,7 +132,7 @@ theorem search_prop {α} {xs : List α} {p : Index xs → Prop} [DecidablePred p
   split
   next h =>
     apply of_decide_eq_true
-    apply find_some _ h
+    exact find_some _ h
   next f =>
     absurd h
     intro ⟨j, hj⟩

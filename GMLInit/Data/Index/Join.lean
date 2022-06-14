@@ -27,18 +27,18 @@ theorem join_unjoin (k : Index xss.join) : join (unjoin k) = k := by
   | nil => contradiction
   | cons xs xss ih =>
     match h : unappend k with
-    | .inl j => rw [unappend_eq_iff_eq_append] at h; cases h; rw [unjoin, unappend_append, join]
-    | .inr k => rw [unappend_eq_iff_eq_append] at h; cases h; rw [unjoin, unappend_append, join, ih]
+    | .inl j => rw [unappend_eq_iff_eq_append] at h; rw [h, unjoin, unappend_append, join]
+    | .inr k => rw [unappend_eq_iff_eq_append] at h; rw [h, unjoin, unappend_append, join, ih]
 
 theorem join_eq_iff_eq_unjoin (i : (i : Index xss) × (Index i.val)) (k : Index xss.join) : join i = k ↔ i = unjoin k := by
   constr
-  · intro h; cases h; rw [unjoin_join]
-  · intro h; cases h; rw [join_unjoin]
+  · intro h; rw [←h, unjoin_join]
+  · intro h; rw [h, join_unjoin]
 
 theorem unjoin_eq_iff_eq_join (k : Index xss.join) (i : (i : Index xss) × (Index i.val)) : unjoin k = i ↔ k = join i := by
   constr
-  · intro h; cases h; rw [join_unjoin]
-  · intro h; cases h; rw [unjoin_join]
+  · intro h; rw [←h, join_unjoin]
+  · intro h; rw [h, unjoin_join]
 
 def joinEquiv (xss : List (List α)) : Equiv ((i : Index xss) × Index i.val) (Index xss.join) where
   fwd := join
@@ -54,8 +54,8 @@ theorem val_join (i : (i : Index xss) × Index i.val) : (join i).val = i.snd.val
   | nil => cases i; contradiction
   | cons xs xss ih =>
     match i with
-    | ⟨head, j⟩ => unfold join; rw [val_append_inl]
-    | ⟨tail i, j⟩ => unfold join; rw [val_append_inr, ih]
+    | ⟨head, j⟩ => rw [join, val_append_inl]
+    | ⟨tail i, j⟩ => rw [join, val_append_inr, ih]
 
 theorem val_unjoin (k : Index xss.join) : (unjoin k).snd.val = k.val := by
   rw [←join_unjoin k, val_join, unjoin_join]

@@ -116,22 +116,11 @@ theorem dedup_undedup {xs : List α} (i : Index (xs.dedup s)) : (i.undedup s).de
   | cons x xs ih =>
     unfold undedup
     split
-    next ha =>
-      unfold dedup
-      rw [dif_pos ha]
-      rw [ih]
-      rw [eqNdrec_symm]
-      rfl
+    next ha => rw [dedup, dif_pos ha, ih, eqNdrec_symm]; rfl
     next ha =>
       split
-      next h =>
-        unfold dedup
-        rw [dif_neg ha, eqNdrec_symm, ←h]
-        rfl
-      next h =>
-        unfold dedup
-        rw [dif_neg ha, eqNdrec_symm, ih, ←h]
-        rfl
+      next h => rw [dedup, dif_neg ha, eqNdrec_symm, ←h]; rfl
+      next h => rw [dedup, dif_neg ha, eqNdrec_symm, ih, ←h]; rfl
 
 theorem undedup_dedup {xs : List α} (i : Index xs) : s.r ((i.dedup s).undedup s).val i.val := by
   symmetry
@@ -145,7 +134,7 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
     match i with
     | head =>
       rw [val_head] at h
-      unfold dedup
+      rw [dedup]
       split
       next ha =>
         rw [eqNdrec_symm]
@@ -171,7 +160,7 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
           exact h
     | tail i =>
       rw [val_tail] at h
-      unfold dedup
+      rw [dedup]
       split
       next ha =>
         rw [eqNdrec_symm]
@@ -193,8 +182,7 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
         | tail j =>
           rw [eqNdrec_symm] at hj
           rw [hj, val_ndrec, val_tail] at h
-          rw [hj]
-          rw [ih h]
+          rw [hj, ih h]
           elim_casts
 
 theorem dedup_eq_iff_rel {xs : List α} (i : Index xs) (j : Index (xs.dedup s)) : i.dedup s = j ↔ s.r i.val j.val := by
