@@ -1,34 +1,30 @@
 import GMLInit.Data.Basic
 import GMLInit.Logic.Relation
+import GMLInit.Meta.Decidable
+
+open Ordering (lt eq gt)
 
 namespace Ord
 variable (α) [Ord α]
 
-open Ordering (lt eq gt)
+scoped instance instLT : LT α := ⟨λ x y => Ord.compare x y = lt⟩
 
-scoped instance instOrdLT : LT α := ⟨λ x y => Ord.compare x y = lt⟩
+scoped instance instLE : LE α := ⟨λ x y => Ord.compare x y ≠ gt⟩
 
-scoped instance instOrdLE : LE α := ⟨λ x y => Ord.compare x y ≠ gt⟩
+instance : DecidableRel (instLT α).lt := λ x y => inferDecidable (Ord.compare x y = lt)
 
-scoped instance instOrdBEq : BEq α := ⟨λ x y => Ord.compare x y = eq⟩
+instance : DecidableRel (instLE α).le := λ x y => inferDecidable (Ord.compare x y ≠ gt)
 
-instance : DecidableRel (instOrdLT α).lt := λ x y => inferDecidable (Ord.compare x y = lt)
+theorem lt_iff_compare_eq_lt {x y : α} : x < y ↔ Ord.compare x y = lt := Iff.rfl
 
-instance : DecidableRel (instOrdLE α).le := λ x y => inferDecidable (Ord.compare x y ≠ gt)
-
-theorem lt_def {x y : α} : x < y ↔ Ord.compare x y = lt := Iff.rfl
-
-theorem le_def {x y : α} : x ≤ y ↔ Ord.compare x y ≠ gt := Iff.rfl
+theorem le_iff_compare_ne_gt {x y : α} : x ≤ y ↔ Ord.compare x y ≠ gt := Iff.rfl
 
 class TransOrd : Prop where
   eq_refl (x : α) : compare x x = eq
+  eq_subst {x y z : α} : compare x y = eq → compare x z = compare y z
   lt_trans {x y z : α} : compare x y = lt → compare y z = lt → compare x z = lt
   gt_trans {x y z : α} : compare x y = gt → compare y z = gt → compare x z = gt
-  lt_of_lt_of_eq {x y z : α} : compare x y = lt → compare y z = eq → compare x z = lt
-  lt_of_eq_of_lt {x y z : α} : compare x y = eq → compare y z = lt → compare x z = lt
-  gt_of_gt_of_eq {x y z : α} : compare x y = gt → compare y z = eq → compare x z = gt
-  gt_of_eq_of_gt {x y z : α} : compare x y = eq → compare y z = gt → compare x z = gt
-export TransOrd (eq_refl lt_trans gt_trans lt_of_lt_of_eq lt_of_eq_of_lt gt_of_gt_of_eq gt_of_eq_of_gt)
+export TransOrd (eq_refl eq_subst lt_trans gt_trans)
 
 class LawfulOrd : Prop where
   eq_refl (x : α) : compare x x = eq
@@ -37,40 +33,91 @@ class LawfulOrd : Prop where
   gt_trans {x y z : α} : compare x y = gt → compare y z = gt → compare x z = gt
 export LawfulOrd (eq_tight)
 
+instance [LawfulOrd α] : TransOrd α where
+  eq_refl := LawfulOrd.eq_refl 
+  eq_subst h := (eq_tight h) ▸ rfl
+  lt_trans := LawfulOrd.lt_trans
+  gt_trans := LawfulOrd.gt_trans
+
 section TransOrd
-variable {α} [ord : Ord α] [TransOrd α]
-
-theorem lt_of_lt_of_lt {x y z : α} : compare x y = lt → compare y z = lt → compare x z = lt := lt_trans
-
-theorem gt_of_gt_of_gt {x y z : α} : compare x y = gt → compare y z = gt → compare x z = gt := gt_trans
+variable {α} [Ord α] [TransOrd α]
 
 theorem lt_irrefl (x : α) : compare x x ≠ lt := eq_refl x ▸ Ordering.noConfusion
 
 theorem gt_irrefl (x : α) : compare x x ≠ gt := eq_refl x ▸ Ordering.noConfusion
 
-theorem lt_of_gt_symm {x y : α} (hyx : compare y x = gt) : compare x y = lt :=
-  match hxy : compare x y with
-  | lt => rfl
-  | eq => absurd (gt_of_eq_of_gt hxy hyx) (eq_refl x ▸ Ordering.noConfusion)
-  | gt => absurd (gt_of_gt_of_gt hxy hyx) (eq_refl x ▸ Ordering.noConfusion)
+theorem eq_trans {x y z : α} (hxy : compare x y = eq) (hyz : compare y z = eq) : compare x z = eq := by
+  rw [eq_subst hxy, hyz]
 
-theorem gt_of_lt_symm {x y : α} (hyx : compare y x = lt) : compare x y = gt :=
-  match hxy : compare x y with
-  | lt => absurd (lt_of_lt_of_lt hxy hyx) (eq_refl x ▸ Ordering.noConfusion)
-  | eq => absurd (lt_of_eq_of_lt hxy hyx) (eq_refl x ▸ Ordering.noConfusion)
-  | gt => rfl
+theorem symm (x y : α) : compare x y = (compare y x).opp := by
+  rw [Ordering.opp]
+  match hxy : compare x y, hyx : compare y x with
+  | lt, lt => 
+    have h : compare x x = lt := by
+      exact lt_trans hxy hyx
+    rw [eq_refl] at h
+    contradiction
+  | lt, eq => 
+    have h : compare y y = lt := by
+      rw [eq_subst hyx]
+      exact hxy
+    rw [eq_refl] at h
+    contradiction
+  | lt, gt => rfl
+  | eq, lt => 
+    have h : compare x x = lt := by
+      rw [eq_subst hxy]
+      exact hyx
+    rw [eq_refl] at h
+    contradiction
+  | eq, eq => rfl
+  | eq, gt => 
+    have h : compare x x = gt := by 
+      rw [eq_subst hxy]
+      exact hyx
+    rw [eq_refl] at h
+    contradiction
+  | gt, lt => rfl
+  | gt, eq => 
+    have h : compare y y = gt := by 
+      rw [eq_subst hyx]
+      exact hxy
+    rw [eq_refl] at h
+    contradiction
+  | gt, gt => 
+    have h : compare y y = gt := by 
+      exact gt_trans hyx hxy
+    rw [eq_refl] at h
+    contradiction
 
-theorem eq_symm {x y : α} (hyx : compare y x = eq) : compare x y = eq :=
-  match hxy : compare x y with
-  | lt => absurd (lt_of_lt_of_eq hxy hyx) (eq_refl x ▸ Ordering.noConfusion)
-  | eq => rfl
-  | gt => absurd (gt_of_gt_of_eq hxy hyx) (eq_refl x ▸ Ordering.noConfusion)
+theorem eq_symm {x y : α} : compare x y = eq → compare y x = eq := by
+  intro h; rw [symm, h]; rfl
 
-theorem eq_trans {x y z : α} (hxy : compare x y = eq) (hyz : compare y z = eq) : compare x z = eq :=
-  match hzx : compare z x with
-  | lt => absurd (lt_of_eq_of_lt hyz hzx) (eq_symm hxy ▸ Ordering.noConfusion)
-  | eq => eq_symm hzx
-  | gt => absurd (gt_of_gt_of_eq hzx hxy) (eq_symm hyz ▸ Ordering.noConfusion)
+theorem lt_of_gt_symm {x y : α} : compare x y = gt → compare y x = lt := by
+  intro h; rw [symm, h]; rfl
+
+theorem gt_of_lt_symm {x y : α} : compare x y = lt → compare y x = gt := by
+  intro h; rw [symm, h]; rfl
+
+theorem eq_of_eq_of_eq {x y z : α} : compare x y = eq → compare y z = eq → compare x z = eq := by exact eq_trans
+
+theorem lt_of_lt_of_lt {x y z : α} : compare x y = lt → compare y z = lt → compare x z = lt := by exact lt_trans
+
+theorem gt_of_gt_of_gt {x y z : α} : compare x y = gt → compare y z = gt → compare x z = gt := by exact gt_trans
+
+theorem lt_of_eq_of_lt {x y z : α} : compare x y = eq → compare y z = lt → compare x z = lt := by intro h hyz; rw [eq_subst h, hyz]
+
+theorem gt_of_eq_of_gt {x y z : α} : compare x y = eq → compare y z = gt → compare x z = gt := by intro h hyz; rw [eq_subst h, hyz]
+
+theorem lt_of_lt_of_eq {x y z : α} : compare x y = lt → compare y z = eq → compare x z = lt := by 
+  intro hxy hyz 
+  rw [symm, Ordering.eq_opp_iff_opp_eq] at hxy hyz ⊢
+  exact gt_of_eq_of_gt hyz hxy
+
+theorem gt_of_gt_of_eq {x y z : α} : compare x y = gt → compare y z = eq → compare x z = gt := by
+  intro hxy hyz 
+  rw [symm, Ordering.eq_opp_iff_opp_eq] at hxy hyz ⊢
+  exact lt_of_eq_of_lt hyz hxy
 
 theorem le_refl (x : α) : x ≤ x := fun h => absurd h (eq_refl x ▸ Ordering.noConfusion)
 
@@ -98,28 +145,12 @@ theorem lt_of_lt_of_le {x y z : α} : x < y → y ≤ z → x < z := by
   | eq => exact lt_of_lt_of_eq hxy hyz
   | gt => absurd hyz; exact nyz
 
-instance : Relation.Reflexive (α:=α) (.≤.) := ⟨le_refl⟩
-instance : Relation.Irreflexive (α:=α) (.<.) := ⟨lt_irrefl⟩
-instance : Relation.Transitive (α:=α) (.≤.) := ⟨le_trans⟩
-instance : Relation.Transitive (α:=α) (.<.) := ⟨lt_trans⟩
-instance : Relation.HTransitive (α:=α) (.<.) (.≤.) (.<.) := ⟨lt_of_lt_of_le⟩
-instance : Relation.HTransitive (α:=α) (.≤.) (.<.) (.<.) := ⟨lt_of_le_of_lt⟩
-
 end TransOrd
 
 section LawfulOrd
 variable {α} [Ord α] [LawfulOrd α]
 
-theorem eq_iff_eq (x y : α) : compare x y = eq ↔ x = y := ⟨eq_tight, fun | rfl => LawfulOrd.eq_refl _⟩
-
-instance : TransOrd α where
-  eq_refl := LawfulOrd.eq_refl
-  lt_trans := LawfulOrd.lt_trans
-  gt_trans := LawfulOrd.gt_trans
-  lt_of_lt_of_eq {x y z : α} (hxy : compare x y = lt) (hyz : compare y z = eq) := match eq_tight hyz with | rfl => hxy
-  lt_of_eq_of_lt {x y z : α} (hxy : compare x y = eq) (hyz : compare y z = lt) := match eq_tight hxy with | rfl => hyz
-  gt_of_gt_of_eq {x y z : α} (hxy : compare x y = gt) (hyz : compare y z = eq) := match eq_tight hyz with | rfl => hxy
-  gt_of_eq_of_gt {x y z : α} (hxy : compare x y = eq) (hyz : compare y z = gt) := match eq_tight hxy with | rfl => hyz
+theorem eq_iff_compare_eq_eq (x y : α) : compare x y = eq ↔ x = y := ⟨eq_tight, fun | rfl => LawfulOrd.eq_refl _⟩
 
 theorem le_antisymm {x y : α} (nxy : x ≤ y) (nyx : x ≥ y) : x = y :=
   eq_tight $ match hxy : compare x y with
@@ -127,14 +158,26 @@ theorem le_antisymm {x y : α} (nxy : x ≤ y) (nyx : x ≥ y) : x = y :=
   | eq => rfl
   | gt => absurd hxy nxy
 
-instance : Relation.Antisymmetric (α:=α) (.≤.) := ⟨le_antisymm⟩
+end LawfulOrd
 
-instance : DecidableEq α := fun x y =>
+instance (α) [Ord α] [TransOrd α] : Relation.Reflexive (α:=α) (.≤.) := ⟨le_refl⟩
+
+instance (α) [Ord α] [TransOrd α] : Relation.Irreflexive (α:=α) (.<.) := ⟨lt_irrefl⟩
+
+instance (α) [Ord α] [TransOrd α] : Relation.Transitive (α:=α) (.≤.) := ⟨le_trans⟩
+
+instance (α) [Ord α] [TransOrd α] : Relation.Transitive (α:=α) (.<.) := ⟨lt_trans⟩
+
+instance (α) [Ord α] [TransOrd α] : Relation.HTransitive (α:=α) (.<.) (.≤.) (.<.) := ⟨lt_of_lt_of_le⟩
+
+instance (α) [Ord α] [TransOrd α] : Relation.HTransitive (α:=α) (.≤.) (.<.) (.<.) := ⟨lt_of_le_of_lt⟩
+
+instance (α) [Ord α] [LawfulOrd α] : Relation.Antisymmetric (α:=α) (.≤.) := ⟨le_antisymm⟩
+
+instance (α) [Ord α] [LawfulOrd α] : DecidableEq α := fun x y =>
   match h : compare x y with
   | lt => isFalse fun | rfl => Ordering.noConfusion (eq_refl x ▸ h)
   | eq => isTrue (eq_tight h)
   | gt => isFalse fun | rfl => Ordering.noConfusion (eq_refl x ▸ h)
-
-end LawfulOrd
 
 end Ord

@@ -4,106 +4,77 @@ import GMLInit.Meta.Decidable
 import GMLInit.Meta.Relation
 
 namespace Relation
+variable {α} (r : α → α → Prop)
 
-class PartialEquivalence {α} (r : α → α → Prop) : Prop where
-  protected symm {x y} : r x y → r y x
-  protected eucl {x y z} : r x y → r x z → r y z
+class PartialEquivalence extends Symmetric r, Euclidean r : Prop
 
-namespace PartialEquivalence
+instance [PartialEquivalence r] : Transitive r := Euclidean.toTransitive r
 
-protected def infer {α} (r : α → α → Prop) [Symmetric r] [Euclidean r] : PartialEquivalence r where
+protected def PartialEquivalence.infer [Symmetric r] [Euclidean r] : PartialEquivalence r where
   symm := Symmetric.symm
   eucl := Euclidean.eucl
 
-variable {α} {r : α → α → Prop} [PartialEquivalence r]
+instance [Symmetric r] : PartialEquivalence (TC r) := PartialEquivalence.infer _
 
-instance : Symmetric r := ⟨PartialEquivalence.symm⟩
-instance : Euclidean r := ⟨PartialEquivalence.eucl⟩
-instance : Transitive r := Euclidean.toTransitive r
+namespace PartialEquivalence
+variable {r} [PartialEquivalence r]
 
 protected theorem trans {x y z} : r x y → r y z → r x z := Transitive.trans
 
-instance {α} (r : α → α → Prop) [Symmetric r] : PartialEquivalence (TC r) := PartialEquivalence.infer _
-
 end PartialEquivalence
 
-class Equivalence {α} (r : α → α → Prop) : Prop where
-  protected refl (x) : r x x
-  protected eucl {x y z} : r x y → r x z → r y z
+class Equivalence extends Reflexive r, Euclidean r : Prop
+
+instance [Equivalence r] : PartialEquivalence r := PartialEquivalence.infer r
 
 protected def Equivalence.infer {α} (r : α → α → Prop) [Reflexive r] [Euclidean r] : Equivalence r where
   refl := Reflexive.refl
   eucl := Euclidean.eucl
 
 namespace Equivalence
-variable {α} {r : α → α → Prop} [Equivalence r]
-
-instance : Reflexive r := ⟨Equivalence.refl⟩
-instance : Euclidean r := ⟨Equivalence.eucl⟩
-instance : Symmetric r := inferInstance
-instance : Transitive r := Euclidean.toTransitive r
+variable {r} [Equivalence r]
 
 protected theorem symm {x y} : r x y → r y x := Symmetric.symm
-
 protected theorem trans {x y z} : r x y → r y z → r x z := Transitive.trans
 
-instance : PartialEquivalence r := PartialEquivalence.infer r
+end Equivalence
+
+protected def Equivalence.to_eqv [Equivalence r] : _root_.Equivalence r where
+  refl := Reflexive.refl
+  symm := Symmetric.symm
+  trans := Transitive.trans
 
 instance (α) : Equivalence (α:=α) (.=.) := Equivalence.infer _
 instance (α) [Setoid α] : Equivalence (α:=α) (.≈.) := Equivalence.infer _
 instance (α) [Setoid α] : Equivalence (α:=α) Setoid.r := Equivalence.infer _
 
-instance {α} (r : α → α → Prop) [Reflexive r] [Symmetric r] : Equivalence (TC r) := Equivalence.infer _
+instance [Reflexive r] [Symmetric r] : Equivalence (TC r) := Equivalence.infer _
 
-protected def to_eqv : _root_.Equivalence r where
-  refl := Reflexive.refl
-  symm := Symmetric.symm
-  trans := Transitive.trans
-
-end Equivalence
-
-namespace PartialEquivalence
-variable {α} (r : α → α → Prop) [PartialEquivalence r]
-
-abbrev toSubtype : { x // r x x } → { x // r x x } → Prop
+abbrev PartialEquivalence.toSubtype [PartialEquivalence r] : { x // r x x } → { x // r x x } → Prop
 | ⟨x,_⟩, ⟨y,_⟩ => r x y
 
-instance : Equivalence (toSubtype r) where
+instance [PartialEquivalence r] : Equivalence (PartialEquivalence.toSubtype r) where
   refl := Subtype.property
   eucl := Euclidean.eucl (r:=r)
 
-end PartialEquivalence
-
-class Apartness {α} (r : α → α → Prop) : Prop where
+class Apartness extends Symmetric r, Comparison r : Prop where
   protected irrefl (x) : ¬ r x x
-  protected symm {x y} : r x y → r y x
-  protected compare {x y} : r x y → (z : α) → r x z ∨ r z y
 
-protected def Apartness.infer {α} (r : α → α → Prop) [Irreflexive r] [Symmetric r] [Comparison r] : Apartness r where
+instance [self : Apartness r] : Irreflexive r := ⟨self.irrefl⟩
+
+protected def Apartness.infer [Irreflexive r] [Symmetric r] [Comparison r] : Apartness r where
   irrefl := Irreflexive.irrefl
   symm := Symmetric.symm
   compare := Comparison.compare
 
-namespace Apartness
-variable {α} {r : α → α → Prop} [Apartness r]
-
-instance : Irreflexive r := ⟨Apartness.irrefl⟩
-instance : Symmetric r := ⟨Apartness.symm⟩
-instance : Comparison r := ⟨Apartness.compare⟩
-
-instance : Equivalence (λ x y => ¬ r x y) where
+instance [Apartness r] : Equivalence (¬ r . .) where
   refl := Irreflexive.irrefl
-  eucl {x _ _} (nxy nxz hyz) :=
+  eucl {x _ _} nxy nxz hyz :=
     match Comparison.compare hyz x with
     | .inl hyx => nxy (Symmetric.symm hyx)
     | .inr hxz => nxz hxz
 
-end Apartness
-
-namespace Equivalence
-variable {α} (r : α → α → Prop) [Equivalence r]
-
-def toApartness [ComplementedRel r] : Apartness (λ x y => ¬ r x y) where
+def Equivalence.toApartness [Equivalence r] [ComplementedRel r] : Apartness (¬ r . .) where
   irrefl x h := h (Reflexive.refl x)
   symm nxy hyx := nxy (Symmetric.symm hyx)
   compare {x y} (nxy z) := by
@@ -120,28 +91,23 @@ def toApartness [ComplementedRel r] : Apartness (λ x y => ¬ r x y) where
       exact hxz
       exact hzy
 
-end Equivalence
-
 class TightApartness {α} (r : α → α → Prop) extends Apartness r : Prop where
   protected tight {x y} : ¬ r x y → x = y
 
 namespace TightApartness
-variable {α} (r : α → α → Prop) [TightApartness r]
+variable [TightApartness r] 
 
-theorem eq_iff_not_apart : x = y ↔ ¬ r x y := ⟨λ | rfl => Irreflexive.irrefl _, TightApartness.tight⟩
+theorem eq_iff_not_apart : x = y ↔ ¬ r x y := by
+  constr
+  · intro | rfl => irreflexivity
+  · exact TightApartness.tight
 
-instance : StableEq α := λ _ _ => Iff.subst (eq_iff_not_apart r).symm inferInstance
-
-instance [WeaklyComplementedEq α] : TightApartness (α:=α) (.≠.) where
-  irrefl := Irreflexive.irrefl
-  symm := Symmetric.symm
-  tight := Stable.by_contradiction
-  compare := by
-    intro x y h z
-    by_cases x = z using WeaklyComplemented with
-    | .isIrrefutable _ => right; intro | rfl => contradiction
-    | .isFalse _ => left; assumption
+instance : StableEq α := λ _ _ => Iff.subst (TightApartness.eq_iff_not_apart r).symm inferInstance
 
 end TightApartness
+
+instance [ComplementedEq α] : TightApartness (α:=α) (.≠.) where
+  toApartness := Equivalence.toApartness _
+  tight := Stable.by_contradiction
 
 end Relation

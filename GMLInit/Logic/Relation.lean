@@ -1,4 +1,5 @@
 import GMLInit.Meta.Stable
+import GMLInit.Meta.Decidable
 
 namespace Relation
 
@@ -26,14 +27,11 @@ end Reflexive
 
 section Irreflexive
 
-abbrev Irreflexive {α} (r : α → α → Prop) : Prop :=
-  Reflexive (λ x y => ¬r x y)
+abbrev Irreflexive {α} (r : α → α → Prop) : Prop := Reflexive (¬ r . .)
 
-protected abbrev Irreflexive.irrefl {α} {r : α → α → Prop} [Irreflexive r] (x : α) :=
-  Reflexive.refl (r:=λ x y => ¬r x y) x
+protected abbrev Irreflexive.irrefl {α} {r : α → α → Prop} [Irreflexive r] (x : α) := Reflexive.refl (r:=(¬ r . .)) x
 
-protected abbrev Irreflexive.irrfl {α} {r : α → α → Prop} [Irreflexive r] {x : α} :=
-  Irreflexive.irrefl (r:=r) x
+protected abbrev Irreflexive.irrfl {α} {r : α → α → Prop} [Irreflexive r] {x : α} := Irreflexive.irrefl (r:=r) x
 
 theorem Irreflexive.ne_of {α} {r : α → α → Prop} [Irreflexive r] : {x y : α} → r x y → x ≠ y
 | _, _, h, rfl => Irreflexive.irrfl h
@@ -99,7 +97,8 @@ instance : HAntisymmetric (.→.) (.↔.) := ⟨Iff.intro⟩
 
 abbrev WeaklyConnex {α} (r : α → α → Prop) := Antisymmetric (λ x y => ¬ r y x)
 
-abbrev WeaklyConnex.connex {α} {r : α → α → Prop} [WeaklyConnex r] {x y} : ¬ r y x → ¬ r x y → x = y := Antisymmetric.antisymm (r := λ x y => ¬ r y x)
+abbrev WeaklyConnex.connex {α} {r : α → α → Prop} [WeaklyConnex r] {x y} : ¬ r y x → ¬ r x y → x = y := 
+  Antisymmetric.antisymm (r := λ x y => ¬ r y x)
 
 end Antisymmetric
 
@@ -148,6 +147,9 @@ instance [Reflexive r] [Euclidean r] : Symmetric r where
 instance [Symmetric r] [Transitive r] : Euclidean r where
   eucl hxy hxz := Transitive.trans (Symmetric.symm hxy) hxz
 
+def Euclidean.toSymmetric {α} (r : α → α → Prop) [Reflexive r] [Euclidean r] : Symmetric r where
+  symm hxy := Euclidean.eucl hxy Reflexive.rfl
+
 def Euclidean.toTransitive {α} (r : α → α → Prop) [Symmetric r] [Euclidean r] : Transitive r where
   trans hxy hyz := Euclidean.eucl (Symmetric.symm hxy) hyz
 
@@ -177,10 +179,10 @@ class Comparison {α} (r : α → α → Prop) : Prop where
 @[defaultInstance]
 instance {α} (r : α → α → Prop) [Comparison r] : HComparison r r := ⟨Comparison.compare⟩
 
-def instComparisonOfTransitive {α} (r : α → α → Prop) [(x y : α) → Complemented (r x y)] [Transitive r] : Comparison (λ x y => ¬ r y x) where
+def Transitive.toComparison {α} (r : α → α → Prop) [ComplementedRel r] [Transitive r] : Comparison (λ x y => ¬ r y x) where
   compare := by
     intro x y nxy z
-    match inferInstanceAs (Complemented (r z x)) with
+    by_cases r z x using Complemented with
     | .isFalse nxz =>
       left
       exact nxz
@@ -190,7 +192,7 @@ def instComparisonOfTransitive {α} (r : α → α → Prop) [(x y : α) → Com
       apply nxy
       exact Transitive.trans hzy hxz
 
-instance {α} (r : α → α → Prop) [Comparison r] : Transitive (λ x y => ¬ r y x) where
+instance Comparison.toTransitive {α} (r : α → α → Prop) [Comparison r] : Transitive (λ x y => ¬ r y x) where
   trans := by
     intros x y z nxy nyz hxz
     cases Comparison.compare hxz y with
@@ -210,7 +212,7 @@ class Connex {α} (r : α → α → Prop) : Prop where
 @[defaultInstance]
 instance {α} (r : α → α → Prop) [Connex r] : HConnex r (.≠.) := ⟨Connex.connex⟩
 
-def instAntisymmOfConnex {α} (r : α → α → Prop) [(x y : α) → Stable (x = y)] [Connex r] : Antisymmetric (λ x y => ¬ r y x) where
+def Connex.toAntisymmetric {α} (r : α → α → Prop) [StableEq α] [Connex r] : Antisymmetric (λ x y => ¬ r y x) where
   antisymm := by
     intro x y nxy nyx
     by_contradiction
@@ -218,6 +220,14 @@ def instAntisymmOfConnex {α} (r : α → α → Prop) [(x y : α) → Stable (x
       cases Connex.connex (r:=r) hne with
       | inl hyx => exact nyx hyx
       | inr hxy => exact nxy hxy
+
+def Antisymmetric.toConnex {α} (r : α → α → Prop) [WeaklyComplementedRel r] [Antisymmetric r] : Connex fun x y => ¬ r y x where
+  connex := by
+    intro x y hne
+    rw [←And.deMorgan]
+    intro ⟨hyx, hxy⟩
+    absurd hne
+    exact Antisymmetric.antisymm hxy hyx
 
 end Connex
 
