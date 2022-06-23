@@ -5,17 +5,13 @@ import GMLInit.Meta.Basic
 instance : LE Bool := leOfOrd
 instance : LT Bool := ltOfOrd
 
-@[reducible] def xor : Bool → Bool → Bool
-| true, true => false
-| true, false => true
-| false, true => true
-| false, false => false
+abbrev xor : Bool → Bool → Bool := bne
 infixl:30 " ^^ " => xor
 
 namespace Bool
 variable (x y z : Bool)
 
-syntax "bool_tt" (&"using" tactic)? term:max* : tactic
+local syntax "bool_tt" (&"using" tactic)? term:max* : tactic
 macro_rules
 | `(tactic| bool_tt) => `(tactic| rfl)
 | `(tactic| bool_tt using $tac) => `(tactic| $tac)
@@ -74,14 +70,14 @@ theorem xor_right_comm : ((x ^^ y) ^^ z) = ((x ^^ z) ^^ y) := by bool_tt x y z
 theorem xor_assoc : ((x ^^ y) ^^ z) = (x ^^ (y ^^ z)) := by bool_tt x y z
 
 protected abbrev beq := x == y
-protected abbrev bne := x ^^ y
+protected abbrev bne := x != y
 protected abbrev bge := x || !y
 protected abbrev bgt := x && !y
 protected abbrev ble := !x || y
 protected abbrev blt := !x && y
 
 theorem beq_eq_decide_eq : Bool.beq x y = decide (x = y) := by bool_tt x y
-theorem xor_eq_decide_ne : Bool.bne x y = decide (x ≠ y) := by bool_tt x y
+theorem bne_eq_decide_ne : Bool.bne x y = decide (x ≠ y) := by bool_tt x y
 theorem bge_eq_decide_ge : Bool.bge x y = decide (x ≥ y) := by bool_tt x y
 theorem bgt_eq_decide_gt : Bool.bgt x y = decide (x > y) := by bool_tt x y
 theorem ble_eq_decide_le : Bool.ble x y = decide (x ≤ y) := by bool_tt x y
@@ -95,15 +91,15 @@ protected theorem lt_asymm {x y : Bool} : x < y → ¬ y < x := by bool_tt using
 protected theorem lt_trans {x y z : Bool} : x < y → y < z → x < z := by bool_tt using simp x y z
 protected theorem lt_of_le_of_lt {x y z : Bool} : x ≤ y → y < z → x < z := by bool_tt using simp x y z
 protected theorem lt_of_lt_of_le {x y z : Bool} : x < y → y ≤ z → x < z := by bool_tt using simp x y z
-protected theorem le_of_lt : x < y → x ≤ y := by bool_tt using simp x y z
-protected theorem le_of_eq : x = y → x ≤ y := by bool_tt using simp x y z
-protected theorem ne_of_lt : x < y → x ≠ y := by bool_tt using simp x y z
-protected theorem lt_of_le_of_ne : x ≤ y → x ≠ y → x < y := by bool_tt using simp x y z
-protected theorem le_of_lt_or_eq : x < y ∨ x = y → x ≤ y := by bool_tt using simp x y z
+protected theorem le_of_lt {x y : Bool} : x < y → x ≤ y := by bool_tt using simp x y z
+protected theorem le_of_eq {x y : Bool} : x = y → x ≤ y := by bool_tt using simp x y z
+protected theorem ne_of_lt {x y : Bool} : x < y → x ≠ y := by bool_tt using simp x y z
+protected theorem lt_of_le_of_ne {x y : Bool} : x ≤ y → x ≠ y → x < y := by bool_tt using simp x y z
+protected theorem le_of_lt_or_eq {x y : Bool} : x < y ∨ x = y → x ≤ y := by bool_tt using simp x y z
 protected theorem le_true : x ≤ true := by bool_tt x
 protected theorem false_le : false ≤ x := by bool_tt x
-protected theorem eq_true_of_true_le : true ≤ x → x = true := by bool_tt using simp x
-protected theorem eq_false_of_le_false : x ≤ false → x = false := by bool_tt using simp x
+protected theorem eq_true_of_true_le {x : Bool} : true ≤ x → x = true := by bool_tt using simp x
+protected theorem eq_false_of_le_false {x : Bool} : x ≤ false → x = false := by bool_tt using simp x
 
 instance : Relation.Reflexive (α:=Bool) (.≤.) := ⟨Bool.le_refl⟩
 instance : Relation.Irreflexive (α:=Bool) (.<.) := ⟨Bool.lt_irrefl⟩
