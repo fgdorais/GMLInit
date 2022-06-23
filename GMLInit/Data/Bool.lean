@@ -40,7 +40,7 @@ theorem and_or_distrib_left : (x && (y || z)) = ((x && y) || (x && z)) := by boo
 theorem and_or_distrib_right : ((x || y) && z) = ((x && z) || (y && z)) := by bool_tt x y z
 theorem and_xor_distrib_left : (x && (y ^^ z)) = ((x && y) ^^ (x && z)) := by bool_tt x y z
 theorem and_xor_distrib_right : ((x ^^ y) && z) = ((x && z) ^^ (y && z)) := by bool_tt x y z
-theorem and_deMorgan : !(x && y) = (!x || !y) := by bool_tt x y
+theorem and_deMorgan : (!(x && y)) = (!x || !y) := by bool_tt x y
 theorem and_eq_true_iff : (x && y) = true ↔ x = true ∧ y = true := by bool_tt using simp x y
 theorem and_eq_false_iff : (x && y) = false ↔ x = false ∨ y = false := by bool_tt using simp x y
 
@@ -57,7 +57,7 @@ theorem or_right_comm : ((x || y) || z) = ((x || z) || y) := by bool_tt x y z
 theorem or_assoc : ((x || y) || z) = (x || (y || z)) := by bool_tt x y z
 theorem or_and_distrib_left : (x || (y && z)) = ((x || y) && (x || z)) := by bool_tt x y z
 theorem or_and_distrib_right : ((x && y) || z) = ((x || z) && (y || z)) := by bool_tt x y z
-theorem or_deMorgan : !(x || y) = (!x && !y) := by bool_tt x y
+theorem or_deMorgan : (!(x || y)) = (!x && !y) := by bool_tt x y
 theorem or_eq_true_iff : (x || y) = true ↔ x = true ∨ y = true := by bool_tt using simp x y
 theorem or_eq_false_iff : (x || y) = false ↔ x = false ∧ y = false := by bool_tt using simp x y
 
@@ -95,12 +95,15 @@ protected theorem lt_asymm {x y : Bool} : x < y → ¬ y < x := by bool_tt using
 protected theorem lt_trans {x y z : Bool} : x < y → y < z → x < z := by bool_tt using simp x y z
 protected theorem lt_of_le_of_lt {x y z : Bool} : x ≤ y → y < z → x < z := by bool_tt using simp x y z
 protected theorem lt_of_lt_of_le {x y z : Bool} : x < y → y ≤ z → x < z := by bool_tt using simp x y z
-
 protected theorem le_of_lt : x < y → x ≤ y := by bool_tt using simp x y z
 protected theorem le_of_eq : x = y → x ≤ y := by bool_tt using simp x y z
 protected theorem ne_of_lt : x < y → x ≠ y := by bool_tt using simp x y z
 protected theorem lt_of_le_of_ne : x ≤ y → x ≠ y → x < y := by bool_tt using simp x y z
 protected theorem le_of_lt_or_eq : x < y ∨ x = y → x ≤ y := by bool_tt using simp x y z
+protected theorem le_true : x ≤ true := by bool_tt x
+protected theorem false_le : false ≤ x := by bool_tt x
+protected theorem eq_true_of_true_le : true ≤ x → x = true := by bool_tt using simp x
+protected theorem eq_false_of_le_false : x ≤ false → x = false := by bool_tt using simp x
 
 instance : Relation.Reflexive (α:=Bool) (.≤.) := ⟨Bool.le_refl⟩
 instance : Relation.Irreflexive (α:=Bool) (.<.) := ⟨Bool.lt_irrefl⟩
@@ -110,5 +113,52 @@ instance : Relation.Transitive (α:=Bool) (.≤.) := ⟨Bool.le_trans⟩
 instance : Relation.Transitive (α:=Bool) (.<.) := ⟨Bool.lt_trans⟩
 instance : Relation.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.<.) (.≤.) (.<.) := ⟨Bool.lt_of_lt_of_le⟩
 instance : Relation.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.≤.) (.<.) (.<.) := ⟨Bool.lt_of_le_of_lt⟩
+
+section
+variable (xs ys : List Bool)
+
+abbrev all : Bool := xs.all id
+
+theorem all_nil : all [] = true := rfl
+theorem all_one : all [x] = x := Bool.and_true x
+theorem all_cons  : all (x :: xs) = (x && all xs) := rfl
+
+theorem all_append : all (xs ++ ys) = (all xs && all ys) := by
+  induction xs with
+  | nil => rw [List.nil_append, all_nil, true_and]
+  | cons x xs ih => rw [List.cons_append, all_cons, all_cons, and_assoc, ih]
+
+theorem all_join (xss : List (List Bool)) : all (xss.map all) = all xss.join := by
+  induction xss with
+  | nil => rfl
+  | cons xs xss ih => rw [List.map, List.join, all_cons, all_append, ih]
+
+abbrev any : Bool := xs.any id
+
+theorem any_nil : any [] = false := rfl
+theorem any_one : any [x] = x := Bool.or_false x
+theorem any_cons : any (x :: xs) = (x || any xs) := rfl
+
+theorem any_append : any (xs ++ ys) = (any xs || any ys) := by
+  induction xs with
+  | nil => rw [List.nil_append, any_nil, false_or]
+  | cons x xs ih => rw [List.cons_append, any_cons, any_cons, or_assoc, ih]
+
+theorem any_join (xss : List (List Bool)) : any (xss.map any) = any xss.join := by
+  induction xss with
+  | nil => rfl
+  | cons xs xss ih => rw [List.map, List.join, any_cons, any_append, ih]
+
+theorem all_deMorgan : (!all xs) = any (xs.map (!.)) := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => rw [List.map, all_cons, any_cons, and_deMorgan, ih]
+
+theorem any_deMorgan : (!any xs) = all (xs.map (!.)) := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => rw [List.map, any_cons, all_cons, or_deMorgan, ih]
+
+end
 
 end Bool
