@@ -1,5 +1,6 @@
 import GMLInit.Data.Basic
 import GMLInit.Data.BDD
+import GMLInit.Data.BEq
 import GMLInit.Data.Bool
 import GMLInit.Data.Equiv
 import GMLInit.Data.Fin
