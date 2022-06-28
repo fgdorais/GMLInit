@@ -1,22 +1,10 @@
 import GMLInit.Data.Nat.Basic
 import GMLInit.Data.Nat.IsPos
 import GMLInit.Logic.Connectives
+import GMLInit.Logic.Ordering
+import GMLInit.Logic.Relation
 
 namespace Nat
-
-instance : Relation.Reflexive (α:=Nat) (.≤.) := ⟨Nat.le_refl⟩
-
-instance : Relation.Irreflexive (α:=Nat) (.<.) := ⟨Nat.lt_irrefl⟩
-
-instance : Relation.Transitive (α:=Nat) (.≤.) := ⟨Nat.le_trans⟩
-
-instance : Relation.Transitive (α:=Nat) (.<.) := ⟨Nat.lt_trans⟩
-
-instance : Relation.HTransitive (α:=Nat) (β:=Nat) (γ:=Nat) (.≤.) (.<.) (.<.) := ⟨Nat.lt_of_le_of_lt⟩
-
-instance : Relation.HTransitive (α:=Nat) (β:=Nat) (γ:=Nat) (.<.) (.≤.) (.<.) := ⟨Nat.lt_of_lt_of_le⟩
-
-instance : Relation.Antisymmetric (α:=Nat) (.≤.) := ⟨Nat.le_antisymm⟩
 
 -- assert theorem lt_or_ge (x y : Nat) : x < y ∨ x ≥ y
 
@@ -42,6 +30,9 @@ protected theorem lt_iff_le_and_ne (x y : Nat) : x < y ↔ x ≤ y ∧ x ≠ y :
 
 protected theorem lt_connex {x y : Nat} : x ≠ y → x < y ∨ x > y :=
   λ hne => Or.elim (Nat.lt_or_ge x y) Or.inl λ h => Or.inr (Nat.lt_of_le_of_ne h hne.symm)
+
+protected theorem lt_compare {x y : Nat} : x < y → ∀ z, x < z ∨ z < y :=
+  λ hlt z => Or.elim (Nat.lt_or_ge x z) Or.inl (λ hge => Or.inr (Nat.lt_of_le_of_lt hge hlt))
 
 -- assert theorem ge_of_not_lt {x y : Nat} : ¬ x < y → x ≥ y := Or.mtp (Nat.le_or_gt y x)
 
@@ -82,5 +73,20 @@ protected theorem ne_iff_lt_or_gt (x y : Nat) : x ≠ y ↔ x < y ∨ x > y :=
 
 protected theorem eq_zero_iff_le_zero (x : Nat) : x = 0 ↔ x ≤ 0 :=
   ⟨Nat.le_of_eq, Nat.eq_zero_of_le_zero⟩
+
+open Relation
+
+local instance : Reflexive (α:=Nat) (.≤.) := ⟨Nat.le_refl⟩
+local instance : Transitive (α:=Nat) (.≤.) := ⟨Nat.le_trans⟩
+local instance : Antisymmetric (α:=Nat) (.≤.) := ⟨Nat.le_antisymm⟩
+local instance : Total (α:=Nat) (.≤.) := ⟨Nat.le_total⟩
+instance : TotalOrder (α:=Nat) (.≤.) := TotalOrder.infer _
+local instance : Irreflexive (α:=Nat) (.<.) := ⟨Nat.lt_irrefl⟩
+local instance : Transitive (α:=Nat) (.<.) := ⟨Nat.lt_trans⟩
+local instance : Connex (α:=Nat) (.<.) := ⟨Nat.lt_connex⟩
+local instance : Comparison (α:=Nat) (.<.) := ⟨Nat.lt_compare⟩
+instance : LinearOrder (α:=Nat) (.<.) := LinearOrder.infer _
+instance : HTransitive (α:=Nat) (β:=Nat) (γ:=Nat) (.≤.) (.<.) (.<.) := ⟨Nat.lt_of_le_of_lt⟩
+instance : HTransitive (α:=Nat) (β:=Nat) (γ:=Nat) (.<.) (.≤.) (.<.) := ⟨Nat.lt_of_lt_of_le⟩
 
 end Nat

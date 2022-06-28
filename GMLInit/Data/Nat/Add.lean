@@ -53,6 +53,15 @@ theorem pos_add_right (x y : Nat) (h : y > 0 := by nat_is_pos) : x + y > 0 := ca
   0 ≤ x := by apply Nat.zero_le
   _ < x + y := by apply Nat.lt_add_right _ _
 
+protected theorem eq_zero_of_add_eq_zero_right : {x y : Nat} → x + y = 0 → y = 0
+| _, 0, _ => rfl
+| _, _+1, h => Nat.noConfusion h
+
+protected theorem eq_zero_of_add_eq_zero_left {x y : Nat} : x + y = 0 → x = 0 := by
+  intro h
+  rw [Nat.add_comm] at h
+  exact Nat.eq_zero_of_add_eq_zero_right h
+
 -- assert theorem add_le_add {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ ≤ y₂ → x₁ + y₁ ≤ x₂ + y₂
 
 -- assert theorem add_le_add_left {x y : Nat} (h : x ≤ y) (z : Nat) : z + x ≤ z + y
