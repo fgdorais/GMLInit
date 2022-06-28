@@ -27,7 +27,7 @@ protected def compare : Index xs → Index xs → Ordering
 
 instance instOrd (xs : List α) : Ord (Index xs) := ⟨Index.compare⟩
 
-open Ordering in instance instLawfulOrd : (xs : List α) → Ord.LawfulOrd (Index xs)
+open Ordering in instance instLawfulOrd : (xs : List α) → LawfulOrd (Index xs)
 | [] => {
   eq_refl := (nomatch .)
   eq_tight := (nomatch .)
