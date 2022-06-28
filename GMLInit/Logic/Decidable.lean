@@ -20,3 +20,11 @@ instance instDecidableAny : (as : List Prop) → [DecidableList as] → Decidabl
   | Decidable.isTrue ha, _ => Decidable.isTrue (Any.head ha)
   | _, Decidable.isTrue has => Decidable.isTrue (Any.tail has)
   | Decidable.isFalse na, Decidable.isFalse nas => Decidable.isFalse λ | Any.head ha => na ha | Any.tail has => nas has
+
+def DecidableList.zip : (as : List Prop) → [DecidableList as] → List ((a : Prop) × Decidable a)
+| [], nil => []
+| a::as, cons i _ => ⟨a, i⟩ :: zip as
+
+def decideList : (as : List Prop) → [DecidableList as] → List Bool
+| [], .nil => []
+| a::as, .cons _ _ => decide a :: decideList as
