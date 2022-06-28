@@ -7,6 +7,7 @@ import GMLInit.Logic.Decidable
 import GMLInit.Logic.Function
 import GMLInit.Logic.HEq
 import GMLInit.Logic.ListConnectives
+import GMLInit.Logic.Ordering
 import GMLInit.Logic.Relation
 import GMLInit.Logic.Stable
 import GMLInit.Logic.WeaklyComplemented

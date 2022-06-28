@@ -51,10 +51,9 @@ class Symmetric (r : α → α → Prop) : Prop where
 @[defaultInstance]
 instance {α} (r : α → α → Prop) [Symmetric r] : HSymmetric r r := ⟨Symmetric.symm⟩
 
-class Asymmetric (r : α → α → Prop) : Prop where
-  protected asymm {x y} : r x y → ¬r y x
+abbrev Asymmetric (r : α → α → Prop) := HSymmetric r (¬ r . .)
 
-instance {α} (r : α → α → Prop) [Asymmetric r] : HSymmetric r (λ x y => ¬r x y) := ⟨Asymmetric.asymm⟩
+protected def Asymmetric.asymm {α} {r : α → α → Prop} [Asymmetric r] {x y : α} : r x y → ¬ r y x := HSymmetric.symm (r:=r) (s:=(¬ r . .))
 
 instance (α) : Symmetric (α:=α) (.=.) := ⟨Eq.symm⟩
 instance (α) : Symmetric (α:=α) (.≠.) := ⟨Ne.symm⟩
@@ -124,9 +123,9 @@ instance (α) [Setoid α] : Transitive (α:=α) (.≈.) := ⟨Setoid.trans⟩
 instance (α) [Setoid α] : Transitive (α:=α) Setoid.r := ⟨Setoid.trans⟩
 instance : Transitive (.→.) := ⟨λ h₁ h₂ h => h₂ (h₁ h)⟩
 instance : Transitive (.↔.) := ⟨Iff.trans⟩
+instance {α} (r : α → α → Prop) : Transitive (TC r) := ⟨TC.trans _ _ _⟩
 
-instance {α} (r : α → α → Prop) : Transitive (TC r) where
-  trans := TC.trans _ _ _
+instance {α} (r : α → α → Prop) [Irreflexive r] [Transitive r] : Asymmetric r := ⟨fun hxy hyx => Irreflexive.irrfl (Transitive.trans hxy hyx)⟩
 
 end Transitive
 
@@ -228,6 +227,16 @@ def Antisymmetric.toConnex {α} (r : α → α → Prop) [WeaklyComplementedRel 
     intro ⟨hyx, hxy⟩
     absurd hne
     exact Antisymmetric.antisymm hxy hyx
+
+def Connex.toComparison {α} (r : α → α → Prop) [ComplementedEq α] [Connex r] [Transitive r] : Comparison r where
+  compare := by
+    intro x y hxy z
+    by_cases x = z using Complemented with
+    | .isTrue rfl => right; exact hxy
+    | .isFalse hne => 
+      match Connex.connex (r:=r) hne with
+      | .inl hxz => left; exact hxz
+      | .inr hzx => right; exact Transitive.trans hzx hxy
 
 end Connex
 
