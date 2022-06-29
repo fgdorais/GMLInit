@@ -143,17 +143,20 @@ protected theorem add_comm (i j : Int) : i + j = j + i := by
       repeat rw [mk_add_mk]
       rw [Nat.add_comm mi mj, Nat.add_comm ni nj]
 
-protected theorem add_left_comm (i j k : Int) : i + (j + k) = j + (i + k) := calc
+protected theorem add_left_comm (i j k : Int) : i + (j + k) = j + (i + k) := 
+  calc
   _ = (i + j) + k := by rw [Int.add_assoc]
   _ = (j + i) + k := by rw [Int.add_comm i j]
   _ = j + (i + k) := by rw [Int.add_assoc]
 
-protected theorem add_right_comm (i j k : Int) : (i + j) + k = (i + k) + j := calc
+protected theorem add_right_comm (i j k : Int) : (i + j) + k = (i + k) + j :=
+  calc
   _ = i + (j + k) := by rw [Int.add_assoc]
   _ = i + (k + j) := by rw [Int.add_comm j k]
   _ = (i + k) + j := by rw [Int.add_assoc]
 
-protected theorem add_cross_comm (i₁ i₂ j₁ j₂ : Int) : (i₁ + i₂) + (j₁ + j₂) = (i₁ + j₁) + (i₂ + j₂) := calc
+protected theorem add_cross_comm (i₁ i₂ j₁ j₂ : Int) : (i₁ + i₂) + (j₁ + j₂) = (i₁ + j₁) + (i₂ + j₂) :=
+  calc
   _ = i₁ + (i₂ + (j₁ + j₂)) := by rw [Int.add_assoc]
   _ = i₁ + (j₁ + (i₂ + j₂)) := by rw [Int.add_left_comm i₂ j₁ j₂]
   _ = (i₁ + j₁) + (i₂ + j₂) := by rw [Int.add_assoc]
@@ -190,24 +193,28 @@ protected theorem zero_sub (i : Int) : 0 - i = -i := by
 protected theorem sub_self (i : Int) : i - i = 0 := by
   rw [Int.sub_eq, Int.add_neg_self_right]
 
-protected theorem add_sub_assoc (i j k : Int) : (i + j) - k = i + (j - k) := calc
+protected theorem add_sub_assoc (i j k : Int) : (i + j) - k = i + (j - k) := 
+  calc
   _ = (i + j) + -k := by rw [Int.sub_eq]
   _ = i + (j + -k) := by rw [Int.add_assoc]
   _ = i + (j - k) := by rw [Int.sub_eq]
 
-protected theorem sub_add_assoc (i j k : Int) : (i - j) + k = i - (j - k) := calc
+protected theorem sub_add_assoc (i j k : Int) : (i - j) + k = i - (j - k) := 
+  calc
   _ = (i + -j) + k := by rw [Int.sub_eq]
   _ = i + (-j + k) := by rw [Int.add_assoc]
   _ = i + (-j + -(-k)) := by rw [Int.neg_neg]
   _ = i + -(j + -k) := by rw [Int.neg_add]
   _ = i - (j - k) := by rw [Int.sub_eq, Int.sub_eq]
 
-protected theorem add_sub_cancel (i j : Int) : (i + j) - j = i := calc
+protected theorem add_sub_cancel (i j : Int) : (i + j) - j = i := 
+  calc
   _ = i + (j - j) := by rw [Int.add_sub_assoc]
   _ = i + 0 := by rw [Int.sub_self]
   _ = i := by rw [Int.add_zero]
 
-protected theorem sub_add_cancel (i j : Int) : (i - j) + j = i := calc
+protected theorem sub_add_cancel (i j : Int) : (i - j) + j = i := 
+  calc
   _ = i - (j - j) := by rw [Int.sub_add_assoc]
   _ = i - 0 := by rw [Int.sub_self]
   _ = i := by rw [Int.sub_zero]
@@ -215,7 +222,8 @@ protected theorem sub_add_cancel (i j : Int) : (i - j) + j = i := calc
 protected theorem neg_sub (i j : Int) : -(i - j) = j - i := by
   rw [Int.sub_eq, Int.sub_eq, Int.neg_add, Int.neg_neg, Int.add_comm]
 
-protected theorem add_left_cancel' (i : Int) {j k : Int} (h : i + j = i + k) : j = k := calc
+protected theorem add_left_cancel' (i : Int) {j k : Int} (h : i + j = i + k) : j = k := 
+  calc
   _ = 0 + j := by rw [Int.zero_add]
   _ = (-i + i) + j := by rw [Int.add_neg_self_left]
   _ = -i + (i + j) := by rw [Int.add_assoc]
@@ -224,7 +232,8 @@ protected theorem add_left_cancel' (i : Int) {j k : Int} (h : i + j = i + k) : j
   _ = 0 + k := by rw [Int.add_neg_self_left]
   _ = k := by rw [Int.zero_add]
 
-protected theorem add_right_cancel' (i : Int) {j k : Int} (h : j + i = k + i) : j = k := calc
+protected theorem add_right_cancel' (i : Int) {j k : Int} (h : j + i = k + i) : j = k := 
+  calc
   _ = j + 0 := by rw [Int.add_zero]
   _ = j + (i + -i) := by rw [Int.add_neg_self_right]
   _ = (j + i) + -i := by rw [Int.add_assoc]
@@ -293,17 +302,20 @@ protected theorem mul_comm (i j : Int) : i * j = j * i := by
       repeat rw [mk_mul_mk]
       simp only [Nat.add_comm, Nat.mul_comm]
 
-protected theorem mul_left_comm (i j k : Int) : i * (j * k) = j * (i * k) := calc
+protected theorem mul_left_comm (i j k : Int) : i * (j * k) = j * (i * k) :=
+  calc
   _ = (i * j) * k := by rw [Int.mul_assoc]
   _ = (j * i) * k := by rw [Int.mul_comm i j]
   _ = j * (i * k) := by rw [Int.mul_assoc]
 
-protected theorem mul_right_comm (i j k : Int) : (i * j) * k = (i * k) * j := calc
+protected theorem mul_right_comm (i j k : Int) : (i * j) * k = (i * k) * j :=
+  calc
   _ = i * (j * k) := by rw [Int.mul_assoc]
   _ = i * (k * j) := by rw [Int.mul_comm j k]
   _ = (i * k) * j := by rw [Int.mul_assoc]
 
-protected theorem mul_cross_comm (i₁ i₂ j₁ j₂ : Int) : (i₁ * i₂) * (j₁ * j₂) = (i₁ * j₁) * (i₂ * j₂) := calc
+protected theorem mul_cross_comm (i₁ i₂ j₁ j₂ : Int) : (i₁ * i₂) * (j₁ * j₂) = (i₁ * j₁) * (i₂ * j₂) :=
+  calc
   _ = i₁ * (i₂ * (j₁ * j₂)) := by rw [Int.mul_assoc]
   _ = i₁ * (j₁ * (i₂ * j₂)) := by rw [Int.mul_left_comm i₂ j₁ j₂]
   _ = (i₁ * j₁) * (i₂ * j₂) := by rw [Int.mul_assoc]
@@ -427,7 +439,8 @@ protected theorem sub_le_sub_right {i j : Int} : i ≤ j → ∀ (k : Int), i - 
   rw [Int.sub_eq, Int.sub_eq]
   exact Int.add_le_add_right h ..
 
-protected theorem le_of_add_le_add_right {i j k : Int} (h : i + k ≤ j + k) : i ≤ j := calc
+protected theorem le_of_add_le_add_right {i j k : Int} (h : i + k ≤ j + k) : i ≤ j :=
+  calc
   _ = (i + k) - k := by rw [Int.add_sub_cancel]
   _ ≤ (j + k) - k := Int.sub_le_sub_right h k
   _ = j := by rw [Int.add_sub_cancel]

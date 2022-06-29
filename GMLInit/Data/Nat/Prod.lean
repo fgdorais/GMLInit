@@ -28,7 +28,8 @@ theorem tri_mono {m n : Nat} : m ≤ n → tri m ≤ tri n := by
 theorem two_tri_eq (n : Nat) : 2 * tri n = n * (n + 1) := by
   induction n with
   | zero => rfl
-  | succ n H => calc
+  | succ n H => 
+    calc
     _ = 2 * (tri n + (n + 1)) := by rfl
     _ = 2 * tri n + 2 * (n + 1) := by rw [Nat.mul_add]
     _ = n * (n + 1) + 2 * (n + 1) := by rw [H]
@@ -75,16 +76,19 @@ abbrev pair (x y : Nat) : Nat := tri (x + y) + x
 
 theorem pair_zero_right (x : Nat) : pair x 0 = tri x + x := rfl
 
-theorem pair_succ_right (x y : Nat) : pair x (y+1) = pair x y + (x + y) + 1 := calc
+theorem pair_succ_right (x y : Nat) : pair x (y+1) = pair x y + (x + y) + 1 := 
+  calc
   _ = (tri (x + y) + (x + y) + 1) + x := by rfl
   _ = ((tri (x + y) + (x + y)) + x) + 1 := by rw [Nat.add_right_comm _ x 1]
   _ = ((tri (x + y) + x) + (x + y)) + 1 := by rw [Nat.add_right_comm _ (x+y) x]
 
-theorem pair_zero_left (y : Nat) : pair 0 y = tri y := calc
+theorem pair_zero_left (y : Nat) : pair 0 y = tri y := 
+  calc
   _ = tri (0 + y) := by rfl
   _ = tri y := by rw [Nat.zero_add]
 
-theorem pair_succ_left (x y : Nat) : pair (x+1) y = pair x y + (x + y) + 2 := calc
+theorem pair_succ_left (x y : Nat) : pair (x+1) y = pair x y + (x + y) + 2 := 
+  calc
   _ = (tri (x + 1 + y)) + (x + 1) := by rfl
   _ = (tri (x + y + 1)) + (x + 1) := by rw [Nat.add_right_comm _ y 1]
   _ = (tri (x + y) + (x + y) + 1) + (x + 1) := by rfl

@@ -43,12 +43,14 @@ protected theorem pred_mul (x y : Nat) : (x - 1) * y = x * y - y := by
 
 -- assert theorem mul_left_comm (x y z : Nat) : x * (y * z) = y * (x * z)
 
-protected theorem mul_right_comm (x y z : Nat) : (x * y) * z = (x * z) * y := calc
+protected theorem mul_right_comm (x y z : Nat) : (x * y) * z = (x * z) * y := 
+  calc
   _ = x * (y * z) := by rw [Nat.mul_assoc]
   _ = x * (z * y) := by rw [Nat.mul_comm y z]
   _ = (x * z) * y := by rw [Nat.mul_assoc]
 
-protected theorem mul_cross_comm (x₁ x₂ y₁ y₂ : Nat) : (x₁ * x₂) * (y₁ * y₂) = (x₁ * y₁) * (x₂ * y₂) := calc
+protected theorem mul_cross_comm (x₁ x₂ y₁ y₂ : Nat) : (x₁ * x₂) * (y₁ * y₂) = (x₁ * y₁) * (x₂ * y₂) := 
+  calc
   _ = x₁ * (x₂ * (y₁ * y₂)) := by rw [Nat.mul_assoc]
   _ = x₁ * (y₁ * (x₂ * y₂)) := by rw [Nat.mul_left_comm x₂ y₁ y₂]
   _ = (x₁ * y₁) * (x₂ * y₂) := by rw [Nat.mul_assoc]
@@ -61,7 +63,8 @@ protected theorem mul_sub (x y z : Nat) : x * (y - z) = x * y - x * z := by
   induction y, z with
   | left y => rw [Nat.sub_zero, Nat.mul_zero, Nat.sub_zero]
   | right z => rw [Nat.zero_sub, Nat.mul_zero, Nat.zero_sub]
-  | diag y z H => calc
+  | diag y z H =>
+    calc
     _ = x * (y - z) := by rw [Nat.succ_sub_succ]
     _ = x * y - x * z := by rw [H]
     _ = (x * y + x) - (x * z + x) := by rw [Nat.add_sub_add]
@@ -71,7 +74,8 @@ protected theorem sub_mul (x y z : Nat) : (x - y) * z = x * z - y * z := by
   induction x, y with
   | left x => rw [Nat.sub_zero, Nat.zero_mul, Nat.sub_zero]
   | right y => rw [Nat.zero_sub, Nat.zero_mul, Nat.zero_sub]
-  | diag x y H => calc
+  | diag x y H => 
+    calc
     _ = (x - y) * z := by rw [Nat.succ_sub_succ]
     _ = x * z - y * z := by rw [H]
     _ = (x * z + z) - (y * z + z) := by rw [Nat.add_sub_add]

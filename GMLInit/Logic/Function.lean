@@ -9,7 +9,7 @@ abbrev uncurry {α} {β : α → Sort _} {γ : {a : α} → β a → Sort _} (f 
 syntax (name := curryNum) "curry." noWs num term : term
 macro_rules
 | `(curry.$n:num $f:term) =>
-  match n.isNatLit? with
+  match Lean.Syntax.isNatLit? n with
   | some 0 => `($f)
   | some (n+1) =>
     let n := Lean.Syntax.mkNumLit (toString n)
@@ -19,7 +19,7 @@ macro_rules
 syntax (name := uncurryNum) "uncurry." noWs num term : term
 macro_rules
 | `(uncurry.$n:num $f:term) =>
-  match n.isNatLit? with
+  match Lean.Syntax.isNatLit? n with
   | some 0 => `($f)
   | some (n+1) =>
     let n := Lean.Syntax.mkNumLit (toString n)

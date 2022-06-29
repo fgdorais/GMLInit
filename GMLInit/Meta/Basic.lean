@@ -13,7 +13,7 @@ namespace Meta
 
 syntax termOrHole := term <|> hole <|> syntheticHole
 
-syntax termList := "[" termOrHole,* ("|" termOrHole)? "]"
+syntax termList := "[" (term <|> hole <|> syntheticHole),* ("|" (term <|> hole <|> syntheticHole))? "]"
 
 macro mods:declModifiers "lemma" n:declId sig:declSig val:declVal : command =>
   `($mods:declModifiers theorem $n $sig $val)

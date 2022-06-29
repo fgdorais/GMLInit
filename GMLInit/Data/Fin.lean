@@ -49,7 +49,8 @@ theorem iotaFind_val {n : Nat} (i : Index (Fin.iota n)) : i.val.iotaFind = i := 
   | succ n H =>
     cases i with
     | head => rfl
-    | tail i => calc
+    | tail i => 
+      calc
       _ = iotaFind (Index.val (Index.tail i)) := by rfl
       _ = iotaFind (Index.val i) := by rw [Index.val_tail]
       _ = iotaFind (Index.val (Index.map Fin.succ (Index.unmap Fin.succ i))) := by rw [Index.map_unmap]

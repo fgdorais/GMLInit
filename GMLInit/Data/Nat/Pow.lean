@@ -14,7 +14,8 @@ attribute [local eliminator] Nat.recDiagAux
 
 protected theorem pow_succ' (x y : Nat) : x ^ (y + 1) = x ^ y * x := Nat.pow_succ x y
 
-protected theorem pow_one (x : Nat) : x ^ 1 = x := calc
+protected theorem pow_one (x : Nat) : x ^ 1 = x := 
+  calc
   _ = x ^ 0 * x := by rw [Nat.pow_succ]
   _ = 1 * x := by rw [Nat.pow_zero]
   _ = x := by rw [Nat.one_mul]
@@ -22,12 +23,14 @@ protected theorem pow_one (x : Nat) : x ^ 1 = x := calc
 protected theorem one_pow (x : Nat) : 1 ^ x = 1 := by
   induction x with
   | zero => rw [Nat.pow_zero]
-  | succ x H => calc
+  | succ x H => 
+    calc
     _ = 1 ^ x * 1 := by rw [Nat.pow_succ]
     _ = 1 * 1 := by rw [H]
     _ = 1 := by rw [Nat.mul_one]
 
-protected theorem zero_pow_succ (x : Nat) : 0 ^ (x + 1) = 0 := calc
+protected theorem zero_pow_succ (x : Nat) : 0 ^ (x + 1) = 0 := 
+  calc
   _ = 0 ^ x * 0 := by rw [Nat.pow_succ]
   _ = 0 := by rw [Nat.mul_zero]
 

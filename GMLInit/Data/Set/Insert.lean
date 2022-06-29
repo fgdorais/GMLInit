@@ -30,69 +30,85 @@ theorem insertIf_true_eq_insert (a : α) (s : Set α) : s.insertIf a True = s.in
     | Or.inl _ => left; constr; assumption; trivial
     | Or.inr _ => right; assumption
 
-theorem insert_idem (a : α) (s : Set α) : (s.insert a).insert a = s.insert a := calc
+theorem insert_idem (a : α) (s : Set α) : (s.insert a).insert a = s.insert a :=
+  calc
   _ = (Set.pure a ∪ Set.pure a) ∪ s := by rw [union_assoc]
   _ = Set.pure a ∪ s := by rw [union_idem]
 
-theorem insertIf_idem (a : α) (s : Set α) : (s.insertIf a p).insertIf a p = s.insertIf a p:= calc
+theorem insertIf_idem (a : α) (s : Set α) : (s.insertIf a p).insertIf a p = s.insertIf a p:= 
+  calc
   _ = (Set.pureIf a p ∪ Set.pureIf a p) ∪ s := by rw [union_assoc]
   _ = Set.pureIf a p ∪ s := by rw [union_idem]
 
-theorem insert_comm (a₁ a₂ : α) (s : Set α) : (s.insert a₁).insert a₂ = (s.insert a₂).insert a₁ := calc
+theorem insert_comm (a₁ a₂ : α) (s : Set α) : (s.insert a₁).insert a₂ = (s.insert a₂).insert a₁ :=
+  calc
   _ = (Set.pure a₂ ∪ Set.pure a₁) ∪ s := by rw [union_assoc]
   _ = (Set.pure a₁ ∪ Set.pure a₂) ∪ s := by rw [union_comm (Set.pure a₁) (Set.pure a₂)]
   _ = Set.pure a₁ ∪ (Set.pure a₂ ∪ s) := by rw [union_assoc]
 
-theorem insertIf_comm (a₁ a₂ : α) (s : Set α) : (s.insertIf a₁ p₁).insertIf a₂ p₂ = (s.insertIf a₂ p₂).insertIf a₁ p₁ := calc
+theorem insertIf_comm (a₁ a₂ : α) (s : Set α) : (s.insertIf a₁ p₁).insertIf a₂ p₂ = (s.insertIf a₂ p₂).insertIf a₁ p₁ :=
+  calc
   _ = (Set.pureIf a₂ p₂ ∪ Set.pureIf a₁ p₁) ∪ s := by rw [union_assoc]
   _ = (Set.pureIf a₁ p₁ ∪ Set.pureIf a₂ p₂) ∪ s := by rw [union_comm (Set.pureIf a₁ p₁) (Set.pureIf a₂ p₂)]
   _ = Set.pureIf a₁ p₁ ∪ (Set.pureIf a₂ p₂ ∪ s) := by rw [union_assoc]
 
-theorem insert_union_left (a : α) (s t : Set α) : s.insert a ∪ t = (s ∪ t).insert a := calc
+theorem insert_union_left (a : α) (s t : Set α) : s.insert a ∪ t = (s ∪ t).insert a :=
+  calc
   _ = Set.pure a ∪ (s ∪ t) := by rw [union_assoc]
 
-theorem insert_union_right (a : α) (s t : Set α) : s ∪ t.insert a = (s ∪ t).insert a := calc
+theorem insert_union_right (a : α) (s t : Set α) : s ∪ t.insert a = (s ∪ t).insert a :=
+  calc
   _ = (s ∪ Set.pure a) ∪ t := by rw [union_assoc]
   _ = (Set.pure a ∪ s) ∪ t := by rw [union_comm (Set.pure a) s]
   _ = Set.pure a ∪ (s ∪ t) := by rw [union_assoc]
 
-theorem insertIf_union_left (a : α) (s t : Set α) : s.insertIf a p ∪ t = (s ∪ t).insertIf a p := calc
+theorem insertIf_union_left (a : α) (s t : Set α) : s.insertIf a p ∪ t = (s ∪ t).insertIf a p :=
+  calc
   _ = Set.pureIf a p ∪ (s ∪ t) := by rw [union_assoc]
 
-theorem insertIf_union_right (a : α) (s t : Set α) : s ∪ t.insertIf a p = (s ∪ t).insertIf a p := calc
+theorem insertIf_union_right (a : α) (s t : Set α) : s ∪ t.insertIf a p = (s ∪ t).insertIf a p := 
+  calc
   _ = (s ∪ Set.pureIf a p) ∪ t := by rw [union_assoc]
   _ = (Set.pureIf a p ∪ s) ∪ t := by rw [union_comm (Set.pureIf a p) s]
   _ = Set.pureIf a p ∪ (s ∪ t) := by rw [union_assoc]
 
-theorem insert_inter_left (a : α) (s t : Set α) : s.insert a ∩ t = (s ∩ t).insertIf a (a ∈ t) := calc
+theorem insert_inter_left (a : α) (s t : Set α) : s.insert a ∩ t = (s ∩ t).insertIf a (a ∈ t) := 
+  calc
   _ = (Set.pure a ∩ t) ∪ (s ∩ t) := by rw [inter_distrib_right]
   _ = Set.pureIf a (a ∈ t) ∪ (s ∩ t) := by rw [pure_inter]
 
-theorem insert_inter_right (a : α) (s t : Set α) : s ∩ t.insert a = (s ∩ t).insertIf a (a ∈ s) := calc
+theorem insert_inter_right (a : α) (s t : Set α) : s ∩ t.insert a = (s ∩ t).insertIf a (a ∈ s) := 
+  calc
   _ = (s ∩ Set.pure a) ∪ (s ∩ t) := by rw [inter_distrib_left]
   _ = Set.pureIf a (a ∈ s) ∪ (s ∩ t) := by rw [inter_pure]
 
-theorem insertIf_inter_left (a : α) (p : Prop) (s t : Set α) : s.insertIf a p ∩ t = (s ∩ t).insertIf a (p ∧ a ∈ t) := calc
+theorem insertIf_inter_left (a : α) (p : Prop) (s t : Set α) : s.insertIf a p ∩ t = (s ∩ t).insertIf a (p ∧ a ∈ t) := 
+  calc
   _ = (Set.pureIf a p ∩ t) ∪ (s ∩ t) := by rw [inter_distrib_right]
   _ = Set.pureIf a (p ∧ a ∈ t) ∪ (s ∩ t) := by rw [pureIf_inter]
 
-theorem insertIf_inter_right (a : α) (p : Prop) (s t : Set α) : s ∩ t.insertIf a p = (s ∩ t).insertIf a (p ∧ a ∈ s) := calc
+theorem insertIf_inter_right (a : α) (p : Prop) (s t : Set α) : s ∩ t.insertIf a p = (s ∩ t).insertIf a (p ∧ a ∈ s) := 
+  calc
   _ = (s ∩ Set.pureIf a p) ∪ (s ∩ t) := by rw [inter_distrib_left]
   _ = Set.pureIf a (p ∧ a ∈ s) ∪ (s ∩ t) := by rw [inter_pureIf]
 
-theorem insert_map (f : α → β) (a : α) (s : Set α) : (s.insert a).map f = (s.map f).insert (f a) := calc
+theorem insert_map (f : α → β) (a : α) (s : Set α) : (s.insert a).map f = (s.map f).insert (f a) := 
+  calc
   _ = (Set.pure a).map f ∪ s.map f := by rw [union_map]
   _ = Set.pure (f a) ∪ s.map f := by rw [Set.map_pure]
 
-theorem insertIf_map (f : α → β) (a : α) (p : Prop) (s : Set α) : (s.insertIf a p).map f = (s.map f).insertIf (f a) p := calc
+theorem insertIf_map (f : α → β) (a : α) (p : Prop) (s : Set α) : (s.insertIf a p).map f = (s.map f).insertIf (f a) p :=
+  calc
   _ = (Set.pureIf a p).map f ∪ s.map f := by rw [union_map]
   _ = Set.pureIf (f a) p ∪ s.map f := by rw [Set.map_pureIf]
 
-theorem insert_bind (f : α → Set β) (a : α) (s : Set α) : (s.insert a).bind f = f a ∪ s.bind f := calc
+theorem insert_bind (f : α → Set β) (a : α) (s : Set α) : (s.insert a).bind f = f a ∪ s.bind f := 
+  calc
   _ = (Set.pure a).bind f ∪ s.bind f := by rw [union_bind]
   _ = f a ∪ s.bind f := by rw [Set.pure_bind]
 
-theorem insertIf_bind (f : α → Set β) (a : α) (p : Prop) (s : Set α) : (s.insertIf a p).bind f = (f a ∩ Set.const p) ∪ s.bind f := calc
+theorem insertIf_bind (f : α → Set β) (a : α) (p : Prop) (s : Set α) : (s.insertIf a p).bind f = (f a ∩ Set.const p) ∪ s.bind f := 
+  calc
   _ = (Set.pureIf a p).bind f ∪ s.bind f := by rw [union_bind]
   _ = (f a ∩ Set.const p) ∪ s.bind f := by rw [Set.pureIf_bind]
 

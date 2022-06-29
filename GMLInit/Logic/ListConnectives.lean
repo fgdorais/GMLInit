@@ -39,9 +39,10 @@ macro_rules
 | `(All.intro [$h, $hs,* |$t]) => `(All.cons $h (All.intro [$hs,* |$t]))
 | `(All.intro [$hs,*]) => `(All.intro [$hs,*|All.nil])
 
-syntax "All.pr." noWs num termOrHole : term
+syntax "All.pr." noWs num (term <|> hole <|> syntheticHole) : term
 macro_rules
-| `(All.pr.$n $h) => match n.isNatLit? with
+| `(All.pr.$n $h) => 
+  match Lean.Syntax.isNatLit? n with
   | some 0 => `(All.head $h)
   | some (n+1) =>
     let n := Lean.Syntax.mkNumLit (toString n)
@@ -85,9 +86,9 @@ syntax "Any.elim" term:max termList : term
 macro_rules
 | `(Any.elim $h $args:termList) => `(Any.elimAll $h (All.intro $args))
 
-syntax "Any.in." noWs num termOrHole : term
+syntax "Any.in." noWs num (term <|> hole <|> syntheticHole) : term
 macro_rules
-| `(Any.in.$n $h) => match n.isNatLit? with
+| `(Any.in.$n $h) => match Lean.Syntax.isNatLit? n with
   | some 0 => `(Any.head $h)
   | some (n+1) => let n := Lean.Syntax.mkNumLit (toString n)
     `(Any.tail (Any.in.$n $h))
