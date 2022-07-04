@@ -1,4 +1,4 @@
-import GMLInit.Data.List
+import GMLInit.Data.List.Basic
 
 structure List1 (α : Type _) where
   toList : List α
