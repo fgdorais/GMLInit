@@ -1,5 +1,5 @@
 import GMLInit.Data.Basic
-import GMLInit.Data.Bool
+import GMLInit.Data.Bool.Basic
 import GMLInit.Data.Equiv
 import GMLInit.Data.Nat
 import GMLInit.Logic.ListConnectives
@@ -38,6 +38,8 @@ protected theorem extIff {α} (as₁ as₂ : List α) : All (List.extAux as₁ a
 
 protected theorem extEq {α} (as₁ as₂ : List α) : All (List.extAux as₁ as₂) = (as₁ = as₂) :=
   propext (List.extIff as₁ as₂)
+
+instance (x : α) (xs : List α) : Nat.IsPos (List.length (x :: xs)) := ⟨Nat.zero_lt_succ _⟩
 
 @[simp] lemma nil_map {α β} (f : α → β) : [].map f = [] := rfl
 
