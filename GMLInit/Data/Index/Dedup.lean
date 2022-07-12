@@ -116,11 +116,11 @@ theorem dedup_undedup {xs : List α} (i : Index (xs.dedup s)) : (i.undedup s).de
   | cons x xs ih =>
     unfold undedup
     split
-    next ha => rw [dedup, dif_pos ha, ih, eqNdrec_symm]; rfl
+    next ha => rw [dedup, dif_pos ha, ih, eqNdrec_symm]
     next ha =>
       split
-      next h => rw [dedup, dif_neg ha, eqNdrec_symm, ←h]; rfl
-      next h => rw [dedup, dif_neg ha, eqNdrec_symm, ih, ←h]; rfl
+      next h => rw [dedup, dif_neg ha, eqNdrec_symm, ←h]
+      next h => rw [dedup, dif_neg ha, eqNdrec_symm, ih, ←h]
 
 theorem undedup_dedup {xs : List α} (i : Index xs) : s.r ((i.dedup s).undedup s).val i.val := by
   symmetry

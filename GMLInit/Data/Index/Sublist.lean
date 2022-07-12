@@ -131,7 +131,6 @@ theorem sublist_eq_iff_eq_unsublist {xs : List α} (i : Index xs) (hi : p i.val)
           cases heq
           rw [eqNdrec_symm]
           rw [ih]
-          rfl
 
 theorem unsublist_sublist {xs : List α} (i : Index xs) (hi : p i.val) : (i.sublist p hi).unsublist p = i := by
   induction i with
