@@ -41,7 +41,7 @@ protected def Not.intro : (a → False) → ¬a := id
   Note: This is a fake recursor -- `Not` is not an inductive type.
 -/
 @[eliminator] protected def Not.rec.{u} {motive : ¬a → Sort u} (t : ¬a) : a → motive t :=
-  λ h => False.casesOn (λ _ => motive t) (t h)
+  λ h => False.casesOn (motive := λ _ => motive t) (t h)
 
 protected def Not.recOn.{u} {motive : ¬a → Sort u} (t : ¬a) := Not.rec (motive:=motive) t
 

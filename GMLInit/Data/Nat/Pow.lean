@@ -25,6 +25,7 @@ protected theorem one_pow (x : Nat) : 1 ^ x = 1 := by
   | zero => rw [Nat.pow_zero]
   | succ x H => 
     calc
+    _ = 1 ^ (x + 1) := rfl
     _ = 1 ^ x * 1 := by rw [Nat.pow_succ]
     _ = 1 * 1 := by rw [H]
     _ = 1 := by rw [Nat.mul_one]

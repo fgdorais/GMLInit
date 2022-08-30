@@ -29,6 +29,14 @@ protected def ofListHVal : (vs : List HVal) → HList (vs.map HVal.sort)
 | [] => []
 | v::vs => v.val :: HList.ofListHVal vs
 
+@[specialize, inline] protected def foldl : {αs : List (Sort _)} → {β : Sort _} → HList αs → HList (αs.map fun α => α → β → β) → β → β
+| [], _, [], [], b => b
+| _::_, _, x :: xs, f :: fs, b => HList.foldl xs fs (f x b)
+
+protected def foldr : {αs : List (Sort _)} → {β : Sort _} → HList αs → HList (αs.map fun α => α → β → β) → β → β
+| [], _, [], [], b => b
+| _::_, _, x :: xs, f :: fs, b => f x (HList.foldr xs fs b)
+
 protected def append : {αs βs : List (Sort _)} → HList αs → HList βs → HList (αs ++ βs)
 | [], _, [], bs => bs
 | α :: αs, βs, a::as, bs => List.cons_append α αs βs ▸ cons a (HList.append as bs)

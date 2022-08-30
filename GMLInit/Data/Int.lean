@@ -389,12 +389,13 @@ protected theorem le_trans {i j k : Int} : i ≤ j → j ≤ k → i ≤ k := by
         apply Nat.le_of_add_le_add_left' mj
         apply Nat.le_of_add_le_add_right' nj
         calc
+        _ = mj + (mk + ni) + nj := rfl
         _ = (mj + mk) + (ni + nj) := by simp only [Nat.add_assoc]
         _ = (mj + ni) + (mk + nj) := by rw [Nat.add_cross_comm]
         _ ≤ (nj + mi) + (nk + mj) := by exact Nat.add_le_add hij hjk
         _ = (nk + mj) + (nj + mi) := by rw [Nat.add_comm]
         _ = (mj + nk) + (mi + nj) := by rw [Nat.add_comm nj, Nat.add_comm mj]
-        _ = _ := by simp only [Nat.add_assoc]
+        _ = mj + (nk + mi) + nj := by simp only [Nat.add_assoc]
 
 protected theorem le_antisymm {i j : Int} : i ≤ j → j ≤ i → i = j := by
   intro hij hji

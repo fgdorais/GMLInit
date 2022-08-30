@@ -7,7 +7,7 @@ attribute [instance] Pos.is_pos
 
 namespace Pos
 
-instance : Coe Pos Nat := ⟨Pos.toNat⟩
+--instance : Coe Pos Nat := ⟨Pos.toNat⟩
 
 lemma toNat.inj : {x y : Pos} → x.toNat = y.toNat → x = y
 | ⟨_,_⟩, ⟨_,_⟩, rfl => rfl
@@ -466,7 +466,7 @@ protected theorem mul_lt_mul {x₁ y₁ x₂ y₂ : Pos} : x₁ < y₁ → x₂ 
   by_toNat; exact Nat.mul_lt_mul
 
 protected theorem pow_le_pow_left {x y : Nat} : x ≤ y → (z : Pos) → z ^ x ≤ z ^ y := by
-  by_toNat; intro h z; exact Nat.pow_le_pow_of_pos_left h (Nat.is_pos z)
+  by_toNat; intro h z; exact Nat.pow_le_pow_of_pos_left h (Nat.is_pos z.toNat)
 
 protected theorem pow_le_pow_right {x y : Pos} : x ≤ y → (z : Nat) → x ^ z ≤ y ^ z := by
   by_toNat; exact Nat.pow_le_pow_left

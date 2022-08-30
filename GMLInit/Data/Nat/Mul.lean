@@ -65,6 +65,7 @@ protected theorem mul_sub (x y z : Nat) : x * (y - z) = x * y - x * z := by
   | right z => rw [Nat.zero_sub, Nat.mul_zero, Nat.zero_sub]
   | diag y z H =>
     calc
+    _ = x * ((y + 1) - (z + 1)) := rfl
     _ = x * (y - z) := by rw [Nat.succ_sub_succ]
     _ = x * y - x * z := by rw [H]
     _ = (x * y + x) - (x * z + x) := by rw [Nat.add_sub_add]
@@ -76,6 +77,7 @@ protected theorem sub_mul (x y z : Nat) : (x - y) * z = x * z - y * z := by
   | right y => rw [Nat.zero_sub, Nat.zero_mul, Nat.zero_sub]
   | diag x y H => 
     calc
+    _ = ((x + 1) - (y + 1)) * z := rfl
     _ = (x - y) * z := by rw [Nat.succ_sub_succ]
     _ = x * z - y * z := by rw [H]
     _ = (x * z + z) - (y * z + z) := by rw [Nat.add_sub_add]

@@ -11,22 +11,24 @@ class TransOrd : Prop where
   eq_subst {x y z : α} : compare x y = eq → compare x z = compare y z
   lt_trans {x y z : α} : compare x y = lt → compare y z = lt → compare x z = lt
   gt_trans {x y z : α} : compare x y = gt → compare y z = gt → compare x z = gt
-export TransOrd (eq_refl eq_subst lt_trans gt_trans)
 
 class LawfulOrd : Prop where
   eq_refl (x : α) : compare x x = eq
   eq_tight {x y : α} : compare x y = eq → x = y
   lt_trans {x y z : α} : compare x y = lt → compare y z = lt → compare x z = lt
   gt_trans {x y z : α} : compare x y = gt → compare y z = gt → compare x z = gt
-export LawfulOrd (eq_tight)
 
 instance [LawfulOrd α] : TransOrd α where
   eq_refl := LawfulOrd.eq_refl 
-  eq_subst h := (eq_tight h) ▸ rfl
+  eq_subst h := (LawfulOrd.eq_tight h) ▸ rfl
   lt_trans := LawfulOrd.lt_trans
   gt_trans := LawfulOrd.gt_trans
 
 namespace Ord
+
+export TransOrd (eq_refl eq_subst lt_trans gt_trans)
+
+export LawfulOrd (eq_tight)
 
 section TransOrd
 variable {α} [Ord α] [TransOrd α]

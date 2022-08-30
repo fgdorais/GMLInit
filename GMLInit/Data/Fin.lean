@@ -36,8 +36,8 @@ protected def iota : (n : Nat) → List (Fin n)
 | n+1 => Fin.zero :: (Fin.iota n).map Fin.succ
 
 def iotaFind : {n : Nat} → Fin n → Index (Fin.iota n)
-| n+1, ⟨0,_⟩ => Index.head
-| n+1, ⟨i+1,hi⟩ => Index.tail ((iotaFind ⟨i, Nat.lt_of_succ_lt_succ hi⟩).map Fin.succ)
+| _+1, ⟨0,_⟩ => Index.head
+| _+1, ⟨i+1,hi⟩ => Index.tail ((iotaFind ⟨i, Nat.lt_of_succ_lt_succ hi⟩).map Fin.succ)
 
 theorem iotaFind_zero {n : Nat} : iotaFind (Fin.zero : Fin (n+1)) = Index.head := by rfl
 
@@ -51,7 +51,7 @@ theorem iotaFind_val {n : Nat} (i : Index (Fin.iota n)) : i.val.iotaFind = i := 
     | head => rfl
     | tail i => 
       calc
-      _ = iotaFind (Index.val (Index.tail i)) := by rfl
+      _ = iotaFind (Index.val (Index.tail i : Index (Fin.iota (n+1)))) := rfl
       _ = iotaFind (Index.val i) := by rw [Index.val_tail]
       _ = iotaFind (Index.val (Index.map Fin.succ (Index.unmap Fin.succ i))) := by rw [Index.map_unmap]
       _ = iotaFind (Fin.succ (Index.val (Index.unmap Fin.succ i))) := by rw [Index.val_map]

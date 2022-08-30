@@ -351,8 +351,7 @@ theorem not_isReduced {xs : List α} (a : BDD xs) : isReduced (BDD.not a) = isRe
         constr
         · intro h
           rw [←BDD.not_not t, ←BDD.not_not f, h]
-        · intro h
-          rw [h]
+        · intro | rfl => rfl
       unfold BDD.not isReduced
       simp [ih t, ih f, this]
 
@@ -489,6 +488,12 @@ protected theorem ext {xs : List α} {a b : RBDD xs} : (∀ v, a.toBDD.eval v = 
   funext v
   exact h v
 
+protected abbrev eval {xs : List Bool} (a : RBDD xs) : Bool := a.toBDD.eval Index.val
+
+protected def lift {x : α} {xs : List α} (a : RBDD xs) : RBDD (x :: xs) where
+  toBDD := .lift a.toBDD
+  isReduced := a.isReduced
+
 protected def true {xs : List α} : RBDD xs where
   toBDD := BDD.true
   isReduced := BDD.true_isReduced
@@ -505,24 +510,105 @@ protected def not {xs : List α} (a : RBDD xs) : RBDD xs where
   toBDD := a.toBDD.not
   isReduced := BDD.not_isReduced a.toBDD ▸ a.isReduced
 
-instance (xs : List α) : Complement (RBDD xs) := ⟨RBDD.not⟩
+instance instComplement (xs : List α) : Complement (RBDD xs) := ⟨RBDD.not⟩
 
 protected def and {xs : List α} (a b : RBDD xs) : RBDD xs where
   toBDD := (BDD.and a.toBDD b.toBDD).reduce
   isReduced := BDD.reduce_isReduced (BDD.and a.toBDD b.toBDD)
 
-instance (xs : List α) : HAnd (RBDD xs) (RBDD xs) (RBDD xs) := ⟨RBDD.and⟩
+instance instHAnd (xs : List α) : HAnd (RBDD xs) (RBDD xs) (RBDD xs) := ⟨RBDD.and⟩
 
 protected def or {xs : List α} (a b : RBDD xs) : RBDD xs where
   toBDD := (BDD.or a.toBDD b.toBDD).reduce
   isReduced := BDD.reduce_isReduced (BDD.or a.toBDD b.toBDD)
 
-instance (xs : List α) : HOr (RBDD xs) (RBDD xs) (RBDD xs) := ⟨RBDD.or⟩
+instance instHOr (xs : List α) : HOr (RBDD xs) (RBDD xs) (RBDD xs) := ⟨RBDD.or⟩
 
 protected def xor {xs : List α} (a b : RBDD xs) : RBDD xs where
   toBDD := (BDD.xor a.toBDD b.toBDD).reduce
   isReduced := BDD.reduce_isReduced (BDD.xor a.toBDD b.toBDD)
 
-instance (xs : List α) : HXor (RBDD xs) (RBDD xs) (RBDD xs) := ⟨RBDD.xor⟩
+instance instHXor (xs : List α) : HXor (RBDD xs) (RBDD xs) (RBDD xs) := ⟨RBDD.xor⟩
 
 end RBDD
+
+#exit
+
+class Reflect (xs : List Bool) (a : Bool) extends RBDD xs where
+  eval_eq : toBDD.eval Index.val = a
+
+namespace Reflect
+
+instance instReflect (a x : Bool) (xs : List Bool) [Reflect xs a] : Reflect (x :: xs) a where
+  toRBDD := .lift (toRBDD a)
+  eval_eq := by 
+    unfold RBDD.lift BDD.eval
+    rw [eval_eq]
+
+instance instSelf (x : Bool) (xs : List Bool) : Reflect (x :: xs) x where
+  toRBDD := .var Index.head
+  eval_eq := by 
+    cases x <;> {
+      unfold RBDD.var
+      rw [BDD.eval_var]
+    }
+
+instance instTrue (xs : List Bool) : Reflect xs true where
+  toRBDD := .true
+  eval_eq := by
+    unfold RBDD.true
+    rw [BDD.eval_true]
+
+instance instFalse (xs : List Bool) : Reflect xs false where
+  toRBDD := .false
+  eval_eq := by 
+    unfold RBDD.false
+    rw [BDD.eval_false]
+
+instance instNot (a : Bool) (xs : List Bool) [Reflect xs a] : Reflect xs (! a) where
+  toRBDD := ~~~ toRBDD a
+  eval_eq := by 
+    unfold Complement.complement RBDD.not
+    rw [BDD.eval_not, eval_eq]
+
+instance instAnd (a b : Bool) (xs : List Bool) [Reflect xs a] [Reflect xs b] : Reflect xs (a && b) where
+  toRBDD := toRBDD a &&& toRBDD b
+  eval_eq := show ((RBDD.instHAnd xs).hAnd (toRBDD a) (toRBDD b)).eval = (a && b) by
+    unfold HAnd.hAnd RBDD.and RBDD.eval
+    rw [BDD.eval_reduce, BDD.eval_and, eval_eq, eval_eq]
+
+instance instOr (a b : Bool) (xs : List Bool) [Reflect xs a] [Reflect xs b] : Reflect xs (a || b) where
+  toRBDD := toRBDD a ||| toRBDD b
+  eval_eq := show ((RBDD.instHOr xs).hOr (toRBDD a) (toRBDD b)).eval = (a || b) by
+    unfold HOr.hOr RBDD.or RBDD.eval
+    rw [BDD.eval_reduce, BDD.eval_or, eval_eq, eval_eq]
+
+instance instXor (a b : Bool) (xs : List Bool) [Reflect xs a] [Reflect xs b] : Reflect xs (a ^^ b) where
+  toRBDD := toRBDD a ^^^ toRBDD b
+  eval_eq := show ((RBDD.instHXor xs).hXor (toRBDD a) (toRBDD b)).eval = (a ^^ b) by
+    unfold HXor.hXor RBDD.xor RBDD.eval
+    rw [BDD.eval_reduce, BDD.eval_xor, eval_eq, eval_eq]
+
+end Reflect
+
+def isTauto (a : Bool) (xs : List Bool) [Reflect xs a] : (Reflect.toRBDD (xs:=xs) a).eval (OBDD.test)
+
+theorem tauto {a : Bool} (xs : List Bool) [Reflect xs a] : (Reflect.toRBDD (xs:=xs) a).toBDD = BDD.true → a = true := by
+  intro h
+  -- unfold BEq.beq at h
+  -- have h := of_decide_eq_true h
+  rw [←Reflect.eval_eq (xs:=xs) (a:=a)] 
+  rw [h, BDD.eval_true]
+
+variable (a b c : Bool)
+
+def X : RBDD [a,b,c] := Reflect.toRBDD (!c || (c ^^ ((a && (b || !a)) ^^ (a && b))))
+
+#reduce (X a b c).toBDD
+
+example : (!c || (c ^^ ((a && (b || !a)) ^^ (a && b)))) = true := by
+  apply tauto [a,b,c]
+  apply of_decide_eq_true
+  apply Lean.ofReduceBool
+  rfl
+  done

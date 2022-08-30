@@ -44,3 +44,13 @@ instance Index.instDecidableEq {α} : {xs : List α} → DecidableEq (Index xs)
 @[reducible] def Index.val {α} : {as : List α} → Index as → α
 | a::_, head => a
 | _::_, tail i => val i
+
+structure Cached {α} (a : α) where
+  value : α
+  value_eq : value = a
+
+instance {α} (a : α) : Inhabited (Cached a) := ⟨⟨a, rfl⟩⟩
+
+instance {α} (a : α) : Subsingleton (Cached a) := ⟨fun | ⟨_,rfl⟩, ⟨_,rfl⟩ => rfl⟩
+
+instance {α} (a : α) : DecidableEq (Cached a) | ⟨_,rfl⟩, ⟨_,rfl⟩ => isTrue rfl
