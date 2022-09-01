@@ -95,22 +95,22 @@ theorem mk_sub_mk (m₁ n₁ m₂ n₂) : (m₁ ⊖ n₁) - (m₂ ⊖ n₂) = (m
 
 theorem nonNeg_mk (m n) : NonNeg (m ⊖ n) ↔ n ≤ m := by
   induction m, n with
-  | zero_zero => 
+  | zero_zero =>
     rw [zero_mk_zero]
     constr
     · intro; reflexivity
     · intro; apply NonNeg.mk
-  | zero_succ n => 
+  | zero_succ n =>
     rw [zero_mk_succ]
     constr
     · intro; contradiction
     · intro; contradiction
-  | succ_zero m => 
+  | succ_zero m =>
     rw [succ_mk_zero]
     constr
     · intro; apply Nat.zero_le
     · intro; apply NonNeg.mk
-  | succ_succ m n ih => 
+  | succ_succ m n ih =>
     rw [succ_mk_succ]
     rw [Nat.succ_le_succ_iff_le]
     exact ih
@@ -143,7 +143,7 @@ protected theorem add_comm (i j : Int) : i + j = j + i := by
       repeat rw [mk_add_mk]
       rw [Nat.add_comm mi mj, Nat.add_comm ni nj]
 
-protected theorem add_left_comm (i j k : Int) : i + (j + k) = j + (i + k) := 
+protected theorem add_left_comm (i j k : Int) : i + (j + k) = j + (i + k) :=
   calc
   _ = (i + j) + k := by rw [Int.add_assoc]
   _ = (j + i) + k := by rw [Int.add_comm i j]
@@ -169,9 +169,9 @@ protected theorem neg_neg (i : Int) : -(-i) = i := by
 
 protected theorem neg_add (i j : Int) : -(i + j) = -i + -j := by
   cases i using Int.casesMkOn with
-  | mk mi ni => 
+  | mk mi ni =>
     cases j using Int.casesMkOn with
-    | mk mj nj => 
+    | mk mj nj =>
       rw [mk_add_mk, neg_mk, neg_mk, neg_mk, mk_add_mk]
 
 protected theorem add_neg_self_left (i : Int) : -i + i = 0 := by
@@ -193,13 +193,13 @@ protected theorem zero_sub (i : Int) : 0 - i = -i := by
 protected theorem sub_self (i : Int) : i - i = 0 := by
   rw [Int.sub_eq, Int.add_neg_self_right]
 
-protected theorem add_sub_assoc (i j k : Int) : (i + j) - k = i + (j - k) := 
+protected theorem add_sub_assoc (i j k : Int) : (i + j) - k = i + (j - k) :=
   calc
   _ = (i + j) + -k := by rw [Int.sub_eq]
   _ = i + (j + -k) := by rw [Int.add_assoc]
   _ = i + (j - k) := by rw [Int.sub_eq]
 
-protected theorem sub_add_assoc (i j k : Int) : (i - j) + k = i - (j - k) := 
+protected theorem sub_add_assoc (i j k : Int) : (i - j) + k = i - (j - k) :=
   calc
   _ = (i + -j) + k := by rw [Int.sub_eq]
   _ = i + (-j + k) := by rw [Int.add_assoc]
@@ -207,13 +207,13 @@ protected theorem sub_add_assoc (i j k : Int) : (i - j) + k = i - (j - k) :=
   _ = i + -(j + -k) := by rw [Int.neg_add]
   _ = i - (j - k) := by rw [Int.sub_eq, Int.sub_eq]
 
-protected theorem add_sub_cancel (i j : Int) : (i + j) - j = i := 
+protected theorem add_sub_cancel (i j : Int) : (i + j) - j = i :=
   calc
   _ = i + (j - j) := by rw [Int.add_sub_assoc]
   _ = i + 0 := by rw [Int.sub_self]
   _ = i := by rw [Int.add_zero]
 
-protected theorem sub_add_cancel (i j : Int) : (i - j) + j = i := 
+protected theorem sub_add_cancel (i j : Int) : (i - j) + j = i :=
   calc
   _ = i - (j - j) := by rw [Int.sub_add_assoc]
   _ = i - 0 := by rw [Int.sub_self]
@@ -222,7 +222,7 @@ protected theorem sub_add_cancel (i j : Int) : (i - j) + j = i :=
 protected theorem neg_sub (i j : Int) : -(i - j) = j - i := by
   rw [Int.sub_eq, Int.sub_eq, Int.neg_add, Int.neg_neg, Int.add_comm]
 
-protected theorem add_left_cancel' (i : Int) {j k : Int} (h : i + j = i + k) : j = k := 
+protected theorem add_left_cancel' (i : Int) {j k : Int} (h : i + j = i + k) : j = k :=
   calc
   _ = 0 + j := by rw [Int.zero_add]
   _ = (-i + i) + j := by rw [Int.add_neg_self_left]
@@ -232,7 +232,7 @@ protected theorem add_left_cancel' (i : Int) {j k : Int} (h : i + j = i + k) : j
   _ = 0 + k := by rw [Int.add_neg_self_left]
   _ = k := by rw [Int.zero_add]
 
-protected theorem add_right_cancel' (i : Int) {j k : Int} (h : j + i = k + i) : j = k := 
+protected theorem add_right_cancel' (i : Int) {j k : Int} (h : j + i = k + i) : j = k :=
   calc
   _ = j + 0 := by rw [Int.add_zero]
   _ = j + (i + -i) := by rw [Int.add_neg_self_right]
@@ -373,7 +373,7 @@ theorem le.dest {i j : Int} : i ≤ j → ∃ (k : Nat), j = i + k := by
 
 protected theorem le_refl (i : Int) : i ≤ i := by
   cases i using Int.casesMkOn with
-  | mk ni mi => 
+  | mk ni mi =>
     rw [mk_le_mk, Nat.add_comm]
     reflexivity
 
@@ -400,7 +400,7 @@ protected theorem le_trans {i j k : Int} : i ≤ j → j ≤ k → i ≤ k := by
 protected theorem le_antisymm {i j : Int} : i ≤ j → j ≤ i → i = j := by
   intro hij hji
   match le.dest hij, le.dest hji with
-  | ⟨a,ha⟩, ⟨b,hb⟩ => 
+  | ⟨a,ha⟩, ⟨b,hb⟩ =>
     rw [hb, Int.add_assoc] at ha
     have : b + a = 0 := by
       apply ofNat.inj
@@ -424,14 +424,14 @@ protected theorem le_total (i j : Int) : i ≤ j ∨ j ≤ i := by
 protected theorem add_le_add_left {i j : Int} : i ≤ j → ∀ (k : Int), k + i ≤ k + j := by
   intro h k
   match le.dest h with
-  | ⟨d, hd⟩ => 
+  | ⟨d, hd⟩ =>
     rw [hd, ←Int.add_assoc]
     exact le.intro ..
-    
+
 protected theorem add_le_add_right {i j : Int} : i ≤ j → ∀ (k : Int), i + k ≤ j + k := by
   intro h k
   match le.dest h with
-  | ⟨d, hd⟩ => 
+  | ⟨d, hd⟩ =>
     rw [hd, Int.add_right_comm]
     exact le.intro ..
 

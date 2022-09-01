@@ -29,7 +29,7 @@ protected theorem add_sub_add (x y z : Nat) : (x + z) - (y + z) = x - y := by
 protected theorem sub_assoc (x y z : Nat) : (x - y) - z = x - (y + z) := by
   induction z with
   | zero => rfl
-  | succ z H => 
+  | succ z H =>
     calc
     _ = x - y - z - 1  := by rw [Nat.sub_succ']
     _ = (x - (y + z)) - 1  := by rw [H]
@@ -43,7 +43,7 @@ protected theorem sub_right_comm (x y z : Nat) : (x - y) - z = (x - z) - y := by
 protected theorem add_sub_cancel_right (x y : Nat) : (x + y) - y = x := by
   induction y with
   | zero => rw [Nat.add_zero, Nat.sub_zero]
-  | succ y H => 
+  | succ y H =>
     calc
     _ = ((x + y) + 1) - (y + 1) := by rw [Nat.add_assoc]
     _ = (x + y) - y := by rw [Nat.add_sub_add]
@@ -51,20 +51,23 @@ protected theorem add_sub_cancel_right (x y : Nat) : (x + y) - y = x := by
 
 protected theorem add_sub_comm (x y : Nat) : x + (y - x) = y + (x - y) := by
   induction x, y with
-  | left x => 
-    calc 
+  | left x =>
+    calc
+    _ = x + (0 - x) := rfl
     _ = x + (0 - x) := rfl
     _ = x + 0 := by rw [Nat.zero_sub]
     _ = 0 + x := by rw [Nat.add_comm]
     _ = 0 + (x - 0) := by rw [Nat.sub_zero]
-  | right y => 
+  | right y =>
     calc
+    _ = 0 + (y - 0) := rfl
     _ = 0 + (y - 0) := rfl
     _ = 0 + y := by rw [Nat.sub_zero]
     _ = y + 0 := by rw [Nat.add_comm]
     _ = y + (0 - y) := by rw [Nat.zero_sub]
   | diag x y H =>
     calc
+    _ = (x + 1) + ((y + 1) - (x + 1)) := rfl
     _ = (x + 1) + ((y + 1) - (x + 1)) := rfl
     _ = (x + 1) + (y - x) := by rw [Nat.succ_sub_succ']
     _ = (x + (y - x)) + 1 := by rw [Nat.succ_add']
@@ -106,7 +109,7 @@ protected theorem gt_iff_sub_pos (x y : Nat) : x > y ↔ x - y > 0 := by
   induction x, y with
   | left x => rw [Nat.sub_zero]; reflexivity
   | right y => rw [Nat.zero_sub]; constr <;> (intro; contradiction)
-  | diag x y H => 
+  | diag x y H =>
     calc
     _ ↔ y < x := Nat.succ_lt_succ_iff_lt y x
     _ ↔ x - y > 0 := H
@@ -217,7 +220,7 @@ protected theorem sub_le_sub_left {x y : Nat} (h : x ≤ y) (z : Nat) : x - z �
   _ = z + (y - z) := by rw [Nat.add_sub_comm]
 
 protected theorem sub_le_sub_of_ge_right {x y : Nat} (h : x ≥ y) (z : Nat) : z - x ≤ z - y :=
-  Nat.sub_le_of_le_add' $ 
+  Nat.sub_le_of_le_add' $
   calc
   _ ≤ z + (y - z) := by apply Nat.le_add_right
   _ = y + (z - y) := by rw [Nat.add_sub_comm]
