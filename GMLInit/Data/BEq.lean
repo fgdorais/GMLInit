@@ -47,7 +47,7 @@ theorem bne_symm {x y : α} : (x != y) = true → (y != x) = true := by
   intro h; rw [bne_comm, h]
 
 theorem bne_comp {x y : α} : (x != y) = true → ∀ z, (x != z) = true ∨ (z != y) = true := by
-  unfold bne
+  clean unfold bne
   intro hxy z
   match hxz : x == z, hyz : z == y with
   | true, true => rw [beq_subs hxz y, hyz] at hxy; contradiction

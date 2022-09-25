@@ -55,7 +55,7 @@ protected def ofNat (n : Nat) : ENat where
 instance : Coe Nat ENat := ⟨ENat.ofNat⟩
 
 @[simp] theorem ofNat_isLE_iff_le (n m : Nat) : ENat.isLE n m ↔ n ≤ m := by
-  unfold ENat.ofNat
+  clean unfold ENat.ofNat
   rw [Nat.ble_eq]
   reflexivity
 

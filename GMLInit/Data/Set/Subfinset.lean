@@ -83,11 +83,11 @@ protected instance seq (f : Set (α → β)) [hf : IsSubfinite f] (s : Set α) [
     apply IsSubfinite.union (ht:=H) (f.map (λ f => f a) ∩ Set.const p) (Set.seq f s)
 
 protected instance seqLeft (s : Set α) [hs : IsSubfinite s] (t : Set β) [ht : IsSubfinite t] : IsSubfinite (Set.seqLeft s t) := by
-  unfold Set.seqLeft
+  clean unfold Set.seqLeft
   infer_instance
 
 protected instance seqRight (s : Set α) [hs : IsSubfinite s] (t : Set β) [ht : IsSubfinite t] : IsSubfinite (Set.seqRight s t) := by
-  unfold Set.seqRight
+  clean unfold Set.seqRight
   infer_instance
 
 end Set.IsSubfinite
@@ -116,47 +116,38 @@ instance : LawfulMonad Subfinset where
   id_map := by
     intro _ ⟨_,_⟩
     apply Subfinset.eq
-    unfold Functor.map
-    rw [Set.id_map]
+    simp only [Functor.map, Set.id_map]
   comp_map := by
     intro _ _ _ f g ⟨_,_⟩
     apply Subfinset.eq
-    unfold Functor.map
-    rw [Set.comp_map]
+    simp only [Functor.map, Set.comp_map]
   map_const := by intros; rfl
   map_pure f a := by
     apply Subfinset.eq
-    unfold Functor.map Pure.pure
-    rw [Set.map_pure]
+    simp only [Functor.map, Pure.pure, Set.map_pure]
   pure_bind := by
     intros
     apply Subfinset.eq
-    unfold Bind.bind Pure.pure
-    rw [Set.pure_bind]
+    simp only [Bind.bind, Pure.pure, Set.pure_bind]
   bind_assoc := by
     intros
     apply Subfinset.eq
-    unfold Bind.bind
-    rw [Set.bind_assoc]
+    simp only [Bind.bind, Set.bind_assoc]
   bind_pure_comp := by
     intros
     apply Subfinset.eq
-    unfold Bind.bind Pure.pure Functor.map
-    rw [Set.bind_pure_comp]
+    simp only [Bind.bind, Pure.pure, Functor.map, Set.bind_pure_comp]
   bind_map := by
     intros
     apply Subfinset.eq
-    unfold Bind.bind Functor.map Seq.seq
-    rw [Set.bind_map]
+    simp only [Bind.bind, Functor.map, Seq.seq, Set.bind_map]
   pure_seq f s := by
     intros
     apply Subfinset.eq
-    unfold Seq.seq Pure.pure Functor.map
-    rw [Set.pure_seq]
+    simp only [Seq.seq, Pure.pure, Functor.map, Set.pure_seq]
   seq_assoc := by
     intros
     apply Subfinset.eq
-    unfold Seq.seq Functor.map
-    rw [Set.seq_assoc]
+    simp only [Seq.seq, Functor.map, Set.seq_assoc]
   seqLeft_eq _ _ := rfl
   seqRight_eq _ _ := rfl

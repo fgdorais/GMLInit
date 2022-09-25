@@ -67,7 +67,7 @@ theorem val_iotaFind {n : Nat} (i : Fin n) : i.iotaFind.val = i := by
     | ⟨0,_⟩ => rfl
     | ⟨i+1,hi⟩ =>
       apply Fin.eq
-      unfold iotaFind
+      clean unfold iotaFind
       open Index in rw [val_tail, val_map, H]
       rfl
 
@@ -84,7 +84,7 @@ def find_some {p : Fin n → Bool} (i) : Fin.find? p = some i → p i = true := 
   | zero => exact i.elim0
   | succ n H =>
     intro h
-    unfold Fin.find? at h
+    clean unfold Fin.find? at h
     split at h
     next h0 => cases h; exact h0
     next hs => cases h; exact H _ hs
@@ -95,7 +95,7 @@ def find_none {p : Fin n → Bool} (x) : Fin.find? p = none → p x = false := b
   | zero => absurd x.isLt; apply Nat.not_lt_zero
   | succ n H =>
     intro h
-    unfold Fin.find? at h
+    clean unfold Fin.find? at h
     split at h
     next => contradiction
     next => contradiction

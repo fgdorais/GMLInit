@@ -18,7 +18,8 @@ theorem unbind_bind {xs : List α} (i : Index xs) (j : Index (f i.val)) : unbind
   induction i with
   | head => rw [bind, unbind, unappend_append]
   | tail i ih =>
-    rw [bind, unbind, unappend_append]
+    unfold bind unbind
+    rw [unappend_append]
     clean
     rw [ih]
 

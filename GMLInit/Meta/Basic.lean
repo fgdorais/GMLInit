@@ -1,4 +1,4 @@
-import GMLInit.Prelude
+import GMLInit.Meta.Prelude
 import GMLInit.Logic.Cast
 import GMLInit.Logic.Congr
 import GMLInit.Logic.HEq
@@ -6,8 +6,9 @@ import Lean
 
 open Lean
 open Lean.Meta
-open Lean.Elab
 open Lean.Parser.Tactic (location)
+open Lean.Elab
+open Lean.Elab.Tactic (Location expandLocation joinLocation)
 
 namespace Meta
 
@@ -18,15 +19,25 @@ syntax termList := "[" (term <|> hole <|> syntheticHole),* ("|" (term <|> hole <
 macro mods:declModifiers "lemma" n:declId sig:declSig val:declVal : command =>
   `($mods:declModifiers theorem $n $sig $val)
 
-syntax "clean " (location)? : tactic
-set_option hygiene false in macro_rules
-| `(tactic| clean $[$loc]?) =>
-  `(tactic| simp only [clean] $[$loc]?)
-
-syntax "unfold " withPosition((colGe ident)+) (location)? : tactic
+syntax (name := clean) "clean " (colGt tactic)? (colGe location)? : tactic
 macro_rules
-| `(tactic| unfold $ids* $[$loc]?) =>
-  `(tactic| simp only [$[$ids:ident],*] $[$loc]?)
+| `(tactic| clean $[$loc:location]?) => 
+  `(tactic| simp only [clean] $[$loc]?)
+| `(tactic| clean $tac $[$loc:location]?) => do
+  let mut loc : Location := match loc with
+  | some loc => expandLocation loc
+  | none => .targets #[] false
+  for stx in Lean.Syntax.filter tac fun stx => stx.getKind == ``location do
+    loc := joinLocation loc (expandLocation stx)
+  match loc with
+  | .wildcard => 
+    `(tactic| $tac; simp only [clean] at *)
+  | .targets hs true =>
+    let locs := hs.map Lean.TSyntax.mk
+    `(tactic| $tac; simp only [clean] at $[$locs]* ⊢)
+  | .targets hs false =>
+    let locs := hs.map Lean.TSyntax.mk
+    `(tactic| $tac; simp only [clean] at $[$locs]*)
 
 syntax "elim_casts" (location)? : tactic
 set_option hygiene false in macro_rules
@@ -36,15 +47,6 @@ set_option hygiene false in macro_rules
 macro "exfalso" : tactic => `(tactic| apply False.elim)
 
 macro "absurd " h:term : tactic => `(tactic| first | apply absurd _ $h | apply absurd $h)
-
--- syntax "whnf" (&"lhs" <|> &"rhs")? (location)? : tactic
--- macro_rules
--- | `(tactic| whnf $[at $h:ident]?) =>
---   `(tactic| conv $[at $h]? => whnf)
--- | `(tactic| whnf lhs $[at $h:ident]?) =>
---   `(tactic| conv $[at $h]? => {lhs; whnf})
--- | `(tactic| whnf rhs $[at $h:ident]?) =>
---   `(tactic| conv $[at $h]? => {rhs; whnf})
 
 def Tactic.constr (mvarId : MVarId) : MetaM (List MVarId) := do
   mvarId.withContext do

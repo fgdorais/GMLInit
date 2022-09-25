@@ -149,24 +149,24 @@ local instance matchQuotDec (x : α) (n : Nat) : Decidable (matchQuot s x n) :=
   match h: enum (α:=α) n with
   | none =>
     Decidable.isFalse $ by
-    unfold matchQuot
+    clean unfold matchQuot
     rw [h]
     intro
     contradiction
   | some y =>
     if hxy : Setoid.r x y
     then Decidable.isTrue $ by
-      unfold matchQuot
+      clean unfold matchQuot
       rw [h]
       exact hxy
     else Decidable.isFalse $ by
-      unfold matchQuot
+      clean unfold matchQuot
       rw [h]
       exact hxy
 
 private theorem matchQuotTotal (x : α) : ∃ n, matchQuot s x n := by
     exists find x
-    unfold matchQuot
+    clean unfold matchQuot
     rw [spec]
     clean
     reflexivity
@@ -175,10 +175,10 @@ private def findQuot (x : α) : Nat := Nat.find (matchQuot s x) (matchQuotTotal 
 
 private theorem findQuotSound (x₁ x₂ : α) : Setoid.r x₁ x₂ → findQuot s x₁ = findQuot s x₂ := by
   intro h
-  unfold findQuot
+  clean unfold findQuot
   apply Nat.find_ext
   intro n
-  unfold matchQuot
+  clean unfold matchQuot
   split
   next => reflexivity
   next =>
@@ -194,16 +194,16 @@ private theorem findQuotSound (x₁ x₂ : α) : Setoid.r x₁ x₂ → findQuot
       · exact hx
 
 private theorem specQuot (x : α) : enumQuot s (findQuot s x) = some (Quotient.mk s x) := by
-  unfold findQuot enumQuot
+  clean unfold findQuot enumQuot
   split
   next h =>
     have hmatch : matchQuot s x (Nat.find (matchQuot s x) (matchQuotTotal s x)) := Nat.find_property (matchQuot s x)
-    unfold matchQuot at hmatch h
+    clean unfold matchQuot at hmatch h
     rw [h] at hmatch
     contradiction
   next y h =>
     have hmatch : matchQuot s x (Nat.find (matchQuot s x) (matchQuotTotal s x)) := Nat.find_property (matchQuot s x)
-    unfold matchQuot at hmatch h
+    clean unfold matchQuot at hmatch h
     simp [h] at hmatch
     rw [Quotient.sound hmatch]
 
@@ -268,7 +268,7 @@ theorem search_prop {α} [Enum α] (p : α → Bool) (h : ∃ x, p x = true) : p
   clean at this
   split at this
   next x' hsome =>
-    unfold search
+    clean unfold search
     split
     next h =>
       rw [hsome] at h

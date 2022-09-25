@@ -122,7 +122,7 @@ instance (p : α → Prop) [DecidablePred p] : Finite { x // p x } :=
   Finite.ofEquiv (Index ((enum α).sublist p)) {x // p x} (Equiv.comp e₁ e₂).inv
 where
   e₁ := Index.sublistEquiv p (enum α)
-  e₂ := Subtype.equiv (Finite.equivIndex α) (λ x => by unfold Finite.equivIndex; rw [Finite.val_find]; reflexivity)
+  e₂ := Subtype.equiv (Finite.equivIndex α) (λ x => by clean unfold Finite.equivIndex; rw [Finite.val_find]; reflexivity)
 
 instance (s : Setoid α) [DecidableRel s.r] : Finite (Quotient s) where
   list := ((enum α).dedup s).map (Quotient.mk s)
@@ -162,7 +162,7 @@ protected def any (p : α → Bool) : Bool := List.any (enum α) p
 protected def all (p : α → Bool) : Bool := List.all (enum α) p
 
 theorem forall_iff_all (p : α → Bool) : (∀ x, p x) ↔ Finite.all p := by
-  unfold Finite.all
+  clean unfold Finite.all
   rw [List.all_eq_true]
   constr
   · intro h
@@ -175,7 +175,7 @@ theorem forall_iff_all (p : α → Bool) : (∀ x, p x) ↔ Finite.all p := by
     apply All.projIdx h
 
 theorem exists_iff_any (p : α → Bool) : (∃ x, p x) ↔ Finite.any p := by
-  unfold Finite.any
+  clean unfold Finite.any
   rw [List.any_eq_true]
   constr
   · intro

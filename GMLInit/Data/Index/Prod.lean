@@ -15,13 +15,11 @@ def unprod (k : Index (List.prod xs ys)) : Index xs × Index ys :=
   | ⟨i,j⟩ => (i, j.unmap (Prod.mk i.val))
 
 theorem unprod_prod (i : Index xs × Index ys) : unprod (prod i) = i := by
-  rw [prod, unprod]
-  clean
+  simp only [prod, unprod]
   rw [unbind_bind, unmap_map]
 
 theorem prod_unprod (k : Index (List.prod xs ys)) : prod (unprod k) = k := by
-  rw [prod, unprod]
-  clean
+  simp only [prod, unprod]
   rw [map_unmap, bind_unbind]
 
 theorem prod_eq_iff_eq_unprod (i : Index xs × Index ys) (k : Index (List.prod xs ys)) : prod i = k ↔ i = unprod k := by

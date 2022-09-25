@@ -55,12 +55,12 @@ instance (x : α) (xs : List α) : Nat.IsPos (List.length (x :: xs)) := ⟨Nat.z
 @[simp] lemma id_map {α} (as : List α) : as.map id = as := by
   induction as with
   | nil => rfl
-  | cons a as H => unfold map; rw [H]; rfl
+  | cons a as H => clean unfold map; rw [H]; rfl
 
 lemma comp_map {α β γ} (f : α → β) (g : β → γ) (as : List α) : as.map (g ∘ f) = (as.map f).map g := by
   induction as with
   | nil => rfl
-  | cons a as H => unfold map; rw [H, Function.comp_apply]
+  | cons a as H => rw [map, map, map, H, Function.comp_apply]
 
 @[simp] lemma nil_bind {α β} (f : α → List β) : [].bind f = [] := rfl
 

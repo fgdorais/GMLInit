@@ -57,21 +57,21 @@ section
 variable {p}
 
 theorem unsublist_pos_head {x : α} {xs : List α} (h : p x) : ((List.sublist_pos h) ▸ (head : Index (⟨x,h⟩ :: xs.sublist p)) : Index ((x :: xs).sublist p)).unsublist p = head := by
-  unfold unsublist
+  clean unfold unsublist
   rw [dif_pos h]
   split
   next => rfl
   next i hh => elim_casts at hh; contradiction
 
 theorem unsublist_pos_tail {x : α} {xs : List α} (h : p x) (i : Index (xs.sublist p)) : ((List.sublist_pos h) ▸ (tail i : Index (⟨x,h⟩ :: xs.sublist p)) : Index ((x :: xs).sublist p)).unsublist p = tail (i.unsublist p) := by
-  unfold unsublist
+  simp only [unsublist]
   rw [dif_pos h]
   split
   next i hh => elim_casts at hh; contradiction
   next i hh => elim_casts at hh; cases hh; rfl
 
 theorem unsublist_neg_tail {x : α} {xs : List α} (h : ¬ p x) (i : Index (xs.sublist p)) : ((List.sublist_neg h).symm ▸ i : Index ((x :: xs).sublist p)).unsublist p = tail (i.unsublist p) := by
-  unfold unsublist
+  simp only [unsublist]
   rw [dif_neg h]
   apply congrArg tail
   apply congrArg (unsublist p)
@@ -157,7 +157,7 @@ theorem val_unsublist_eq_val_val {xs : List α} (i : Index (xs.sublist p)) : (i.
   | cons x xs ih =>
     by_cases p x with
     | isTrue hx =>
-      unfold unsublist
+      clean unfold unsublist
       rw [dif_pos hx]
       split
       next h =>
@@ -171,7 +171,7 @@ theorem val_unsublist_eq_val_val {xs : List α} (i : Index (xs.sublist p)) : (i.
         rw [val_tail, val_tail]
         apply ih
     | isFalse hx =>
-      unfold unsublist
+      clean unfold unsublist
       rw [dif_neg hx]
       rw [val_tail]
       rw [ih]

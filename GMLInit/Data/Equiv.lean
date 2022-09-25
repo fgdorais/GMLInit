@@ -43,7 +43,7 @@ protected def comp (f : Equiv β γ) (e : Equiv α β) : Equiv α γ where
   rev := e.rev ∘ f.rev
   spec := by
     intros
-    unfold Function.comp
+    clean unfold Function.comp
     constr
     · intro | rfl => rw [f.rev_fwd, e.rev_fwd]
     · intro | rfl => rw [e.fwd_rev, f.fwd_rev]

@@ -20,7 +20,7 @@ theorem eq_refl [Reflexive (α:=α) (.≤.)] (x : α) : compareOfLE x x = eq := 
   rw [if_pos (Reflexive.refl x)]
 
 theorem eq_subst [Transitive (α:=α) (.≤.)] {x y z : α} : compareOfLE x y = eq → compareOfLE x z = compareOfLE y z := by
-  unfold compareOfLE
+  clean unfold compareOfLE
   intro h
   by_cases x ≤ y, y ≤ x with
   | isFalse nxy, _ => rw [if_neg nxy] at h; contradiction
@@ -42,7 +42,7 @@ theorem eq_subst [Transitive (α:=α) (.≤.)] {x y z : α} : compareOfLE x y = 
       | _, isTrue hzy => rw [if_pos hzy, if_pos (Transitive.trans hzy hyx)]
 
 theorem eq_tight [Antisymmetric (α:=α) (.≤.)] {x y : α} : compareOfLE x y = eq → x = y := by
-  unfold compareOfLE
+  clean unfold compareOfLE
   intro h
   by_cases x ≤ y, y ≤ x with
   | isFalse nxy, _ => rw [if_neg nxy] at h; contradiction
@@ -51,7 +51,7 @@ theorem eq_tight [Antisymmetric (α:=α) (.≤.)] {x y : α} : compareOfLE x y =
     exact Antisymmetric.antisymm hxy hyx
 
 theorem gt_trans [Transitive (α:=α) (.≤.)] [Total (α:=α) (.≤.)] {x y z : α} : compareOfLE x y = gt → compareOfLE y z = gt → compareOfLE x z = gt := by
-  unfold compareOfLE
+  clean unfold compareOfLE
   intro cxy cyz
   by_cases x ≤ y, y ≤ z, x ≤ z with
   | isTrue hxy, _, _ => rw [if_pos hxy] at cxy; split at cxy <;> contradiction
@@ -65,7 +65,7 @@ theorem gt_trans [Transitive (α:=α) (.≤.)] [Total (α:=α) (.≤.)] {x y z :
       split at cyz <;> contradiction
 
 theorem lt_trans [Transitive (α:=α) (.≤.)] [Total (α:=α) (.≤.)] {x y z : α} : compareOfLE x y = lt → compareOfLE y z = lt → compareOfLE x z = lt := by
-  unfold compareOfLE
+  clean unfold compareOfLE
   intro cxy cyz
   cases Total.total (r:=(.≤.)) x y with
   | inr hyx => rw [if_pos hyx] at cxy; split at cxy <;> contradiction
@@ -105,12 +105,12 @@ namespace compareOfLT
 variable {α} [inst : LT α] [DecidableRel (α:=α) (.<.)]
 
 theorem eq_refl [Irreflexive (α:=α) (.<.)] (x : α) : compareOfLT x x = eq := by
-  unfold compareOfLT
+  clean unfold compareOfLT
   rw [if_neg (Irreflexive.irrefl x)]
   rw [if_neg (Irreflexive.irrefl x)]
 
 theorem eq_subst {x y z : α} [Transitive (α:=α) (.<.)] [Comparison (α:=α) (.<.)] : compareOfLT x y = eq → compareOfLT x z = compareOfLT y z := by
-  unfold compareOfLT
+  clean unfold compareOfLT
   intro heq
   by_cases x < y, y < x with
   | isTrue hxy, _ => rw [if_pos hxy] at heq; contradiction
@@ -144,7 +144,7 @@ theorem eq_subst {x y z : α} [Transitive (α:=α) (.<.)] [Comparison (α:=α) (
         rw [if_neg nzx, if_neg nzy]
 
 theorem eq_tight {x y : α} [StableEq α] [Connex (α:=α) (.<.)] : compareOfLT x y = eq → x = y := by
-  unfold compareOfLT
+  clean unfold compareOfLT
   intro heq
   by_contradiction
   | assuming hne =>
@@ -159,7 +159,7 @@ theorem eq_tight {x y : α} [StableEq α] [Connex (α:=α) (.<.)] : compareOfLT 
       next => contradiction
 
 theorem lt_trans [Transitive (α:=α) (.<.)] {x y z : α} : compareOfLT x y = lt → compareOfLT y z = lt → compareOfLT x z = lt := by
-  unfold compareOfLT
+  clean unfold compareOfLT
   intro cxy cyz
   by_cases x < z, x < y, y < z with
   | isTrue hxz, _, _ =>
@@ -175,7 +175,7 @@ theorem lt_trans [Transitive (α:=α) (.<.)] {x y z : α} : compareOfLT x y = lt
     split at cxy <;> contradiction
 
 theorem gt_trans [Irreflexive (α:=α) (.<.)] [Transitive (α:=α) (.<.)] {x y z : α} : compareOfLT x y = gt → compareOfLT y z = gt → compareOfLT x z = gt := by
-  unfold compareOfLT
+  clean unfold compareOfLT
   intro cxy cyz
   by_cases z < x, y < x, z < y with
   | isTrue hzx, _, _ =>
@@ -221,7 +221,7 @@ theorem eq_refl [Irreflexive (α:=α) (.<.)] (x : α) : compareOfLessAndEq x x =
   rw [if_pos rfl]
 
 theorem eq_tight {x y : α} : compareOfLessAndEq x y = eq → x = y := by
-  unfold compareOfLessAndEq
+  clean unfold compareOfLessAndEq
   intro cxy
   by_cases x = y with
   | isTrue rfl => rfl
@@ -230,7 +230,7 @@ theorem eq_tight {x y : α} : compareOfLessAndEq x y = eq → x = y := by
     split at cxy <;> contradiction
 
 theorem lt_trans [Transitive (α:=α) (.<.)] {x y z : α} : compareOfLessAndEq x y = lt → compareOfLessAndEq y z = lt → compareOfLessAndEq x z = lt := by
-  unfold compareOfLessAndEq
+  clean unfold compareOfLessAndEq
   intro cxy cyz
   split at cxy
   next hxy => 
@@ -240,7 +240,7 @@ theorem lt_trans [Transitive (α:=α) (.<.)] {x y z : α} : compareOfLessAndEq x
   next nxy => split at cxy <;> contradiction
 
 theorem gt_trans [Irreflexive (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Connex (α:=α) (.<.)] {x y z : α} : compareOfLessAndEq x y = gt → compareOfLessAndEq y z = gt → compareOfLessAndEq x z = gt := by
-  unfold compareOfLessAndEq
+  clean unfold compareOfLessAndEq
   intro cxy cyz
   by_cases x = y, y = z with
   | isTrue hxy, _ => rw [if_pos hxy] at cxy; split at cxy <;> contradiction

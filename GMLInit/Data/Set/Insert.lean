@@ -117,7 +117,7 @@ theorem insert_join (s : Set (Set α)) (t : Set α) : (s.insert t).join = t ∪ 
 theorem insertIf_join (s : Set (Set α)) (t : Set α) (p : Prop) : (s.insertIf t p).join = (t ∩ Set.const p) ∪ s.join := insertIf_bind id t p s
 
 theorem insert_seq (f : Set (α → β)) (a : α) (s : Set α) : Set.seq f (s.insert a) = f.map (λ f => f a) ∪ Set.seq f s := by
-  unfold Set.seq
+  clean unfold Set.seq
   apply Set.ext
   intro y
   constr
@@ -132,7 +132,7 @@ theorem insert_seq (f : Set (α → β)) (a : α) (s : Set α) : Set.seq f (s.in
     | Or.inr ⟨f,hf,x,hx,h⟩ => cases h; exists f; constr; assumption; exists x; constr; right; assumption; rfl
 
 theorem insertIf_seq (f : Set (α → β)) (a : α) (p : Prop) (s : Set α) : Set.seq f (s.insertIf a p) = (f.map (λ f => f a) ∩ Set.const p) ∪ Set.seq f s := by
-  unfold Set.seq
+  clean unfold Set.seq
   apply Set.ext
   intro y
   constr

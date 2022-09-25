@@ -44,7 +44,7 @@ theorem is_even_inl (n : Nat) : is_even n.inl := by
   induction n with
   | zero => rfl
   | succ n ih =>
-    unfold Nat.inl at ih ⊢
+    clean unfold Nat.inl at ih ⊢
     rw [Nat.mul_succ]
     exact ih
 
@@ -52,7 +52,7 @@ theorem is_odd_inr (n : Nat) : is_odd n.inr := by
   induction n with
   | zero => rfl
   | succ n ih =>
-    unfold Nat.inr at ih ⊢
+    clean unfold Nat.inr at ih ⊢
     rw [Nat.mul_succ]
     exact ih
 
@@ -60,14 +60,14 @@ theorem half_inl_eq (n : Nat) : half n.inl = n := by
   induction n with
   | zero => rfl
   | succ n ih =>
-    unfold Nat.inl at ih ⊢
+    clean unfold Nat.inl at ih ⊢
     rw [Nat.mul_succ, Nat.half, ih]
 
 theorem half_inr_eq (n : Nat) : half n.inr = n := by
   induction n with
   | zero => rfl
   | succ n ih =>
-    unfold Nat.inr at ih ⊢
+    clean unfold Nat.inr at ih ⊢
     rw [Nat.mul_succ, Nat.half, ih]
 
 theorem inl_half_eq_or_inr_half_eq (n : Nat) : (half n).inl = n ∨ (half n).inr = n := by
@@ -78,12 +78,12 @@ theorem inl_half_eq_or_inr_half_eq (n : Nat) : (half n).inl = n ∨ (half n).inr
     cases ih with
     | inl ih =>
       left
-      unfold Nat.inl Nat.half Nat.add at ih ⊢
-      rw [Nat.mul_succ, ih]
+      unfold Nat.inl at ih ⊢
+      rw [Nat.half, Nat.mul_succ, ih]
     | inr ih =>
       right
-      unfold Nat.inr Nat.half Nat.add at ih ⊢
-      rw [Nat.mul_succ, Nat.add_succ, Nat.add_succ, ih]
+      unfold Nat.inr at ih ⊢
+      rw [Nat.half, Nat.mul_succ, Nat.add_succ, Nat.add_succ, ih]
 
 theorem inl_half_eq_of_is_even (n : Nat) : is_even n → (half n).inl = n := by
   induction n using Nat.recTwo with
@@ -91,7 +91,8 @@ theorem inl_half_eq_of_is_even (n : Nat) : is_even n → (half n).inl = n := by
   | one => intro; contradiction
   | step n ih =>
     intro h
-    unfold Nat.inl Nat.half Nat.add at ih ⊢
+    unfold Nat.inl at ih ⊢
+    clean unfold Nat.half Nat.add
     rw [Nat.mul_succ, ih h]
 
 theorem inr_half_eq_of_is_odd (n : Nat) : is_odd n → (half n).inr = n := by
@@ -100,7 +101,8 @@ theorem inr_half_eq_of_is_odd (n : Nat) : is_odd n → (half n).inr = n := by
   | one => intro; rfl
   | step n ih =>
     intro h
-    unfold Nat.inr Nat.half Nat.add at ih ⊢
+    unfold Nat.inr at ih ⊢
+    clean unfold Nat.half Nat.add
     rw [Nat.mul_succ, Nat.add_succ, Nat.add_succ, ih h]
 
 def equivSum : Equiv Nat (Sum Nat Nat) where

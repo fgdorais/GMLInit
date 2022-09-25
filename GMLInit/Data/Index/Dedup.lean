@@ -62,7 +62,7 @@ theorem val_dedup (i : Index xs) : s.r i.val (i.dedup s).val := by
   | cons x xs ih =>
     match i with
     | head =>
-      unfold dedup
+      clean unfold dedup
       split
       next h =>
         rw [val_ndrec]
@@ -72,7 +72,7 @@ theorem val_dedup (i : Index xs) : s.r i.val (i.dedup s).val := by
         · exact ih ..
       next => rw [val_ndrec]; reflexivity using s.r
     | tail i =>
-      unfold dedup
+      clean unfold dedup
       split
       next => rw [val_ndrec]; exact ih ..
       next => rw [val_ndrec]; exact ih ..
@@ -93,7 +93,7 @@ theorem val_undedup (i : Index (xs.dedup s)) : (i.undedup s).val = i.val := by
   induction xs with
   | nil => contradiction
   | cons x xs ih =>
-    unfold undedup
+    simp only [undedup]
     split
     next ha =>
       have : (x :: xs).dedup s = xs.dedup s := if_pos ha
@@ -114,7 +114,7 @@ theorem dedup_undedup {xs : List α} (i : Index (xs.dedup s)) : (i.undedup s).de
   induction xs with
   | nil => contradiction
   | cons x xs ih =>
-    unfold undedup
+    simp only [undedup]
     split
     next ha => rw [dedup, dif_pos ha, ih, eqNdrec_symm]
     next ha =>

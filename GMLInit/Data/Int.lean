@@ -116,12 +116,12 @@ theorem nonNeg_mk (m n) : NonNeg (m ⊖ n) ↔ n ≤ m := by
     exact ih
 
 theorem mk_le_mk (m₁ n₁ m₂ n₂) : (m₁ ⊖ n₁) ≤ (m₂ ⊖ n₂) ↔ n₂ + m₁ ≤ m₂ + n₁ := by
-  unfold LE.le Int.le
+  simp only [LE.le, Int.le]
   rw [mk_sub_mk, nonNeg_mk]
   reflexivity
 
 theorem mk_lt_mk (m₁ n₁ m₂ n₂) : (m₁ ⊖ n₁) < (m₂ ⊖ n₂) ↔ n₂ + m₁ < m₂ + n₁ := by
-  unfold LT.lt Int.lt Nat.lt
+  simp only [LT.lt, Int.lt, Nat.lt]
   rw [←one_mk_zero, mk_add_mk, mk_le_mk, Nat.add_succ, Nat.add_zero]
   reflexivity
 

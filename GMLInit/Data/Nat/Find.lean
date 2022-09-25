@@ -12,7 +12,7 @@ variable {p} {h}
 
 theorem not_prop_of_lt_bfind {x} : (x < bfind p h) → ¬ p x := by
   intro hlt h
-  unfold bfind at hlt
+  clean unfold bfind at hlt
   apply Nat.not_ge_of_lt hlt
   apply toNat_le_of_isLE
   apply first.isLE_of
@@ -29,7 +29,7 @@ variable (p) (h)
 
 theorem bfind_prop : p (bfind p h) := by
   have : (first p).isLE (bfind p h) := by
-    unfold bfind
+    clean unfold bfind
     rw [isLE_toNat]
   match first.exists_le_of_isLE _ this with
   | ⟨x, hle, hx⟩ =>

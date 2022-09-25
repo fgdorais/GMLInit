@@ -12,7 +12,7 @@ def first : ENat where
   isLE := first.isLEAux p
   step := by
     intro x hx
-    unfold first.isLEAux
+    clean unfold first.isLEAux
     simp [hx]
 
 variable {p}
@@ -28,7 +28,7 @@ theorem first.exists_le_of_isLE (x : Nat) : (first p).isLE x → ∃ y, y ≤ x 
     exists (0:Nat)
   | succ x H =>
     intro h
-    unfold first first.isLEAux at h
+    clean unfold first first.isLEAux at h
     rw [Bool.or_eq_true] at h
     cases h with
     | inl h =>

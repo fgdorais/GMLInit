@@ -44,8 +44,7 @@ theorem append_unappend (k : Index (xs ++ ys)) : append (unappend k) = k := by
     match k with
     | .head => rfl
     | .tail k =>
-      rw [unappend]
-      clean
+      simp only [unappend]
       split
       next h => rw [append, ←h, ih]
       next h => rw [append, ←h, ih]

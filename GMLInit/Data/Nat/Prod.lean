@@ -116,20 +116,18 @@ theorem split_eq (n : Nat) : tri (split n).fst + (split n).snd = n := by
     transitivity (tri (split n).fst + ((split n).snd + 1))
     · rw [←Nat.add_assoc (tri (split n).fst) (split n).snd 1, H]
     · symmetry
-      unfold split
+      simp only [split]
       split
       next h =>
         dsimp only [Nat.add_eq] at h ⊢
         rw [Nat.add_zero n] at h ⊢
         rw [dif_pos h]
       next h =>
+        have h : ¬((split n).snd.val < (split n).fst) := h
         have heq : (split n).snd.val = (split n).fst := by
           apply Nat.le_antisymm
           · exact Nat.le_of_lt_succ (split n).snd.isLt
           · exact Nat.le_of_not_gt h
-        unfold tri
-        clean at h
-        rw [Nat.add_zero n] at h
         rw [dif_neg h, ←Nat.add_assoc, heq]; rfl
 
 protected abbrev fst (n : Nat) : Nat := (split n).snd

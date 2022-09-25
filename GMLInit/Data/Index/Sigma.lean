@@ -24,8 +24,8 @@ theorem unsigma_sigma (i : (i : Index xs) × Index (f i)) : unsigma (sigma i) = 
   | nil => cases i; contradiction
   | cons x xs ih =>
     match i with
-    | ⟨head, j⟩ => unfold sigma unsigma; rw [unappend_append]; clean; rw [unmap_map]
-    | ⟨tail i, j⟩ => unfold sigma unsigma; rw [unappend_append]; clean; rw [ih]
+    | ⟨head, j⟩ => clean unfold sigma unsigma; rw [unappend_append]; clean; rw [unmap_map]
+    | ⟨tail i, j⟩ => clean unfold sigma unsigma; rw [unappend_append]; clean; rw [ih]
 
 theorem sigma_unsigma (k : Index (xs.sigma f)) : sigma (unsigma k) = k := by
   induction xs with
@@ -59,8 +59,8 @@ theorem val_sigma (i : (i : Index xs) × Index (f i)) : (sigma i).val = ⟨i.fst
   | nil => cases i; contradiction
   | cons x xs ih =>
     match i with
-    | ⟨head, j⟩ => unfold sigma unsigma; rw [val_append_inl, val_map]
-    | ⟨tail i, j⟩ => unfold sigma unsigma; rw [val_append_inr, ih]
+    | ⟨head, j⟩ => simp only [sigma, unsigma]; rw [val_append_inl, val_map]
+    | ⟨tail i, j⟩ => simp only [sigma, unsigma]; rw [val_append_inr, ih]
 
 theorem val_unsigma (k : Index (xs.sigma f)) : ⟨(unsigma k).fst.val, (unsigma k).snd.val⟩ = k.val := by
   rw [←sigma_unsigma k, val_sigma, unsigma_sigma]

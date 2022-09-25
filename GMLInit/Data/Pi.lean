@@ -13,12 +13,12 @@ def equiv {α₁ α₂ β₁ β₂} (e : Equiv α₁ α₂) (f : Equiv β₁ β�
     · intro
       | rfl =>
         funext x₁
-        unfold Function.comp
+        simp only [Function.comp]
         rw [e.rev_fwd, f.rev_fwd]
     · intro
       | rfl =>
         funext x₂
-        unfold Function.comp
+        simp only [Function.comp]
         rw [e.fwd_rev, f.fwd_rev]
 
 end Function
@@ -35,14 +35,14 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
       | rfl =>
         funext x₁
         apply eq_of_heq
-        clean
+        elim_casts
         rw [e.rev_fwd x₁]
         reflexivity using (.≅.)
     · intro
       | rfl =>
         funext x₂
         apply eq_of_heq
-        clean
+        elim_casts
         rw [e.fwd_rev x₂]
         reflexivity using (.≅.)
 
