@@ -1,4 +1,4 @@
-import GMLInit.Prelude
+import GMLInit.Meta.Prelude
 
 theorem eqRec_eq_cast {α} {a b : α} {motive : (b : α) → a = b → Sort _} (t : motive a rfl) (h : a = b) : Eq.rec t h = cast (show motive a rfl = motive b h by cases h; rfl) t := by cases h; rfl
 

@@ -1,4 +1,5 @@
 import GMLInit.Logic.Basic
+import GMLInit.Meta.Prelude
 
 theorem heq_iff_eq {α} (a a' : α) : a ≅ a' ↔ a = a' := ⟨eq_of_heq, heq_of_eq⟩
 
