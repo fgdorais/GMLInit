@@ -30,7 +30,7 @@ protected theorem cons_hcongr {α β} {n m} {a : α} {b : β} {as : LList α n} 
 | 0, .nil => nil
 | _+1, .cons a as => cons a as (LList.rec nil cons as)
 
-protected def recOn {α n} (as : LList α n) {motive : (n : Nat) → LList α n → Sort _} (nil : motive 0 HList.nil) (cons : {n : Nat} → (a : α) → (as : LList α n) → motive n as → motive (n+1) (LList.cons a as)) 
+protected def recOn {α n} (as : LList α n) {motive : (n : Nat) → LList α n → Sort _} (nil : motive 0 HList.nil) (cons : {n : Nat} → (a : α) → (as : LList α n) → motive n as → motive (n+1) (LList.cons a as))
 : motive n as := LList.rec nil cons as
 
 protected def casesOn {α n} (as : LList α n) {motive : (n : Nat) → LList α n → Sort _} (nil : motive 0 HList.nil) (cons : {n : Nat} → (a : α) → (as : LList α n) → motive (n+1) (LList.cons a as))
@@ -55,10 +55,10 @@ protected theorem cons_append {α n m} (a : α) (as : LList α n) (bs : LList α
 
 protected theorem append_nil {α n} (as : LList α n) : LList.append as [] ≅ as := by
   induction as with
-  | nil => 
+  | nil =>
     rw [LList.nil_append]
     reflexivity using (.≅.)
-  | cons _ _ ih => 
+  | cons _ _ ih =>
     rw [LList.cons_append]
     apply LList.cons_hcongr
     · reflexivity
@@ -68,10 +68,10 @@ protected theorem append_nil {α n} (as : LList α n) : LList.append as [] ≅ a
 
 protected theorem append_assoc {α l m n} (as : LList α l) (bs : LList α m) (cs : LList α n) : LList.append (LList.append as bs) cs ≅ LList.append as (LList.append bs cs) := by
   induction as with
-  | nil => 
+  | nil =>
     repeat rw [LList.nil_append]
     reflexivity using (.≅.)
-  | cons _ _ ih => 
+  | cons _ _ ih =>
     repeat rw [LList.cons_append]
     apply LList.cons_hcongr
     · reflexivity
@@ -110,7 +110,7 @@ def equiv (α n) : Equiv (LList α n) (Fin n → α) where
       cases h
       induction as with
       | nil => rfl
-      | cons a as ih => 
+      | cons a as ih =>
         rw [LList.mk_succ]
         rw [LList.eval_cons_zero]
         apply congrArg
@@ -122,7 +122,7 @@ def equiv (α n) : Equiv (LList α n) (Fin n → α) where
     · intro h
       cases h
       induction n with
-      | zero => 
+      | zero =>
         funext i
         cases i
         contradiction

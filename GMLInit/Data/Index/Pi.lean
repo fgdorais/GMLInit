@@ -27,7 +27,10 @@ theorem unpi_pi (h : (i : Index xs) → Index (f i)) : unpi (pi h) = h := by
 
 theorem pi_unpi (k : Index (xs.pi f)) : pi (unpi k) = k := by
   induction xs with
-  | nil => cases k; simp only [pi, unpi]; contradiction
+  | nil =>
+    cases k
+    · rfl
+    · contradiction
   | cons x xs ih =>
     match h : unbind _ k with
     | ⟨k₁,k₂⟩ =>

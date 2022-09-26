@@ -21,7 +21,7 @@ macro mods:declModifiers "lemma" n:declId sig:declSig val:declVal : command =>
 
 syntax (name := clean) "clean " (colGt tactic)? (colGe location)? : tactic
 macro_rules
-| `(tactic| clean $[$loc:location]?) => 
+| `(tactic| clean $[$loc:location]?) =>
   `(tactic| simp only [clean] $[$loc]?)
 | `(tactic| clean $tac $[$loc:location]?) => do
   let mut loc : Location := match loc with
@@ -30,7 +30,7 @@ macro_rules
   for stx in Lean.Syntax.filter tac fun stx => stx.getKind == ``location do
     loc := joinLocation loc (expandLocation stx)
   match loc with
-  | .wildcard => 
+  | .wildcard =>
     `(tactic| $tac; simp only [clean] at *)
   | .targets hs true =>
     let locs := hs.map Lean.TSyntax.mk

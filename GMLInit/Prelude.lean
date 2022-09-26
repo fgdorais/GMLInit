@@ -1,6 +1,6 @@
 import Lean
 
-instance (α) [Subsingleton α] : DecidableEq α 
+instance (α) [Subsingleton α] : DecidableEq α
 | _, _ => isTrue (Subsingleton.allEq _ _)
 
 infix:50 " ≅ " => HEq

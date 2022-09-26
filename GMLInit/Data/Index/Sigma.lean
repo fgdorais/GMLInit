@@ -59,8 +59,8 @@ theorem val_sigma (i : (i : Index xs) × Index (f i)) : (sigma i).val = ⟨i.fst
   | nil => cases i; contradiction
   | cons x xs ih =>
     match i with
-    | ⟨head, j⟩ => simp only [sigma, unsigma]; rw [val_append_inl, val_map]
-    | ⟨tail i, j⟩ => simp only [sigma, unsigma]; rw [val_append_inr, ih]
+    | ⟨head, j⟩ => rw [sigma, val_append_inl, val_map]
+    | ⟨tail i, j⟩ => rw [sigma, val_append_inr, ih]
 
 theorem val_unsigma (k : Index (xs.sigma f)) : ⟨(unsigma k).fst.val, (unsigma k).snd.val⟩ = k.val := by
   rw [←sigma_unsigma k, val_sigma, unsigma_sigma]

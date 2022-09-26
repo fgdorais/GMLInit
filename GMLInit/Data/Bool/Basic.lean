@@ -31,7 +31,7 @@ theorem and_idem : (x && x) = x := by bool_tt x
 theorem and_comm : (x && y) = (y && x) := by bool_tt x y
 theorem and_left_comm : (x && (y && z)) = (y && (x && z)) := by bool_tt x y z
 theorem and_right_comm : ((x && y) && z) = ((x && z) && y) := by bool_tt x y z
---theorem and_assoc : ((x && y) && z) = (x && (y && z)) := by bool_tt x y z
+-- assert and_assoc : ((x && y) && z) = (x && (y && z)) := by bool_tt x y z
 theorem and_or_distrib_left : (x && (y || z)) = ((x && y) || (x && z)) := by bool_tt x y z
 theorem and_or_distrib_right : ((x || y) && z) = ((x && z) || (y && z)) := by bool_tt x y z
 theorem and_xor_distrib_left : (x && (y ^^ z)) = ((x && y) ^^ (x && z)) := by bool_tt x y z
@@ -50,7 +50,7 @@ theorem or_idem : (x || x) = x := by bool_tt x
 theorem or_comm : (x || y) = (y || x) := by bool_tt x y
 theorem or_left_comm : (x || (y || z)) = (y || (x || z)) := by bool_tt x y z
 theorem or_right_comm : ((x || y) || z) = ((x || z) || y) := by bool_tt x y z
---theorem or_assoc : ((x || y) || z) = (x || (y || z)) := by bool_tt x y z
+-- assort or_assoc : ((x || y) || z) = (x || (y || z)) := by bool_tt x y z
 theorem or_and_distrib_left : (x || (y && z)) = ((x || y) && (x || z)) := by bool_tt x y z
 theorem or_and_distrib_right : ((x && y) || z) = ((x || z) && (y || z)) := by bool_tt x y z
 theorem or_deMorgan : (!(x || y)) = (!x && !y) := by bool_tt x y

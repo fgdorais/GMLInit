@@ -89,7 +89,7 @@ instance : LawfulMonad Finset where
     intro _ _ _ f g ⟨_,_⟩
     apply Finset.eq
     simp only [Functor.map, Set.comp_map]
-  map_const := by intros; rfl
+  map_const := rfl
   map_pure f a := by
     apply Finset.eq
     simp only [Functor.map, Pure.pure, Set.map_pure]

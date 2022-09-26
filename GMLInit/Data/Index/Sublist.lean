@@ -67,14 +67,13 @@ theorem unsublist_pos_tail {x : α} {xs : List α} (h : p x) (i : Index (xs.subl
   simp only [unsublist]
   rw [dif_pos h]
   split
-  next i hh => elim_casts at hh; contradiction
+  next i hh => elim_casts at hh; cases hh
   next i hh => elim_casts at hh; cases hh; rfl
 
 theorem unsublist_neg_tail {x : α} {xs : List α} (h : ¬ p x) (i : Index (xs.sublist p)) : ((List.sublist_neg h).symm ▸ i : Index ((x :: xs).sublist p)).unsublist p = tail (i.unsublist p) := by
   simp only [unsublist]
   rw [dif_neg h]
-  apply congrArg tail
-  apply congrArg (unsublist p)
+  congr
   elim_casts
 
 end

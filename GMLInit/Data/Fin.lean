@@ -67,9 +67,7 @@ theorem val_iotaFind {n : Nat} (i : Fin n) : i.iotaFind.val = i := by
     | ⟨0,_⟩ => rfl
     | ⟨i+1,hi⟩ =>
       apply Fin.eq
-      clean unfold iotaFind
-      open Index in rw [val_tail, val_map, H]
-      rfl
+      open Index in rw [iotaFind, val_tail, val_map, H, Fin.succ]
 
 protected def find? : {n : Nat} → (p : Fin n → Bool) → Option (Fin n)
 | 0, _ => none
