@@ -2,11 +2,13 @@ import GMLInit.Data.Nat
 
 structure Pos where
   protected toNat : Nat
-  protected is_pos : Nat.IsPos toNat
-attribute [instance] Pos.is_pos
+  protected is_pos : toNat > 0
+--   protected is_pos : Nat.IsPos toNat
+-- attribute [instance] Pos.is_pos
 
 namespace Pos
 
+instance (n : Pos) : Nat.IsPos n.toNat := ⟨Pos.is_pos n⟩
 --instance : Coe Pos Nat := ⟨Pos.toNat⟩
 
 lemma toNat.inj : {x y : Pos} → x.toNat = y.toNat → x = y
@@ -15,16 +17,16 @@ lemma toNat.inj : {x y : Pos} → x.toNat = y.toNat → x = y
 @[simp] lemma toNat.injEq (x y : Pos) : (x.toNat = y.toNat) = (x = y) :=
   propext ⟨toNat.inj, congrArg Pos.toNat⟩
 
-protected abbrev one : Pos := ⟨1, inferInstance⟩
+protected abbrev one : Pos := ⟨1, Nat.is_pos 1⟩
 instance : OfNat Pos (nat_lit 1) := ⟨Pos.one⟩
 
-protected abbrev add (x y : Pos) : Pos := ⟨x.toNat + y.toNat, inferInstance⟩
+protected abbrev add (x y : Pos) : Pos := ⟨x.toNat + y.toNat, Nat.is_pos _⟩
 instance : Add Pos := ⟨Pos.add⟩
 
-protected abbrev mul (x y : Pos) : Pos := ⟨x.toNat * y.toNat, inferInstance⟩
+protected abbrev mul (x y : Pos) : Pos := ⟨x.toNat * y.toNat, Nat.is_pos _⟩
 instance : Mul Pos := ⟨Pos.mul⟩
 
-protected abbrev pow (x : Pos) (y : Nat) : Pos := ⟨x.toNat ^ y, inferInstance⟩
+protected abbrev pow (x : Pos) (y : Nat) : Pos := ⟨x.toNat ^ y, Nat.is_pos _⟩
 instance : Pow Pos Nat := ⟨Pos.pow⟩
 
 protected def le (x y : Pos) : Prop := x.toNat ≤ y.toNat
@@ -45,14 +47,16 @@ instance : LT Pos := ⟨Pos.lt⟩
 
 @[simp,clean] protected lemma lt_eq (x y : Pos) : Pos.lt x y = (x < y) := rfl
 
-instance (n : Nat) : OfNat Pos n.succ := ⟨n.succ, inferInstance⟩
+instance (n : Nat) : OfNat Pos n.succ := ⟨n.succ, Nat.is_pos _⟩
 
 unif_hint succ (x : Pos) (y : Nat) where
   x =?= OfNat.ofNat y.succ ⊢ x + 1 =?= OfNat.ofNat y.succ.succ
 
 @[eliminator] protected def recAux {motive : Pos → Sort _} (one : motive 1) (succ : (x : Pos) → motive x → motive (x+1)) : (x : Pos) → motive x
-| ⟨1,_⟩ => one
-| ⟨x+2,_⟩ => succ _ (Pos.recAux one succ ⟨x.succ, inferInstance⟩)
+| ⟨x+1,_⟩ =>
+  match x with
+  | 0 => one
+  | x+1 => succ ⟨x+1, Nat.is_pos _⟩ (Pos.recAux one succ ⟨x+1, Nat.is_pos _⟩)
 
 protected def recAuxOn {motive : Pos → Sort _} (x : Pos) (one : motive 1) (succ : (x : Pos) → motive x → motive (x+1)) : motive x :=
   Pos.recAux one succ x
