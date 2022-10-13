@@ -2,12 +2,9 @@ import GMLInit.Data.Nat
 
 structure Pos where
   protected toNat : Nat
-  protected is_pos : Nat.IsPos toNat
-attribute [instance] Pos.is_pos
+  protected is_pos : toNat > 0
 
 namespace Pos
-
---instance : Coe Pos Nat := ⟨Pos.toNat⟩
 
 lemma toNat.inj : {x y : Pos} → x.toNat = y.toNat → x = y
 | ⟨_,_⟩, ⟨_,_⟩, rfl => rfl
@@ -15,16 +12,18 @@ lemma toNat.inj : {x y : Pos} → x.toNat = y.toNat → x = y
 @[simp] lemma toNat.injEq (x y : Pos) : (x.toNat = y.toNat) = (x = y) :=
   propext ⟨toNat.inj, congrArg Pos.toNat⟩
 
-protected abbrev one : Pos := ⟨1, inferInstance⟩
+instance (x : Pos) : Nat.IsPos x.toNat := ⟨x.is_pos⟩
+
+protected abbrev one : Pos := ⟨1, by nat_is_pos⟩
 instance : OfNat Pos (nat_lit 1) := ⟨Pos.one⟩
 
-protected abbrev add (x y : Pos) : Pos := ⟨x.toNat + y.toNat, inferInstance⟩
+protected abbrev add (x y : Pos) : Pos := ⟨x.toNat + y.toNat, by nat_is_pos⟩
 instance : Add Pos := ⟨Pos.add⟩
 
-protected abbrev mul (x y : Pos) : Pos := ⟨x.toNat * y.toNat, inferInstance⟩
+protected abbrev mul (x y : Pos) : Pos := ⟨x.toNat * y.toNat, by nat_is_pos⟩
 instance : Mul Pos := ⟨Pos.mul⟩
 
-protected abbrev pow (x : Pos) (y : Nat) : Pos := ⟨x.toNat ^ y, inferInstance⟩
+protected abbrev pow (x : Pos) (y : Nat) : Pos := ⟨x.toNat ^ y, by nat_is_pos⟩
 instance : Pow Pos Nat := ⟨Pos.pow⟩
 
 protected def le (x y : Pos) : Prop := x.toNat ≤ y.toNat
@@ -45,14 +44,14 @@ instance : LT Pos := ⟨Pos.lt⟩
 
 @[simp,clean] protected lemma lt_eq (x y : Pos) : Pos.lt x y = (x < y) := rfl
 
-instance (n : Nat) : OfNat Pos n.succ := ⟨n.succ, inferInstance⟩
+instance (n : Nat) : OfNat Pos n.succ := ⟨n.succ, by nat_is_pos⟩
 
 unif_hint succ (x : Pos) (y : Nat) where
   x =?= OfNat.ofNat y.succ ⊢ x + 1 =?= OfNat.ofNat y.succ.succ
 
 @[eliminator] protected def recAux {motive : Pos → Sort _} (one : motive 1) (succ : (x : Pos) → motive x → motive (x+1)) : (x : Pos) → motive x
 | ⟨1,_⟩ => one
-| ⟨x+2,_⟩ => succ _ (Pos.recAux one succ ⟨x.succ, inferInstance⟩)
+| ⟨x+2,_⟩ => succ _ (Pos.recAux one succ ⟨x.succ, by nat_is_pos⟩)
 
 protected def recAuxOn {motive : Pos → Sort _} (x : Pos) (one : motive 1) (succ : (x : Pos) → motive x → motive (x+1)) : motive x :=
   Pos.recAux one succ x
@@ -462,8 +461,8 @@ protected theorem lt_of_mul_lt_mul_left {x y z : Pos} : z * x < z * y → x < y 
 protected theorem lt_of_mul_lt_mul_right {x y z : Pos} : x * z < y * z → x < y := by
   by_toNat; exact Nat.lt_of_mul_lt_mul_right _
 
-protected theorem mul_lt_mul {x₁ y₁ x₂ y₂ : Pos} : x₁ < y₁ → x₂ < y₂ → x₁ * x₂ < y₁ * y₂ := by
-  by_toNat; exact Nat.mul_lt_mul
+protected theorem mul_lt_mul_of_lt_of_lt {x₁ y₁ x₂ y₂ : Pos} : x₁ < y₁ → x₂ < y₂ → x₁ * x₂ < y₁ * y₂ := by
+  by_toNat; exact Nat.mul_lt_mul_of_lt_of_lt
 
 protected theorem pow_le_pow_left {x y : Nat} : x ≤ y → (z : Pos) → z ^ x ≤ z ^ y := by
   by_toNat; intro h z; exact Nat.pow_le_pow_of_pos_left h (Nat.is_pos z.toNat)
