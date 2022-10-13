@@ -55,9 +55,7 @@ protected theorem cons_append {α n m} (a : α) (as : LList α n) (bs : LList α
 
 protected theorem append_nil {α n} (as : LList α n) : LList.append as [] ≅ as := by
   induction as with
-  | nil =>
-    rw [LList.nil_append]
-    reflexivity using (.≅.)
+  | nil => rw [LList.nil_append]
   | cons _ _ ih =>
     rw [LList.cons_append]
     apply LList.cons_hcongr
@@ -68,11 +66,9 @@ protected theorem append_nil {α n} (as : LList α n) : LList.append as [] ≅ a
 
 protected theorem append_assoc {α l m n} (as : LList α l) (bs : LList α m) (cs : LList α n) : LList.append (LList.append as bs) cs ≅ LList.append as (LList.append bs cs) := by
   induction as with
-  | nil =>
-    repeat rw [LList.nil_append]
-    reflexivity using (.≅.)
+  | nil => rw [LList.nil_append, LList.nil_append]
   | cons _ _ ih =>
-    repeat rw [LList.cons_append]
+    rw [LList.cons_append, LList.cons_append, LList.cons_append]
     apply LList.cons_hcongr
     · reflexivity
     · rw [Nat.add_assoc]

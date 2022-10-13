@@ -37,15 +37,9 @@ protected def recMkOn.{u} {motive : Int → Sort u} (i : Int) (mk : (m n : Nat) 
 
 protected def casesMkOn.{u} {motive : Int → Sort u} (i : Int) (mk : (m n : Nat) → motive (m ⊖ n)) : motive i := Int.recMk mk i
 
-protected theorem add_zero (x : Int) : x + 0 = x :=
-  match x with
-  | ofNat _ => rfl
-  | negSucc _ => rfl
+-- asseert theorem add_zero (x : Int) : x + 0 = x
 
-protected theorem zero_add (x : Int) : 0 + x = x :=
-  match x with
-  | ofNat _ => show ofNat _ = ofNat _ by rw [Nat.zero_add]
-  | negSucc _ => rfl
+-- assert theorem zero_add (x : Int) : 0 + x = x
 
 theorem mk_self (m) : (m ⊖ m) = 0 := by
   induction m with
@@ -125,35 +119,13 @@ theorem mk_lt_mk (m₁ n₁ m₂ n₂) : (m₁ ⊖ n₁) < (m₂ ⊖ n₂) ↔ n
   rw [←one_mk_zero, mk_add_mk, mk_le_mk, Nat.add_succ, Nat.add_zero]
   reflexivity
 
-protected theorem add_assoc (i j k : Int) : (i + j) + k = i + (j + k) := by
-  cases i using Int.casesMkOn with
-  | mk mi ni =>
-    cases j using Int.casesMkOn with
-    | mk mj nj =>
-      cases k using Int.casesMkOn with
-      | mk mk nk =>
-        repeat rw [mk_add_mk]
-        repeat rw [Nat.add_assoc]
+-- assert theorem add_assoc (i j k : Int) : (i + j) + k = i + (j + k)
 
-protected theorem add_comm (i j : Int) : i + j = j + i := by
-  cases i using Int.casesMkOn with
-  | mk mi ni =>
-    cases j using Int.casesMkOn with
-    | mk mj nj =>
-      repeat rw [mk_add_mk]
-      rw [Nat.add_comm mi mj, Nat.add_comm ni nj]
+-- assert theorem add_comm (i j : Int) : i + j = j + i
 
-protected theorem add_left_comm (i j k : Int) : i + (j + k) = j + (i + k) :=
-  calc
-  _ = (i + j) + k := by rw [Int.add_assoc]
-  _ = (j + i) + k := by rw [Int.add_comm i j]
-  _ = j + (i + k) := by rw [Int.add_assoc]
+-- assert theorem add_left_comm (i j k : Int) : i + (j + k) = j + (i + k)
 
-protected theorem add_right_comm (i j k : Int) : (i + j) + k = (i + k) + j :=
-  calc
-  _ = i + (j + k) := by rw [Int.add_assoc]
-  _ = i + (k + j) := by rw [Int.add_comm j k]
-  _ = (i + k) + j := by rw [Int.add_assoc]
+-- assert theorem add_right_comm (i j k : Int) : (i + j) + k = (i + k) + j
 
 protected theorem add_cross_comm (i₁ i₂ j₁ j₂ : Int) : (i₁ + i₂) + (j₁ + j₂) = (i₁ + j₁) + (i₂ + j₂) :=
   calc
@@ -161,18 +133,11 @@ protected theorem add_cross_comm (i₁ i₂ j₁ j₂ : Int) : (i₁ + i₂) + (
   _ = i₁ + (j₁ + (i₂ + j₂)) := by rw [Int.add_left_comm i₂ j₁ j₂]
   _ = (i₁ + j₁) + (i₂ + j₂) := by rw [Int.add_assoc]
 
-protected theorem neg_zero : -0 = 0 := rfl
+-- assert theorem neg_zero : -0 = 0
 
-protected theorem neg_neg (i : Int) : -(-i) = i := by
-  cases i using Int.casesMkOn with
-  | mk mi ni => rw [neg_mk, neg_mk]
+-- assert theorem neg_neg (i : Int) : -(-i) = i
 
-protected theorem neg_add (i j : Int) : -(i + j) = -i + -j := by
-  cases i using Int.casesMkOn with
-  | mk mi ni =>
-    cases j using Int.casesMkOn with
-    | mk mj nj =>
-      rw [mk_add_mk, neg_mk, neg_mk, neg_mk, mk_add_mk]
+-- assert theorem neg_add (i j : Int) : -(i + j) = -i + -j
 
 protected theorem add_neg_self_left (i : Int) : -i + i = 0 := by
   cases i using Int.casesMkOn with
@@ -190,14 +155,9 @@ protected theorem sub_zero (i : Int) : i - 0 = i := by
 protected theorem zero_sub (i : Int) : 0 - i = -i := by
   rw [Int.sub_eq, Int.zero_add]
 
-protected theorem sub_self (i : Int) : i - i = 0 := by
-  rw [Int.sub_eq, Int.add_neg_self_right]
+-- assert theorem sub_self (i : Int) : i - i = 0
 
-protected theorem add_sub_assoc (i j k : Int) : (i + j) - k = i + (j - k) :=
-  calc
-  _ = (i + j) + -k := by rw [Int.sub_eq]
-  _ = i + (j + -k) := by rw [Int.add_assoc]
-  _ = i + (j - k) := by rw [Int.sub_eq]
+-- assert theorem add_sub_assoc (i j k : Int) : (i + j) - k = i + (j - k)
 
 protected theorem sub_add_assoc (i j k : Int) : (i - j) + k = i - (j - k) :=
   calc
@@ -207,20 +167,11 @@ protected theorem sub_add_assoc (i j k : Int) : (i - j) + k = i - (j - k) :=
   _ = i + -(j + -k) := by rw [Int.neg_add]
   _ = i - (j - k) := by rw [Int.sub_eq, Int.sub_eq]
 
-protected theorem add_sub_cancel (i j : Int) : (i + j) - j = i :=
-  calc
-  _ = i + (j - j) := by rw [Int.add_sub_assoc]
-  _ = i + 0 := by rw [Int.sub_self]
-  _ = i := by rw [Int.add_zero]
+-- assert theorem add_sub_cancel (i j : Int) : (i + j) - j = i
 
-protected theorem sub_add_cancel (i j : Int) : (i - j) + j = i :=
-  calc
-  _ = i - (j - j) := by rw [Int.sub_add_assoc]
-  _ = i - 0 := by rw [Int.sub_self]
-  _ = i := by rw [Int.sub_zero]
+-- assert theorem sub_add_cancel (i j : Int) : (i - j) + j = i
 
-protected theorem neg_sub (i j : Int) : -(i - j) = j - i := by
-  rw [Int.sub_eq, Int.sub_eq, Int.neg_add, Int.neg_neg, Int.add_comm]
+-- assert theorem neg_sub (i j : Int) : -(i - j) = j - i
 
 protected theorem add_left_cancel' (i : Int) {j k : Int} (h : i + j = i + k) : j = k :=
   calc
@@ -242,25 +193,13 @@ protected theorem add_right_cancel' (i : Int) {j k : Int} (h : j + i = k + i) : 
   _ = k + 0 := by rw [Int.add_neg_self_right]
   _ = k := by rw [Int.add_zero]
 
-protected theorem mul_zero (i : Int) : i * 0 = 0 :=
-  match i with
-  | ofNat _ => rfl
-  | negSucc _ => rfl
+-- assert theorem mul_zero (i : Int) : i * 0 = 0
 
-protected theorem zero_mul (i : Int) : 0 * i = 0 :=
-  match i with
-  | ofNat _ => show ofNat _ = ofNat _ by simp_arith
-  | negSucc _ => show negOfNat _ = ofNat _ by simp_arith
+-- assert theorem zero_mul (i : Int) : 0 * i = 0
 
-protected theorem mul_one (i : Int) : i * 1 = i :=
-  match i with
-  | ofNat _ => show ofNat _ = ofNat _ by simp_arith
-  | negSucc _ => show negSucc _ = negSucc _ by simp_arith
+-- assert theorem mul_one (i : Int) : i * 1 = i
 
-protected theorem one_mul (i : Int) : 1 * i = i :=
-  match i with
-  | ofNat _ => show ofNat _ = ofNat _ by simp_arith
-  | negSucc _ => show negSucc _ = negSucc _ by simp_arith
+-- assert theorem one_mul (i : Int) : 1 * i = i
 
 theorem mk_mul_ofNat (m n k) : (m ⊖ n) * ofNat k = (m * k ⊖ n * k) := by
   induction m, n with
@@ -283,36 +222,13 @@ theorem mk_mul_mk (m₁ n₁ m₂ n₂) : (m₁ ⊖ n₁) * (m₂ ⊖ n₂) = (m
   | succ_zero m₂ => simp only [Nat.zero_mul, Nat.mul_zero, Nat.add_zero, Nat.zero_add, succ_mk_zero, mk_mul_ofNat, Nat.mul_comm]
   | succ_succ m₂ n₂ ih => simp only [Nat.mul_succ, Nat.succ_mul]; rw [succ_mk_succ, Nat.add_cross_comm _ m₁ _ n₁, Nat.add_cross_comm _ m₁ _ n₁, add_mk_add_right]; exact ih
 
-protected theorem mul_assoc (i j k : Int) : (i * j) * k = i * (j * k) := by
-  cases i using Int.casesMkOn with
-  | mk mi ni =>
-    cases j using Int.casesMkOn with
-    | mk mj nj =>
-      cases k using Int.casesMkOn with
-      | mk mk nk =>
-        repeat rw [mk_mul_mk]
-        simp only [Nat.mul_add, Nat.add_mul, ←Nat.mul_assoc]
-        simp only [Nat.add_cross_comm, Nat.add_comm]
+-- assert theorem mul_assoc (i j k : Int) : (i * j) * k = i * (j * k)
 
-protected theorem mul_comm (i j : Int) : i * j = j * i := by
-  cases i using Int.casesMkOn with
-  | mk mi ni =>
-    cases j using Int.casesMkOn with
-    | mk mj nj =>
-      repeat rw [mk_mul_mk]
-      simp only [Nat.add_comm, Nat.mul_comm]
+-- assert theorem mul_comm (i j : Int) : i * j = j * i
 
-protected theorem mul_left_comm (i j k : Int) : i * (j * k) = j * (i * k) :=
-  calc
-  _ = (i * j) * k := by rw [Int.mul_assoc]
-  _ = (j * i) * k := by rw [Int.mul_comm i j]
-  _ = j * (i * k) := by rw [Int.mul_assoc]
+-- assert theorem mul_left_comm (i j k : Int) : i * (j * k) = j * (i * k)
 
-protected theorem mul_right_comm (i j k : Int) : (i * j) * k = (i * k) * j :=
-  calc
-  _ = i * (j * k) := by rw [Int.mul_assoc]
-  _ = i * (k * j) := by rw [Int.mul_comm j k]
-  _ = (i * k) * j := by rw [Int.mul_assoc]
+-- assert theorem mul_right_comm (i j k : Int) : (i * j) * k = (i * k) * j
 
 protected theorem mul_cross_comm (i₁ i₂ j₁ j₂ : Int) : (i₁ * i₂) * (j₁ * j₂) = (i₁ * j₁) * (i₂ * j₂) :=
   calc
@@ -320,172 +236,66 @@ protected theorem mul_cross_comm (i₁ i₂ j₁ j₂ : Int) : (i₁ * i₂) * (
   _ = i₁ * (j₁ * (i₂ * j₂)) := by rw [Int.mul_left_comm i₂ j₁ j₂]
   _ = (i₁ * j₁) * (i₂ * j₂) := by rw [Int.mul_assoc]
 
-protected theorem mul_neg (i j : Int) : i * (-j) = -(i * j) := by
-  cases i using Int.casesMkOn with
-  | mk mi ni =>
-    cases j using Int.casesMkOn with
-    | mk mj nj =>
-      rw [neg_mk, mk_mul_mk, mk_mul_mk, neg_mk]
+-- assert theorem mul_neg (i j : Int) : i * (-j) = -(i * j)
 
-protected theorem neg_mul (i j : Int) : (-i) * j = -(i * j) := by
-  cases i using Int.casesMkOn with
-  | mk mi ni =>
-    cases j using Int.casesMkOn with
-    | mk mj nj =>
-      rw [neg_mk, mk_mul_mk, mk_mul_mk, neg_mk, Nat.add_comm (mi * nj), Nat.add_comm (ni * nj)]
+-- assert theorem neg_mul (i j : Int) : (-i) * j = -(i * j)
 
-protected theorem mul_add (i j k : Int) : i * (j + k) = i * j + i * k := by
-  cases i using Int.casesMkOn with
-  | mk mi ni =>
-    cases j using Int.casesMkOn with
-    | mk mj nj =>
-      cases k using Int.casesMkOn with
-      | mk mk nk =>
-        simp only [mk_mul_mk, mk_add_mk, Nat.mul_add, Nat.add_mul]
-        rw [Nat.add_cross_comm (mi * mj), Nat.add_cross_comm (mi * nj)]
+-- assert theorem mul_add (i j k : Int) : i * (j + k) = i * j + i * k)
 
-protected theorem add_mul (i j k : Int) : (i + j) * k = i * k + j * k := by
-  cases i using Int.casesMkOn with
-  | mk mi ni =>
-    cases j using Int.casesMkOn with
-    | mk mj nj =>
-      cases k using Int.casesMkOn with
-      | mk mk nk =>
-        simp only [mk_mul_mk, mk_add_mk, Nat.mul_add, Nat.add_mul]
-        rw [Nat.add_cross_comm (mi * mk), Nat.add_cross_comm (mi * nk)]
+-- assert theorem add_mul (i j k : Int) : (i + j) * k = i * k + j * k]
 
-protected theorem mul_sub (i j k : Int) : i * (j - k) = i * j - i * k :=
-  show i * (j + -k) = i * j + -(i * k) by rw [Int.mul_add, Int.mul_neg]
+-- assert theorem mul_sub (i j k : Int) : i * (j - k) = i * j - i * k
 
-protected theorem sub_mul (i j k : Int) : (i - j) * k = i * k - j * k :=
-  show (i + -j) * k = i * k + -(j * k) by rw [Int.add_mul, Int.neg_mul]
+-- assert theorem sub_mul (i j k : Int) : (i - j) * k = i * k - j * k
 
-theorem le.intro (i : Int) (k : Nat) : i ≤ i + k :=
+theorem le.intro' (i : Int) (k : Nat) : i ≤ i + k :=
   show (NonNeg ((i+k)-i)) by
   rw [Int.sub_eq, Int.add_right_comm, Int.add_neg_self_right, Int.zero_add]
   apply NonNeg.mk
 
-theorem le.dest {i j : Int} : i ≤ j → ∃ (k : Nat), j = i + k := by
+theorem le.dest' {i j : Int} : i ≤ j → ∃ (k : Nat), j = i + k := by
   intro (h : NonNeg (j - i))
   match hk : j - i with
   | ofNat k => exists k; rw [←hk, Int.sub_eq, Int.add_left_comm, Int.add_neg_self_right, Int.add_zero]
   | negSucc _ => rw [hk] at h; contradiction
 
-protected theorem le_refl (i : Int) : i ≤ i := by
-  cases i using Int.casesMkOn with
-  | mk ni mi =>
-    rw [mk_le_mk, Nat.add_comm]
-    reflexivity
+-- assert theorem le_refl (i : Int) : i ≤ i
 
-protected theorem le_trans {i j k : Int} : i ≤ j → j ≤ k → i ≤ k := by
-  intro hij hjk
-  cases i using Int.casesMkOn with
-  | mk ni mi =>
-    cases j using Int.casesMkOn with
-    | mk nj mj =>
-      cases k using Int.casesMkOn with
-      | mk nk mk =>
-        rw [mk_le_mk] at hij hjk ⊢
-        apply Nat.le_of_add_le_add_left' mj
-        apply Nat.le_of_add_le_add_right' nj
-        calc
-        _ = mj + (mk + ni) + nj := rfl
-        _ = (mj + mk) + (ni + nj) := by simp only [Nat.add_assoc]
-        _ = (mj + ni) + (mk + nj) := by rw [Nat.add_cross_comm]
-        _ ≤ (nj + mi) + (nk + mj) := by exact Nat.add_le_add hij hjk
-        _ = (nk + mj) + (nj + mi) := by rw [Nat.add_comm]
-        _ = (mj + nk) + (mi + nj) := by rw [Nat.add_comm nj, Nat.add_comm mj]
-        _ = mj + (nk + mi) + nj := by simp only [Nat.add_assoc]
+-- assert theorem le_trans {i j k : Int} : i ≤ j → j ≤ k → i ≤ k
 
-protected theorem le_antisymm {i j : Int} : i ≤ j → j ≤ i → i = j := by
-  intro hij hji
-  match le.dest hij, le.dest hji with
-  | ⟨a,ha⟩, ⟨b,hb⟩ =>
-    rw [hb, Int.add_assoc] at ha
-    have : b + a = 0 := by
-      apply ofNat.inj
-      apply Int.add_left_cancel' j
-      symmetry
-      transitivity j
-      · exact Int.add_zero ..
-      · exact ha
-    rw [Nat.eq_zero_of_add_eq_zero_left this] at hb
-    rw [hb]
-    exact Int.add_zero ..
+-- assert theorem le_antisymm {i j : Int} : i ≤ j → j ≤ i → i = j
 
-protected theorem le_total (i j : Int) : i ≤ j ∨ j ≤ i := by
-  cases i using Int.casesMkOn with
-  | mk ni mi =>
-    cases j using Int.casesMkOn with
-    | mk nj mj =>
-      rw [mk_le_mk, mk_le_mk, Nat.add_comm mi, Nat.add_comm ni]
-      exact Nat.le_total ..
+-- assert theorem le_total (i j : Int) : i ≤ j ∨ j ≤ i
 
-protected theorem add_le_add_left {i j : Int} : i ≤ j → ∀ (k : Int), k + i ≤ k + j := by
-  intro h k
-  match le.dest h with
-  | ⟨d, hd⟩ =>
-    rw [hd, ←Int.add_assoc]
-    exact le.intro ..
+-- assert theorem add_le_add_left {i j : Int} : i ≤ j → ∀ (k : Int), k + i ≤ k + j
 
-protected theorem add_le_add_right {i j : Int} : i ≤ j → ∀ (k : Int), i + k ≤ j + k := by
-  intro h k
-  match le.dest h with
-  | ⟨d, hd⟩ =>
-    rw [hd, Int.add_right_comm]
-    exact le.intro ..
+-- assert theorem add_le_add_right {i j : Int} : i ≤ j → ∀ (k : Int), i + k ≤ j + k
 
-protected theorem sub_le_sub_right {i j : Int} : i ≤ j → ∀ (k : Int), i - k ≤ j - k := by
-  intro h k
-  rw [Int.sub_eq, Int.sub_eq]
-  exact Int.add_le_add_right h ..
+-- assert theorem sub_le_sub_right {i j : Int} : i ≤ j → ∀ (k : Int), i - k ≤ j - k
 
-protected theorem le_of_add_le_add_right {i j k : Int} (h : i + k ≤ j + k) : i ≤ j :=
-  calc
-  _ = (i + k) - k := by rw [Int.add_sub_cancel]
-  _ ≤ (j + k) - k := Int.sub_le_sub_right h k
-  _ = j := by rw [Int.add_sub_cancel]
+-- assert theorem le_of_add_le_add_right {i j k : Int} (h : i + k ≤ j + k) : i ≤ j
 
-protected theorem le_of_add_le_add_left {i j k : Int} (h : i + j ≤ i + k) : j ≤ k := by
-  rw [Int.add_comm i, Int.add_comm i] at h
-  apply Int.le_of_add_le_add_right h
+-- assert theorem le_of_add_le_add_left {i j k : Int} (h : i + j ≤ i + k) : j ≤ k
 
-protected theorem le_succ_self (i : Int) : i ≤ i + 1 := by
-  apply le.intro
+protected theorem le_succ_self (i : Int) : i ≤ i + 1 := le.intro' ..
 
 protected theorem lt_iff_succ_le (i j : Int) : i < j ↔ i + 1 ≤ j := Iff.rfl
 
 protected theorem le_iff_lt_succ (i j : Int) : i ≤ j ↔ i < j + 1 := by
   rw [Int.lt_iff_succ_le]
   constr
-  · apply Int.add_le_add_right (k:=1)
+  · apply Int.add_le_add_right (c:=1)
   · apply Int.le_of_add_le_add_right
 
-protected theorem le_of_lt {i j : Int} : i < j → i ≤ j := by
-  intro hlt
-  rw [Int.lt_iff_succ_le] at hlt
-  apply Int.le_trans (Int.le_succ_self i) hlt
+-- assert theorem le_of_lt {i j : Int} : i < j → i ≤ j
 
-protected theorem lt_of_lt_of_le {i j k : Int} : i < j → j ≤ k → i < k := by
-  intro hij hjk
-  rw [Int.lt_iff_succ_le] at hij ⊢
-  exact Int.le_trans hij hjk
+-- assert theorem lt_of_lt_of_le {i j k : Int} : i < j → j ≤ k → i < k
 
-protected theorem lt_of_le_of_lt {i j k : Int} : i ≤ j → j < k → i < k := by
-  intro hij hjk
-  rw [Int.le_iff_lt_succ] at hij
-  rw [Int.lt_iff_succ_le] at hjk
-  exact Int.lt_of_lt_of_le hij hjk
+-- assert theorem lt_of_le_of_lt {i j k : Int} : i ≤ j → j < k → i < k
 
-protected theorem lt_irrefl (i : Int) : ¬ i < i := by
-  induction i using Int.casesMkOn with
-  | mk ni mi => rw [mk_lt_mk, Nat.add_comm]; exact Nat.lt_irrefl _
+-- assert theorem lt_irrefl (i : Int) : ¬ i < i
 
-protected theorem lt_trans {i j k : Int} : i < j → j < k → i < k := by
-  intro hij hjk
-  rw [Int.lt_iff_succ_le] at hij ⊢
-  apply Int.le_of_lt
-  exact Int.lt_of_le_of_lt hij hjk
+-- assert theorem lt_trans {i j k : Int} : i < j → j < k → i < k
 
 protected theorem le_or_gt (i j : Int) : i ≤ j ∨ j < i := by
   induction i using Int.casesMkOn with
@@ -503,7 +313,7 @@ protected theorem lt_or_ge (i j : Int) : i < j ∨ j ≤ i := by
 
 theorem lt_or_eq_of_le {i j : Int} : i ≤ j → i < j ∨ i = j := by
   intro hle
-  match le.dest hle with
+  match le.dest' hle with
   | ⟨0, (h : j = i + 0)⟩ =>
     right
     rw [h, Int.add_zero]
@@ -511,7 +321,7 @@ theorem lt_or_eq_of_le {i j : Int} : i ≤ j → i < j ∨ i = j := by
     left
     rw [Int.lt_iff_succ_le]
     rw [h, ←Int.add_assoc, Int.add_right_comm]
-    apply Int.le.intro
+    apply Int.le.intro'
 
 protected theorem lt_of_le_of_ne {i j : Int} : i ≤ j → i ≠ j → i < j := by
   intro hle hne

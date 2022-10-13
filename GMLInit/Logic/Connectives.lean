@@ -30,11 +30,11 @@ protected abbrev Implies.mp : Implies a b → a → b := id
 /-- modus tollens -/
 protected abbrev Implies.mt : Implies a b → ¬b → ¬a := mt
 
-/-- constructor for `Not`
+/- constructor for `Not`
 
   Note: This is a fake constructor -- `Not` is not an inductive type. Cannot be used for pattern matching.
 -/
-protected def Not.intro : (a → False) → ¬a := id
+-- assert def Not.intro : (a → False) → ¬a := id
 
 /-- recursor for `Not`
 
@@ -47,17 +47,17 @@ protected def Not.recOn.{u} {motive : ¬a → Sort u} (t : ¬a) := Not.rec (moti
 
 protected def Not.casesOn.{u} {motive : ¬p → Sort u} := Not.recOn (motive:=motive)
 
-/-- eliminator for `Not`
+/- eliminator for `Not`
 
   This is a fake eliminator -- `Not` is not an inductive type.
 -/
-protected def Not.elim.{u} {motive : Sort u} := Not.casesOn (motive := λ _ : ¬a => motive)
+-- assert def Not.elim.{u} {motive : Sort u} := Not.casesOn (motive := λ _ : ¬a => motive)
 
-/-- eliminator for `And` -/
-protected def And.elim.{u} {motive : Sort u} := And.casesOn (motive := λ _ : a ∧ b => motive)
+/- eliminator for `And` -/
+-- assert def And.elim.{u} {motive : Sort u} := And.casesOn (motive := λ _ : a ∧ b => motive)
 
-/-- eliminator for `Iff` -/
-protected def Iff.elim.{u} {motive : Sort u} := Iff.casesOn (motive := λ _ : a ↔ b => motive)
+/- eliminator for `Iff` -/
+-- assert def Iff.elim.{u} {motive : Sort u} := Iff.casesOn (motive := λ _ : a ↔ b => motive)
 
 theorem Iff.eq_implies_and_implies (a b : Prop) : (a ↔ b) = ((a → b) ∧ (b → a)) :=
   propext (iff_iff_implies_and_implies a b)

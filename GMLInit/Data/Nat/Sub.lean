@@ -38,7 +38,7 @@ protected theorem sub_assoc (x y z : Nat) : (x - y) - z = x - (y + z) := by
 protected theorem sub_right_comm (x y z : Nat) : (x - y) - z = (x - z) - y := by
   rw [Nat.sub_assoc, Nat.add_comm, ←Nat.sub_assoc]
 
--- assert theorem add_sub_cancel_left (x y : Nat) : (x + y) - x = y := by
+-- assert theorem add_sub_cancel_left (x y : Nat) : (x + y) - x = y
 
 protected theorem add_sub_cancel_right (x y : Nat) : (x + y) - y = x := by
   induction y with
@@ -96,18 +96,17 @@ protected theorem sub_sub_comm (x y : Nat) : x - (x - y) = y - (y - x) :=
 
 protected theorem le_iff_sub_eq_zero (x y : Nat) : x - y = 0 ↔ x ≤ y := by
   induction x, y with
-  | left x => rw [Nat.sub_zero, Nat.eq_zero_iff_le_zero]; reflexivity
+  | left x => rw [Nat.sub_zero, Nat.eq_zero_iff_le_zero]
   | right y => rw [Nat.zero_sub, Nat.eq_zero_iff_le_zero]; constr <;> (intro; apply Nat.zero_le)
   | diag x y H => rw [Nat.succ_sub_succ, Nat.succ_le_succ_iff_le]; exact H
 
-protected theorem le_of_sub_eq_zero {x y : Nat} : x - y = 0 → x ≤ y :=
-  (Nat.le_iff_sub_eq_zero x y).mp
+-- assert theorem le_of_sub_eq_zero {x y : Nat} : x - y = 0 → x ≤ y
 
 -- assert theorem sub_eq_zero_of_le {x y : Nat} : x ≤ y → x - y = 0
 
 protected theorem gt_iff_sub_pos (x y : Nat) : x > y ↔ x - y > 0 := by
   induction x, y with
-  | left x => rw [Nat.sub_zero]; reflexivity
+  | left x => rw [Nat.sub_zero]
   | right y => rw [Nat.zero_sub]; constr <;> (intro; contradiction)
   | diag x y H =>
     calc
@@ -123,7 +122,7 @@ protected theorem sub_pos_of_gt {x y : Nat} : x > y → x - y > 0 :=
 
 protected theorem sub_le_iff_le_add (x y z : Nat) : x - y ≤ z ↔ x ≤ y + z := by
   induction x, y with
-  | left x => rw [Nat.sub_zero, Nat.zero_add]; reflexivity
+  | left x => rw [Nat.sub_zero, Nat.zero_add]
   | right y => rw [Nat.zero_sub]; constr <;> (intro; apply Nat.zero_le)
   | diag x y H => rw [Nat.succ_sub_succ, Nat.succ_add', Nat.succ_le_succ_iff_le]; exact H
 
@@ -137,16 +136,14 @@ protected theorem le_sub_iff_add_le_of_ge (x y z : Nat) (h : y ≥ z) : x ≤ y 
   induction y, z with
   | left y =>
     rw [Nat.sub_zero, Nat.add_zero]
-    reflexivity
   | right z =>
     rw [Nat.zero_sub, Nat.eq_zero_of_le_zero h, Nat.add_zero]
-    reflexivity
   | diag y z H =>
     rw [Nat.succ_sub_succ', Nat.add_succ', Nat.succ_le_succ_iff_le]
     apply H
     exact Nat.le_of_succ_le_succ' h
 
--- assert theorem le_sub_of_add_le {x y z : Nat} : x + y ≤ z → x ≤ z - y := by
+-- assert theorem le_sub_of_add_le {x y z : Nat} : x + y ≤ z → x ≤ z - y
 
 protected theorem add_le_of_ge_of_le_sub {x y z : Nat} : y ≥ z → x ≤ y - z → x + z ≤ y := by
   intro hge h
@@ -158,7 +155,6 @@ protected theorem sub_lt_iff_lt_add_of_pos (x y z : Nat) (hz : z > 0) : x - y < 
   induction x, y with
   | left x =>
     rw [Nat.sub_zero, Nat.zero_add]
-    reflexivity
   | right y =>
     rw [Nat.zero_sub]
     constr
@@ -192,7 +188,7 @@ protected theorem lt_add_of_sub_lt {x y z : Nat} : x - y < z → x < y + z := by
 
 protected theorem lt_sub_iff_add_lt (x y z : Nat) : x < y - z ↔ x + z < y := by
   induction y, z with
-  | left y => rw [Nat.sub_zero, Nat.add_zero]; reflexivity
+  | left y => rw [Nat.sub_zero, Nat.add_zero]
   | right z => rw [Nat.zero_sub]; constr <;> (intro; contradiction)
   | diag y z H => rw [Nat.succ_sub_succ, Nat.add_succ, Nat.succ_eq, Nat.succ_lt_succ_iff_lt]; exact H
 
@@ -209,15 +205,10 @@ protected theorem sub_le_right (x y : Nat) : x - y ≤ x := by
 protected theorem sub_lt_of_pos_of_pos_right {x y : Nat} : x > 0 → y > 0 → x - y < x := by
   intro hx hy
   rw [Nat.sub_lt_iff_lt_add_of_pos]
-  · exact Nat.lt_add_left _ _
+  · exact Nat.lt_add_left_of_pos _ _
   · exact hx
 
-protected theorem sub_le_sub_left {x y : Nat} (h : x ≤ y) (z : Nat) : x - z ≤ y - z :=
-  Nat.sub_le_of_le_add' $
-  calc
-  _ ≤ x + (z - y) := by apply Nat.le_add_right
-  _ ≤ y + (z - y) := by apply Nat.add_le_add_right h
-  _ = z + (y - z) := by rw [Nat.add_sub_comm]
+-- assert theorem sub_le_sub_left {x y : Nat} (h : x ≤ y) (z : Nat) : x - z ≤ y - z
 
 protected theorem sub_le_sub_of_ge_right {x y : Nat} (h : x ≥ y) (z : Nat) : z - x ≤ z - y :=
   Nat.sub_le_of_le_add' $
@@ -229,7 +220,7 @@ protected theorem sub_le_sub_of_ge_right {x y : Nat} (h : x ≥ y) (z : Nat) : z
 protected theorem sub_le_sub_of_le_of_ge {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ ≥ y₂ → x₁ - y₁ ≤ x₂ - y₂ := by
   intro hx hy
   transitivity (x₂ - y₁)
-  · exact Nat.sub_le_sub_left hx ..
+  · exact Nat.sub_le_sub_right hx ..
   · exact Nat.sub_le_sub_of_ge_right hy ..
 
 protected theorem sub_lt_sub_of_lt_left {x y z : Nat} : x < y → z < y → x - z < y - z := by
