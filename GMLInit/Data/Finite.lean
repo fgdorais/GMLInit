@@ -105,7 +105,7 @@ where
   e₂ := Sum.equiv (Finite.equivIndex α) (Finite.equivIndex β)
 
 instance : Finite ((x : α) × γ x) :=
-  Finite.ofEquiv (Index (List.sigma (enum α) (λ i => enum (γ i.val)))) ((x : α) × γ x) (Equiv.comp e₁ e₂).inv
+  Finite.ofEquiv (Index (List.sigma' (enum α) (λ i => enum (γ i.val)))) ((x : α) × γ x) (Equiv.comp e₁ e₂).inv
 where
   e₁ := Index.sigmaEquiv (enum α) (λ i => enum (γ i.val))
   e₂ := (Sigma.equiv (Finite.equivIndex α).inv (λ i => (Finite.equivIndex (γ i.val)).inv)).inv
@@ -122,7 +122,10 @@ instance (p : α → Prop) [DecidablePred p] : Finite { x // p x } :=
   Finite.ofEquiv (Index ((enum α).sublist p)) {x // p x} (Equiv.comp e₁ e₂).inv
 where
   e₁ := Index.sublistEquiv p (enum α)
-  e₂ := Subtype.equiv (Finite.equivIndex α) (λ x => by clean unfold Finite.equivIndex; rw [Finite.val_find]; reflexivity)
+  e₂ := Subtype.equiv (Finite.equivIndex α) $ by
+    intro
+    unfold Finite.equivIndex
+    rw [Finite.val_find]
 
 instance (s : Setoid α) [DecidableRel s.r] : Finite (Quotient s) where
   list := ((enum α).dedup s).map (Quotient.mk s)

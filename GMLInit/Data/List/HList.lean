@@ -47,9 +47,7 @@ protected theorem cons_append {α : Sort _} {αs βs : List (Sort _)} (a : α) (
 
 protected theorem append_nil {αs : List (Sort _)} (as : HList αs) : HList.append as [] ≅ as := by
   induction as with
-  | nil =>
-    rw [HList.nil_append]
-    reflexivity using (.≅.)
+  | nil => rw [HList.nil_append]
   | cons _ _ ih =>
     rw [HList.cons_append]
     apply HList.cons_hcongr
@@ -60,11 +58,9 @@ protected theorem append_nil {αs : List (Sort _)} (as : HList αs) : HList.appe
 
 protected theorem append_assoc {αs βs γs : List (Sort _)} (as : HList αs) (bs : HList βs) (cs : HList γs) : HList.append (HList.append as bs) cs ≅ HList.append as (HList.append bs cs) := by
   induction as with
-  | nil =>
-    repeat rw [HList.nil_append]
-    reflexivity using (.≅.)
+  | nil => rw [HList.nil_append, HList.nil_append]
   | cons _ _ ih =>
-    repeat rw [HList.cons_append]
+    rw [HList.cons_append, HList.cons_append]
     apply HList.cons_hcongr
     · reflexivity
     · rw [List.append_assoc]

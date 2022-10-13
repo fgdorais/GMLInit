@@ -2,8 +2,6 @@ import GMLInit.Prelude
 
 namespace Ordering
 
-deriving instance DecidableEq for Ordering
-
 def opp : Ordering → Ordering
 | lt => gt
 | eq => eq

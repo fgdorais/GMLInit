@@ -43,12 +43,7 @@ protected theorem pred_mul (x y : Nat) : (x - 1) * y = x * y - y := by
 
 -- assert theorem mul_left_comm (x y z : Nat) : x * (y * z) = y * (x * z)
 
-protected theorem mul_right_comm (x y z : Nat) : (x * y) * z = (x * z) * y :=
-  calc
-  _ = (x * y) * z := rfl
-  _ = x * (y * z) := by rw [Nat.mul_assoc]
-  _ = x * (z * y) := by rw [Nat.mul_comm y z]
-  _ = (x * z) * y := by rw [Nat.mul_assoc]
+-- assert theorem mul_right_comm (x y z : Nat) : (x * y) * z = (x * z) * y
 
 protected theorem mul_cross_comm (x₁ x₂ y₁ y₂ : Nat) : (x₁ * x₂) * (y₁ * y₂) = (x₁ * y₁) * (x₂ * y₂) :=
   calc
@@ -66,7 +61,6 @@ protected theorem mul_sub (x y z : Nat) : x * (y - z) = x * y - x * z := by
   | right z => rw [Nat.zero_sub, Nat.mul_zero, Nat.zero_sub]
   | diag y z H =>
     calc
-    _ = x * ((y + 1) - (z + 1)) := rfl
     _ = x * ((y + 1) - (z + 1)) := rfl
     _ = x * (y - z) := by rw [Nat.succ_sub_succ]
     _ = x * y - x * z := by rw [H]
@@ -101,7 +95,7 @@ protected theorem lt_mul_of_gt_one_of_pos_left {x y : Nat} (h : x > 0 := by nat_
   | zero => contradiction
   | succ y =>
     rw [Nat.succ_mul]
-    apply Nat.lt_add_left
+    apply Nat.lt_add_left_of_pos
     apply Nat.mul_pos
     · exact Nat.lt_of_succ_lt_succ hy
     · exact h
@@ -112,7 +106,7 @@ protected theorem lt_mul_of_gt_one_right {x y : Nat} (h : x > 0 := by nat_is_pos
   | zero => contradiction
   | succ y =>
     rw [Nat.mul_succ]
-    apply Nat.lt_add_left
+    apply Nat.lt_add_left_of_pos
     apply Nat.mul_pos
     · exact h
     · exact Nat.lt_of_succ_lt_succ hy
@@ -131,7 +125,7 @@ protected theorem mul_lt_mul_left {x y z : Nat} : x < y → (h : z > 0 := by nat
 
 protected theorem mul_lt_mul_right {x y z : Nat} : x < y → (h : z > 0 := by nat_is_pos) → x * z < y * z := Nat.mul_lt_mul_of_pos_right
 
-protected theorem mul_lt_mul {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ < y₂ → x₁ * y₁ < x₂ * y₂ := by
+protected theorem mul_lt_mul_of_lt_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ < y₂ → x₁ * y₁ < x₂ * y₂ := by
   intro hx hy
   transitivity (x₂ * y₁) using LE.le, LT.lt
   · apply Nat.mul_le_mul_right

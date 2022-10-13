@@ -12,8 +12,6 @@ attribute [local eliminator] Nat.recDiagAux
 
 -- assert theorem pow_zero (x : Nat) : x ^ 0 = 1
 
-protected theorem pow_succ' (x y : Nat) : x ^ (y + 1) = x ^ y * x := Nat.pow_succ x y
-
 protected theorem pow_one (x : Nat) : x ^ 1 = x :=
   calc
   _ = x ^ 0 * x := by rw [Nat.pow_succ]

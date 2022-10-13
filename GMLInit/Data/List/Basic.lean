@@ -15,29 +15,29 @@ instance {α} : (xs : List α) → Decidable ([] = xs)
 | [] => isTrue rfl
 | _::_ => isFalse List.noConfusion
 
-protected def extAux {α} : (as₁ as₂ : List α) → List Prop
+protected def ext'Aux {α} : (as₁ as₂ : List α) → List Prop
 | [], [] => []
 | [], _::_ => [False]
 | _::_, [] => [False]
-| a₁::as₁, a₂::as₂ => (a₁ = a₂) :: List.extAux as₁ as₂
+| a₁::as₁, a₂::as₂ => (a₁ = a₂) :: List.ext'Aux as₁ as₂
 
-protected theorem ext {α} : (as₁ as₂ : List α) → All (List.extAux as₁ as₂) → as₁ = as₂
+protected theorem ext' {α} : (as₁ as₂ : List α) → All (List.ext'Aux as₁ as₂) → as₁ = as₂
 | [], [], _ => rfl
 | [], _::_, All.cons h _ => False.elim h
 | _::_₁, [], All.cons h _ => False.elim h
-| _::as₁, _::as₂, All.cons h hs => h ▸ List.ext as₁ as₂ hs ▸ rfl
+| _::as₁, _::as₂, All.cons h hs => h ▸ List.ext' as₁ as₂ hs ▸ rfl
 
-protected theorem extIff {α} (as₁ as₂ : List α) : All (List.extAux as₁ as₂) ↔ as₁ = as₂ := by
+protected theorem ext'Iff {α} (as₁ as₂ : List α) : All (List.ext'Aux as₁ as₂) ↔ as₁ = as₂ := by
   constr
-  exact List.ext as₁ as₂
+  exact List.ext' as₁ as₂
   intro h
   cases h
   induction as₁ with
   | nil => exact All.nil
   | cons _ _ H => exact All.cons rfl H
 
-protected theorem extEq {α} (as₁ as₂ : List α) : All (List.extAux as₁ as₂) = (as₁ = as₂) :=
-  propext (List.extIff as₁ as₂)
+protected theorem ext'Eq {α} (as₁ as₂ : List α) : All (List.ext'Aux as₁ as₂) = (as₁ = as₂) :=
+  propext (List.ext'Iff as₁ as₂)
 
 instance (x : α) (xs : List α) : Nat.IsPos (List.length (x :: xs)) := ⟨Nat.zero_lt_succ _⟩
 
@@ -62,16 +62,13 @@ lemma comp_map {α β γ} (f : α → β) (g : β → γ) (as : List α) : as.ma
   | nil => rfl
   | cons a as H => simp only [map]; rw [H, Function.comp_apply]
 
-@[simp] lemma nil_bind {α β} (f : α → List β) : [].bind f = [] := rfl
+-- assert nil_bind {α β} (f : α → List β) : [].bind f = []
 
-@[simp] lemma cons_bind {α β} (f : α → List β) (a : α) (as : List α) : (a :: as).bind f = f a ++ as.bind f := rfl
+-- assert cons_bind {α β} (f : α → List β) (a : α) (as : List α) : (a :: as).bind f = f a ++ as.bind f
 
 @[simp] lemma pure_bind {α β} (f : α → List β) (a : α) : [a].bind f = f a := by rw [cons_bind, nil_bind, append_nil]
 
-@[simp] lemma append_bind {α β} (f : α → List β) (as bs : List α) : (as ++ bs).bind f = as.bind f ++ bs.bind f := by
-  induction as generalizing bs with
-  | nil => rfl
-  | cons a as H => rw [cons_append, cons_bind, cons_bind, append_assoc, H]
+-- assert append_bind {α β} (f : α → List β) (as bs : List α) : (as ++ bs).bind f = as.bind f ++ bs.bind f
 
 lemma bind_assoc {α β γ} (f : α → List β) (g : β → List γ) (as : List α) : (as.bind f).bind g = as.bind (λ a => (f a).bind g) := by
   induction as with
@@ -87,37 +84,33 @@ def equiv {α β} (e : Equiv α β) : Equiv (List α) (List β) where
     · intro h; rw [←h, ←comp_map, e.comp_rev_fwd, id_map]
     · intro h; rw [←h, ←comp_map, e.comp_fwd_rev, id_map]
 
-@[simp] lemma all_nil {α} (p : α → Bool) : [].all p = true := rfl
+-- assert all_nil {α} (p : α → Bool) : [].all p = true
 
-@[simp] lemma all_cons {α} (p : α → Bool) (x : α) (xs : List α) : (x :: xs).all p = (p x && xs.all p) := rfl
+-- assert all_cons {α} (p : α → Bool) (x : α) (xs : List α) : (x :: xs).all p = (p x && xs.all p)
 
 lemma all_eq_true {α} (p : α → Bool) (xs : List α) : xs.all p = true ↔ All (xs.map λ x => p x = true) := by
   induction xs generalizing p with
   | nil => rw [all_nil, nil_map]; simp
-  | cons x xs H => rw [all_cons, cons_map, All.cons_eq, ←H, Bool.and_eq_true_iff]; simp
+  | cons x xs H => rw [all_cons, cons_map, All.cons_eq, ←H, Bool.and_eq_true_iff]
 
 lemma all_eq_false {α} (p : α → Bool) (xs : List α) : xs.all p = false ↔ Any (xs.map λ x => p x = false) := by
   induction xs generalizing p with
   | nil => rw [all_nil, nil_map]; simp
-  | cons x xs H => rw [all_cons, cons_map, Any.cons_eq, ←H, Bool.and_eq_false_iff]; simp
-
-@[simp] lemma any_nil {α} (p : α → Bool) : [].any p = false := rfl
-
-@[simp] lemma any_cons {α} (p : α → Bool) (x : α) (xs : List α) : (x :: xs).any p = (p x || xs.any p) := rfl
+  | cons x xs H => rw [all_cons, cons_map, Any.cons_eq, ←H, Bool.and_eq_false_iff]
 
 lemma any_eq_true {α} (p : α → Bool) (xs : List α) : xs.any p = true ↔ Any (xs.map λ x => p x = true) := by
   induction xs generalizing p with
   | nil => rw [any_nil, nil_map, Any.nil_eq]; simp
-  | cons x xs H => rw [any_cons, cons_map, Any.cons_eq, ←H, Bool.or_eq_true_iff]; simp
+  | cons x xs H => rw [any_cons, cons_map, Any.cons_eq, ←H, Bool.or_eq_true_iff]
 
 lemma any_eq_false {α} (p : α → Bool) (xs : List α) : xs.any p = false ↔ All (xs.map λ x => p x = false) := by
   induction xs generalizing p with
   | nil => rw [any_nil, nil_map, All.nil_eq]; simp
-  | cons x xs H => rw [any_cons, cons_map, All.cons_eq, ←H, Bool.or_eq_false_iff]; simp
+  | cons x xs H => rw [any_cons, cons_map, All.cons_eq, ←H, Bool.or_eq_false_iff]
 
 theorem replicate_zero {α} (a : α) : replicate 0 a = [] := rfl
 
-theorem replicate_succ {α} (a : α) (n : Nat) : replicate (n+1) a = a :: replicate n a := rfl
+-- assert replicate_succ {α} (a : α) (n : Nat) : replicate (n+1) a = a :: replicate n a
 
 theorem replicate_add {α} (a : α) : (m n : Nat) → replicate n a ++ replicate m a = replicate (m + n) a
 | _, 0 => rfl

@@ -69,13 +69,11 @@ protected def casesDiagOn.{u} {motive : Nat → Nat → Sort u} (x y : Nat)
 
 section clean
 
-attribute [clean] Nat.zero_eq Nat.add_eq Nat.sub_eq Nat.mul_eq Nat.div_eq Nat.mod_eq Nat.add_zero Nat.mul_zero Nat.pow_zero
+attribute [clean] Nat.zero_eq Nat.add_eq Nat.sub_eq Nat.mul_eq Nat.div_eq Nat.mod_eq Nat.pow_eq Nat.add_zero Nat.mul_zero Nat.pow_zero
 
 @[simp,clean] protected lemma succ_eq (x : Nat) : Nat.succ x = x + 1 := rfl
 
 @[simp,clean] protected lemma pred_eq (x : Nat) : Nat.pred x = x - 1 := rfl
-
-@[simp,clean] protected lemma pow_eq (x y : Nat) : Nat.pow x y = x ^ y := rfl
 
 end clean
 

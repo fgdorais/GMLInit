@@ -11,8 +11,7 @@ namespace Nat
 protected theorem le_or_gt (x y : Nat) : x ≤ y ∨ x > y :=
   Or.elim (Nat.lt_or_ge y x) Or.inr Or.inl
 
-protected theorem lt_or_eq_of_le {x y : Nat} : x ≤ y → x < y ∨ x = y :=
-  λ hle => Or.elim (Nat.lt_or_ge x y) Or.inl λ hge => Or.inr (Nat.le_antisymm hle hge)
+-- assert theorem lt_or_eq_of_le {x y : Nat} : x ≤ y → x < y ∨ x = y
 
 protected theorem le_iff_lt_or_eq (x y : Nat) : x ≤ y ↔ x < y ∨ x = y :=
   ⟨Nat.lt_or_eq_of_le, λ h => Or.elim h Nat.le_of_lt Nat.le_of_eq⟩
@@ -23,8 +22,7 @@ protected theorem le_iff_lt_or_eq (x y : Nat) : x ≤ y ↔ x < y ∨ x = y :=
 
 -- assert theorem lt_of_le_of_ne {x y : Nat} : x ≤ y → x ≠ y → x < y
 
-protected theorem lt_iff_le_and_ne (x y : Nat) : x < y ↔ x ≤ y ∧ x ≠ y :=
-  ⟨λ hlt => ⟨Nat.le_of_lt hlt, Nat.ne_of_lt hlt⟩, λ ⟨hle, hne⟩ => Nat.lt_of_le_of_ne hle hne⟩
+-- assert theorem lt_iff_le_and_ne (x y : Nat) : x < y ↔ x ≤ y ∧ x ≠ y
 
 -- assert theorem le_total (x y : Nat) : x ≤ y ∨ x ≥ y := Nat.leTotal x y
 

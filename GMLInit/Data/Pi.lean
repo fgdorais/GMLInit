@@ -37,14 +37,12 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
         apply eq_of_heq
         elim_casts
         rw [e.rev_fwd x₁]
-        reflexivity using (.≅.)
     · intro
       | rfl =>
         funext x₂
         apply eq_of_heq
         elim_casts
         rw [e.fwd_rev x₂]
-        reflexivity using (.≅.)
 
 def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) → Equiv (β₁ x) (β₂ x)) : Equiv ((x : α) → β₁ x) ((x : α) → β₂ x) where
   fwd f₁ x := (e x).fwd (f₁ x)
