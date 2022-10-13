@@ -1,4 +1,4 @@
-import Lean
+import Std
 
 instance (α) [Subsingleton α] : DecidableEq α
 | _, _ => isTrue (Subsingleton.allEq _ _)
