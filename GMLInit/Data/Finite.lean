@@ -166,7 +166,7 @@ protected def all (p : α → Bool) : Bool := List.all (enum α) p
 
 theorem forall_iff_all (p : α → Bool) : (∀ x, p x) ↔ Finite.all p := by
   clean unfold Finite.all
-  rw [List.all_eq_true]
+  rw [List.all_eq_true_iff_all_true]
   constr
   · intro h
     apply All.introIdx
@@ -179,7 +179,7 @@ theorem forall_iff_all (p : α → Bool) : (∀ x, p x) ↔ Finite.all p := by
 
 theorem exists_iff_any (p : α → Bool) : (∃ x, p x) ↔ Finite.any p := by
   clean unfold Finite.any
-  rw [List.any_eq_true]
+  rw [List.any_eq_true_iff_any_true]
   constr
   · intro
     | ⟨x,hx⟩ =>

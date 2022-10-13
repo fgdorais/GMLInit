@@ -88,22 +88,22 @@ def equiv {α β} (e : Equiv α β) : Equiv (List α) (List β) where
 
 -- assert all_cons {α} (p : α → Bool) (x : α) (xs : List α) : (x :: xs).all p = (p x && xs.all p)
 
-lemma all_eq_true {α} (p : α → Bool) (xs : List α) : xs.all p = true ↔ All (xs.map λ x => p x = true) := by
+lemma all_eq_true_iff_all_true {α} (p : α → Bool) (xs : List α) : xs.all p = true ↔ All (xs.map λ x => p x = true) := by
   induction xs generalizing p with
   | nil => rw [all_nil, nil_map]; simp
   | cons x xs H => rw [all_cons, cons_map, All.cons_eq, ←H, Bool.and_eq_true_iff]
 
-lemma all_eq_false {α} (p : α → Bool) (xs : List α) : xs.all p = false ↔ Any (xs.map λ x => p x = false) := by
+lemma all_eq_false_iff_any_false {α} (p : α → Bool) (xs : List α) : xs.all p = false ↔ Any (xs.map λ x => p x = false) := by
   induction xs generalizing p with
   | nil => rw [all_nil, nil_map]; simp
   | cons x xs H => rw [all_cons, cons_map, Any.cons_eq, ←H, Bool.and_eq_false_iff]
 
-lemma any_eq_true {α} (p : α → Bool) (xs : List α) : xs.any p = true ↔ Any (xs.map λ x => p x = true) := by
+lemma any_eq_true_iff_any_true {α} (p : α → Bool) (xs : List α) : xs.any p = true ↔ Any (xs.map λ x => p x = true) := by
   induction xs generalizing p with
   | nil => rw [any_nil, nil_map, Any.nil_eq]; simp
   | cons x xs H => rw [any_cons, cons_map, Any.cons_eq, ←H, Bool.or_eq_true_iff]
 
-lemma any_eq_false {α} (p : α → Bool) (xs : List α) : xs.any p = false ↔ All (xs.map λ x => p x = false) := by
+lemma any_eq_false_iff_all_false {α} (p : α → Bool) (xs : List α) : xs.any p = false ↔ All (xs.map λ x => p x = false) := by
   induction xs generalizing p with
   | nil => rw [any_nil, nil_map, All.nil_eq]; simp
   | cons x xs H => rw [any_cons, cons_map, All.cons_eq, ←H, Bool.or_eq_false_iff]
