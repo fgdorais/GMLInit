@@ -10,10 +10,10 @@ variable {α β γ}
 
 namespace Notation
 set_option hygiene false
-scoped notation x:50 " ∈ " s:51 => Set.Mem s x
-scoped infix:50 " ⊆ " => Set.Subset
-scoped infixr:55 " ∪ " => Set.union
-scoped infixr:60 " ∩ " => Set.inter
+scoped notation (priority:=high) x:50 " ∈ " s:51 => Set.Mem s x
+scoped infix:50 (priority:=high) " ⊆ " => Set.Subset
+scoped infixr:55 (priority:=high) " ∪ " => Set.union
+scoped infixr:60 (priority:=high) " ∩ " => Set.inter
 end Notation
 open Notation
 
