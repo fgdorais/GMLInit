@@ -105,9 +105,9 @@ where
   e₂ := Sum.equiv (Finite.equivIndex α) (Finite.equivIndex β)
 
 instance : Finite ((x : α) × γ x) :=
-  Finite.ofEquiv (Index (List.sigma' (enum α) (λ i => enum (γ i.val)))) ((x : α) × γ x) (Equiv.comp e₁ e₂).inv
+  Finite.ofEquiv (Index (List.sigma (enum α) (λ x => enum (γ x)))) ((x : α) × γ x) (Equiv.comp e₁ e₂).inv
 where
-  e₁ := Index.sigmaEquiv (enum α) (λ i => enum (γ i.val))
+  e₁ := Index.sigmaEquiv (enum α) (λ x => enum (γ x))
   e₂ := (Sigma.equiv (Finite.equivIndex α).inv (λ i => (Finite.equivIndex (γ i.val)).inv)).inv
 
 instance : Finite (α × β) := Finite.ofEquiv (Sigma (λ _ : α => β)) (α × β) (Sigma.equivProd α β).inv
