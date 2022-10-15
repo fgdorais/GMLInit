@@ -27,39 +27,33 @@ protected def compare : Index xs → Index xs → Ordering
 
 instance instOrd (xs : List α) : Ord (Index xs) := ⟨Index.compare⟩
 
-open Ordering in instance instLawfulOrd : (xs : List α) → LawfulOrd (Index xs)
+open Ordering in instance instLinearOrd : (xs : List α) → LinearOrd (Index xs)
 | [] => {
-  eq_refl := (nomatch .)
-  eq_tight := (nomatch .)
-  lt_trans := (nomatch .)
-  gt_trans := (nomatch .)
+  symm := (nomatch .)
+  le_trans := (nomatch .)
+  eq_strict := (nomatch .)
 }
 | _::xs => {
-  eq_refl := fun
-  | head => rfl
-  | tail i => (instLawfulOrd xs).eq_refl i
-  eq_tight := fun {i j} h => match i, j, h with
+  symm := fun
+  | head, head => rfl
+  | head, tail _ => rfl
+  | tail _, head => rfl
+  | tail i, tail j => (instLinearOrd xs).symm i j
+  le_trans := fun {i j k} hij hjk => match i, j, k, hij, hjk with
+  | head, _, head, _, _ => Ordering.noConfusion
+  | head, _, tail _, _, _ => Ordering.noConfusion
+  | tail _, head, tail _, h, _ => absurd rfl h
+  | tail _, tail _, tail _, hij, hjk => (instLinearOrd xs).le_trans hij hjk
+  eq_strict := fun {i j} h => match i, j, h with
   | head, head, _ => rfl
   | head, tail _, h => Ordering.noConfusion h
   | tail _, head, h => Ordering.noConfusion h
-  | tail _, tail _, h => congrArg tail ((instLawfulOrd xs).eq_tight h)
-  lt_trans := fun {i j k} hij hjk => match i, j, k, hij, hjk with
-  | head, _, tail _, _, _ => rfl
-  | head, head, _, h, _ => Ordering.noConfusion h
-  | tail _, head, _, h, _ => Ordering.noConfusion h
-  | _, tail _, head, _, h => Ordering.noConfusion h
-  | tail _, tail _, tail _, hij, hjk => (instLawfulOrd xs).lt_trans hij hjk
-  gt_trans := fun {i j k} hij hjk => match i, j, k, hij, hjk with
-  | tail _, _, head, _, _ => rfl
-  | head, head, _, h, _ => Ordering.noConfusion h
-  | head, tail _, _, h, _ => Ordering.noConfusion h
-  | _, head, tail _, _, h => Ordering.noConfusion h
-  | tail _, tail _, tail _, hij, hjk => (instLawfulOrd xs).gt_trans hij hjk
+  | tail _, tail _, h => congrArg tail ((instLinearOrd xs).eq_strict h)
 }
 
-instance : LE (Index xs) := open Ord in inferInstance
+instance : LE (Index xs) := ⟨fun i j => Ord.compare i j ≠ .gt⟩
 
-instance : LT (Index xs) := open Ord in inferInstance
+instance : LT (Index xs) := ⟨fun i j => Ord.compare i j = .lt⟩
 
 protected def head? {α} : (as : List α) → Option (Index as)
 | [] => none
