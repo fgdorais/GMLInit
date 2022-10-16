@@ -2,63 +2,62 @@ import GMLInit.Data.Basic
 import GMLInit.Meta.Basic
 import GMLInit.Meta.Relation
 
-class EquivBEq (α) [BEq α] : Prop where
-  beq_refl (x : α) : (x == x) = true
-  beq_subs {x y : α} : (x == y) = true → ∀ z, (x == z) = (y == z)
-export EquivBEq (beq_refl beq_subs)
+class EquivBEq (α) [BEq α] extends PartialEquivBEq α : Prop where
+  protected refl (x : α) : (x == x) = true
 
 instance (α) [BEq α] [LawfulBEq α] : EquivBEq α where
-  beq_refl _ := LawfulBEq.rfl
-  beq_subs h _ := eq_of_beq h ▸ rfl
+  refl _ := LawfulBEq.rfl
+  symm h := eq_of_beq h ▸ LawfulBEq.rfl
+  trans h₁ h₂ := eq_of_beq h₁ ▸ h₂
 
-section EquivBEq
-variable {α} [inst : BEq α] [self : EquivBEq α]
+namespace BEq
+variable {α} [BEq α] 
 
-theorem beq_rfl {x : α} : (x == x) = true := beq_refl x
+protected theorem refl [EquivBEq α] (x : α) : x == x := EquivBEq.refl x
 
-theorem beq_of_eq {x y : α} : x = y → (x == y) = true := fun | rfl => beq_rfl
+protected theorem rfl [EquivBEq α] {x : α} : x == x := EquivBEq.refl x
 
-theorem beq_symm {x y : α} : (x == y) = true → (y == x) = true := by
-  intro hxy
-  transitivity (x == x)
-  · rw [beq_subs hxy]
-  · rw [beq_refl]
+protected theorem symm [PartialEquivBEq α] {x y : α} : x == y → y == x := PartialEquivBEq.symm
 
-theorem beq_comm (x y : α) : (x == y) = (y == x) := by
+protected theorem trans [PartialEquivBEq α] {x y z : α} : x == y → y == z → x == z := PartialEquivBEq.trans
+
+protected theorem comm [PartialEquivBEq α] (x y : α) : (x == y) = (y == x) := by
   match hxy : x == y, hyx : y == x with
   | true, true => rfl
-  | true, false => rw [beq_symm hxy] at hyx; contradiction
-  | false, true => rw [beq_symm hyx] at hxy; contradiction
+  | true, false => rw [BEq.symm hxy] at hyx; contradiction
+  | false, true => rw [BEq.symm hyx] at hxy; contradiction
   | false, false => rfl
 
-theorem beq_trans {x y z : α} : (x == y) = true → (y == z) = true → (x == z) = true := by
-  intro hxy hyz
-  transitivity (y == z)
-  · rw [beq_subs hxy]
-  · rw [hyz]
+theorem subst_left [PartialEquivBEq α] {x y z : α} : (x == y) = true → (x == z) = (y == z) := by
+  intro hxy 
+  match hxz : x == z, hyz : y == z with
+  | true, true => rfl
+  | true, false => rw [BEq.trans (BEq.symm hxy) hxz] at hyz; contradiction
+  | false, true => rw [BEq.trans hxy hyz] at hxz; contradiction
+  | false, false => rfl
 
-theorem bne_irrefl (x : α) : ¬ (x != x) = true := by
-  rw [Bool.not_eq_true, bne, beq_refl, Bool.not_true]
+theorem subst_right [PartialEquivBEq α] {x y z : α} : (x == y) = true → (z == x) = (z == y) := by
+  intro hxy 
+  match hzx : z == x, hzy : z == y with
+  | true, true => rfl
+  | true, false => rw [BEq.trans hzx hxy] at hzy; contradiction
+  | false, true => rw [BEq.trans hzy (BEq.symm hxy)] at hzx; contradiction
+  | false, false => rfl
 
-theorem bne_comm (x y : α) : (x != y) = (y != x) := by
-  rw [bne, beq_comm, bne]
+theorem beq_of_eq [EquivBEq α] {x y : α} : x = y → (x == y) = true := fun | rfl => BEq.rfl
 
-theorem bne_symm {x y : α} : (x != y) = true → (y != x) = true := by
-  intro h; rw [bne_comm, h]
+theorem eq_of_beq [LawfulBEq α] {x y : α} : (x == y) = true → x = y := LawfulBEq.eq_of_beq
 
-theorem bne_comp {x y : α} : (x != y) = true → ∀ z, (x != z) = true ∨ (z != y) = true := by
+theorem comp [PartialEquivBEq α] {x y : α} : (x != y) = true → ∀ z, (x != z) = true ∨ (z != y) = true := by
   clean unfold bne
   intro hxy z
   match hxz : x == z, hyz : z == y with
-  | true, true => rw [beq_subs hxz y, hyz] at hxy; contradiction
+  | true, true => rw [BEq.subst_right hyz] at hxz; rw [hxz] at hxy; contradiction
   | false, _ => left; rfl
   | _, false => right; rfl
 
-instance : Relation.Reflexive (α:=α) (.==.) := ⟨beq_refl⟩
-instance : Relation.Symmetric (α:=α) (.==.) := ⟨beq_symm⟩
-instance : Relation.Transitive (α:=α) (.==.) := ⟨beq_trans⟩
-instance : Relation.Irreflexive (α:=α) (.!=.) := ⟨bne_irrefl⟩
-instance : Relation.Symmetric (α:=α) (.!=.) := ⟨bne_symm⟩
-instance : Relation.Comparison (α:=α) (.!=.) := ⟨bne_comp⟩
+instance (α) [BEq α] [EquivBEq α] : Relation.Reflexive (α:=α) (.==.) := ⟨BEq.refl⟩
+instance (α) [BEq α] [PartialEquivBEq α] : Relation.Symmetric (α:=α) (.==.) := ⟨BEq.symm⟩
+instance (α) [BEq α] [PartialEquivBEq α] : Relation.Transitive (α:=α) (.==.) := ⟨BEq.trans⟩
 
-end EquivBEq
+end BEq
