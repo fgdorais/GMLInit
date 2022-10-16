@@ -3,14 +3,14 @@ import GMLInit.Data.Index.Append
 import GMLInit.Data.Index.Map
 
 namespace Index
-variable {α} {β : α → Type _} {xs : List α} {f : (x : α) → List (β x)}
+variable {α} {β : α → Type _} {f : (x : α) → List (β x)} {xs : List α} 
 
-def sigma : {xs : List α} → {f : (x : α) → List (β x)} → (i : Index xs) × Index (f i.val) → Index (xs.sigma f)
-| x::_, _, ⟨head, j⟩ => append (.inl (j.map (Sigma.mk x)))
-| _::_, _, ⟨tail i, j⟩ => append (.inr (sigma ⟨i, j⟩))
+def sigma : {xs : List α} → (i : Index xs) × Index (f i.val) → Index (xs.sigma f)
+| x::_, ⟨head, j⟩ => append (.inl (j.map (Sigma.mk x)))
+| _::_, ⟨tail i, j⟩ => append (.inr (sigma ⟨i, j⟩))
 
-def unsigma : {xs : List α} → {f : (x : α) → List (β x)} → Index (xs.sigma f) → (i : Index xs) × Index (f i.val)
-| x::_, _, k =>
+def unsigma : {xs : List α} → Index (xs.sigma f) → (i : Index xs) × Index (f i.val)
+| x::_, k =>
   match unappend k with
   | .inl j => ⟨head, j.unmap (Sigma.mk x)⟩
   | .inr k => ⟨tail (unsigma k).fst, (unsigma k).snd⟩

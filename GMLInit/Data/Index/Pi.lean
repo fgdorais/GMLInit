@@ -2,24 +2,24 @@ import GMLInit.Data.Index.Basic
 import GMLInit.Data.Index.Bind
 import GMLInit.Data.Index.Map
 
-protected def List.pi {α} {β : α → Type _} : (xs : List α) → (f : (i : Index xs) → List (β i.val)) → List ((i : Index xs) → β i.val)
-| [], _ => [(nomatch .)]
-| _::xs, f => (List.pi xs fun i => f i.tail).bind (λ ys => (f .head).map (λ y i => match i with | .head => y | .tail i => ys i))
+protected def List.pi {α} {β : α → Type _} (f : (x : α) → List (β x)) : (xs : List α) → List ((i : Index xs) → β i.val)
+| [] => [(nomatch .)]
+| x::xs => (List.pi f xs).bind (λ ys => (f x).map (λ y i => match i with | .head => y | .tail i => ys i))
 
 namespace Index
-variable {α} {β : α → Type _} {xs : List α} {f : (i : Index xs) → List (β i.val)}
+variable {α} {β : α → Type _} {f : (x : α) → List (β x)} {xs : List α}
 
-def pi : {xs : List α} → {f : (i : Index xs) → List (β i.val)} → ((i : Index xs) → Index (f i)) → Index (xs.pi f)
-| [], _, _ => head
-| _::_, _, y => bind _ ⟨pi fun i => y i.tail, map _ (y head)⟩
+def pi : {xs : List α} → ((i : Index xs) → Index (f i.val)) → Index (xs.pi f)
+| [], _ => head
+| _::_, y => bind _ ⟨pi fun i => y i.tail, map _ (y head)⟩
 
-def unpi : {xs : List α} → {f : (i : Index xs) → List (β i.val)} → (Index (xs.pi f)) → (i : Index xs) → Index (f i)
-| _::_, _, k, head =>
+def unpi : {xs : List α} → (Index (xs.pi f)) → (i : Index xs) → Index (f i.val)
+| _::_, k, head =>
   match unbind _ k with | ⟨_, k⟩ => unmap _ k
-| _::_, _, k, tail i =>
+| _::_, k, tail i =>
   match unbind _ k with | ⟨k, _⟩ => unpi k i
 
-theorem unpi_pi (h : (i : Index xs) → Index (f i)) : unpi (pi h) = h := by
+theorem unpi_pi (h : (i : Index xs) → Index (f i.val)) : unpi (pi h) = h := by
   funext i
   induction i with
   | head => rw [pi, unpi]; clean; rw [unbind_bind, unmap_map]
@@ -39,17 +39,17 @@ theorem pi_unpi (k : Index (xs.pi f)) : pi (unpi k) = k := by
       simp only [pi, unpi]
       rw [unbind_bind, ih, map_unmap]
 
-theorem pi_eq_iff_eq_unpi (h : (i : Index xs) → Index (f i)) (k : Index (xs.pi f)) : pi h = k ↔ h = unpi k := by
+theorem pi_eq_iff_eq_unpi (h : (i : Index xs) → Index (f i.val)) (k : Index (xs.pi f)) : pi h = k ↔ h = unpi k := by
   constr
   · intro h; rw [←h, unpi_pi]
   · intro h; rw [h, pi_unpi]
 
-theorem unpi_eq_iff_eq_pi (k : Index (xs.pi f)) (h : (i : Index xs) → Index (f i)) : unpi k = h ↔ k = pi h := by
+theorem unpi_eq_iff_eq_pi (k : Index (xs.pi f)) (h : (i : Index xs) → Index (f i.val)) : unpi k = h ↔ k = pi h := by
   constr
   · intro h; rw [←h, pi_unpi]
   · intro h; rw [h, unpi_pi]
 
-def piEquiv (xs : List α) (f : (i : Index xs) → List (β i.val)) : Equiv ((i : Index xs) → Index (f i)) (Index (xs.pi f)) where
+def piEquiv (xs : List α) (f : (x : α) → List (β x)) : Equiv ((i : Index xs) → Index (f i.val)) (Index (xs.pi f)) where
   fwd := pi
   rev := unpi
   spec := by
