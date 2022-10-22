@@ -5,9 +5,9 @@ import GMLInit.Data.Nat
 
 def LList (α) (n : Nat) := HList (List.replicate n α)
 
-@[matchPattern] protected def LList.nil {α} : LList α 0 := HList.nil
+@[match_pattern] protected def LList.nil {α} : LList α 0 := HList.nil
 
-@[matchPattern] protected def LList.cons {α n} (a : α) : LList α n → LList α (n+1) := HList.cons a
+@[match_pattern] protected def LList.cons {α n} (a : α) : LList α n → LList α (n+1) := HList.cons a
 
 def List.toLList {α} : (xs : List α) → LList α xs.length
 | [] => LList.nil

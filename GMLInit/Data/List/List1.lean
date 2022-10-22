@@ -7,7 +7,7 @@ structure List1 (α : Type _) where
 namespace List1
 variable {α}
 
-@[matchPattern]
+@[match_pattern]
 def cons (x : α) (xs : List α) : List1 α := ⟨x::xs, List.noConfusion⟩
 
 def head : List1 α → α

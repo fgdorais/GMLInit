@@ -48,7 +48,7 @@ class HSymmetric (r : α → β → Prop) (s : β → α → Prop) : Prop where
 class Symmetric (r : α → α → Prop) : Prop where
   protected symm {x y} : r y x → r x y
 
-@[defaultInstance]
+@[default_instance]
 instance {α} (r : α → α → Prop) [Symmetric r] : HSymmetric r r := ⟨Symmetric.symm⟩
 
 abbrev Asymmetric (r : α → α → Prop) := HSymmetric r (¬ r . .)
@@ -88,7 +88,7 @@ class HAntisymmetric {α} (r : α → α → Prop) (s : outParam (α → α → 
 class Antisymmetric {α} (r : α → α → Prop) : Prop where
   protected antisymm {x y} : r x y → r y x → x = y
 
-@[defaultInstance]
+@[default_instance]
 instance {α} (r : α → α → Prop) [Antisymmetric r] : HAntisymmetric r Eq where
   antisymm := Antisymmetric.antisymm
 
@@ -96,7 +96,7 @@ instance : HAntisymmetric (.→.) (.↔.) := ⟨Iff.intro⟩
 
 abbrev WeaklyConnex {α} (r : α → α → Prop) := Antisymmetric (λ x y => ¬ r y x)
 
-abbrev WeaklyConnex.connex {α} {r : α → α → Prop} [WeaklyConnex r] {x y} : ¬ r y x → ¬ r x y → x = y := 
+abbrev WeaklyConnex.connex {α} {r : α → α → Prop} [WeaklyConnex r] {x y} : ¬ r y x → ¬ r x y → x = y :=
   Antisymmetric.antisymm (r := λ x y => ¬ r y x)
 
 end Antisymmetric
@@ -112,7 +112,7 @@ instance {α β γ} (r : α → β → Prop) (s : β → γ → Prop) (t : α �
 class Transitive {α} (r : α → α → Prop) : Prop where
   protected trans {x y z} : (left : r x y) → (right : r y z) → r x z
 
-@[defaultInstance]
+@[default_instance]
 instance {α} (r : α → α → Prop) [Transitive r] : HTransitive r r r := ⟨Transitive.trans⟩
 
 instance (α) : Transitive (α:=α) (.=.) := ⟨Eq.trans⟩
@@ -137,7 +137,7 @@ class HEuclidean {α β γ} (r : α → β → Prop) (s : α → γ → Prop) (t
 class Euclidean {α} (r : α → α → Prop) : Prop where
   protected eucl {x y z} : (left : r x y) → (right : r x z) → r y z
 
-@[defaultInstance]
+@[default_instance]
 instance {α} (r : α → α → Prop) [Euclidean r] : HEuclidean r r r := ⟨Euclidean.eucl⟩
 
 instance [Reflexive r] [Euclidean r] : Symmetric r where
@@ -162,7 +162,7 @@ class HTotal {α β} (r : α → β → Prop) (s : β → α → Prop) : Prop wh
 class Total {α} (r : α → α → Prop) : Prop where
   protected total (x y) : (r x y) ∨ (r y x)
 
-@[defaultInstance]
+@[default_instance]
 instance {α} (r : α → α → Prop) [Total r] : HTotal r r := ⟨Total.total⟩
 
 end Total
@@ -175,7 +175,7 @@ class HComparison {α} (r : α → α → Prop) (s : α → α → Prop) : Prop 
 class Comparison {α} (r : α → α → Prop) : Prop where
   protected compare {x y} : r x y → (z : α) → r x z ∨ r z y
 
-@[defaultInstance]
+@[default_instance]
 instance {α} (r : α → α → Prop) [Comparison r] : HComparison r r := ⟨Comparison.compare⟩
 
 def Transitive.toComparison {α} (r : α → α → Prop) [ComplementedRel r] [Transitive r] : Comparison (λ x y => ¬ r y x) where
@@ -208,7 +208,7 @@ class HConnex {α} (r : α → α → Prop) (s : α → α → Prop) : Prop wher
 class Connex {α} (r : α → α → Prop) : Prop where
   protected connex {x y} : x ≠ y → r x y ∨ r y x
 
-@[defaultInstance]
+@[default_instance]
 instance {α} (r : α → α → Prop) [Connex r] : HConnex r (.≠.) := ⟨Connex.connex⟩
 
 def Connex.toAntisymmetric {α} (r : α → α → Prop) [StableEq α] [Connex r] : Antisymmetric (λ x y => ¬ r y x) where
@@ -233,7 +233,7 @@ def Connex.toComparison {α} (r : α → α → Prop) [ComplementedEq α] [Conne
     intro x y hxy z
     by_cases x = z using Complemented with
     | .isTrue rfl => right; exact hxy
-    | .isFalse hne => 
+    | .isFalse hne =>
       match Connex.connex (r:=r) hne with
       | .inl hxz => left; exact hxz
       | .inr hzx => right; exact Transitive.trans hzx hxy

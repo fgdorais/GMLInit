@@ -5,7 +5,7 @@ package GMLInit {
   moreLeanArgs := #["-Dlinter.unusedVariables=false"]
 }
 
-@[defaultTarget]
+@[default_target]
 lean_lib GMLInit {}
 
-require std from git "https://github.com/leanprover/std4.git"@"e564a554a3aa40ca8542928494ef161a1f79f2df"
+require std from git "https://github.com/leanprover/std4.git"@"68c404a3bc72a44559fb58ae9ab74196abf9853d"

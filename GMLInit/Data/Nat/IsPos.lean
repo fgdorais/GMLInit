@@ -36,9 +36,9 @@ theorem pos_of_nonzero {n : Nat} : n ≠ 0 → n > 0 := by
   | zero => intro; contradiction
   | succ n => intro; exact is_pos _
 
-macro "nat_is_pos" : tactic => `(tactic| show ((_:Nat) > 0); first | assumption | exact Nat.is_pos _)
+macro "nat_is_pos" : tactic => `(tactic| (show ((_ : Nat) > 0); first | assumption | exact Nat.is_pos _))
 
-macro "nat_is_nonzero" : tactic => `(tactic| show ((_:Nat) ≠ 0); first | assumption | symmetry; assumption | exact Nat.is_nonzero _)
+macro "nat_is_nonzero" : tactic => `(tactic| (show ((_ : Nat) ≠ 0); first | assumption | symmetry; assumption | exact Nat.is_nonzero _))
 
 protected theorem pred_lt_self (n : Nat) (h : n > 0 := by nat_is_pos) : n.pred < n := by
   cases n with
