@@ -17,14 +17,14 @@ variable {α} [LE α] [DecidableRel (α:=α) (.≤.)]
 theorem symm [Total (α:=α) (.≤.)] (x y : α) : (compareOfLE x y).swap = compareOfLE y x := by
   unfold compareOfLE
   split
-  next => 
+  next =>
     split
     next => rfl
     next => rfl
-  next => 
+  next =>
     split
     next => rfl
-    next nxy nyx => 
+    next nxy nyx =>
       cases Total.total (r:=(.≤.)) x y with
       | inl hxy => contradiction
       | inr hyx => contradiction
@@ -39,9 +39,9 @@ theorem le_trans [Transitive (α:=α) (.≤.)] {x y z : α} : compareOfLE x y �
     next => intro; contradiction
   next nxz =>
     split at cxy
-    next hxy => 
+    next hxy =>
       split at cyz
-      next hyz => 
+      next hyz =>
         absurd nxz
         transitivity y
         · exact hxy
@@ -53,9 +53,9 @@ theorem eq_strict [Antisymmetric (α:=α) (.≤.)] {x y : α} : compareOfLE x y 
   unfold compareOfLE
   intro cxy
   split at cxy
-  next hxy => 
+  next hxy =>
     split at cxy
-    next hyx => 
+    next hyx =>
       antisymmetry using (.≤.)
       · exact hxy
       · exact hyx
@@ -66,14 +66,14 @@ variable (α) [LE α] [DecidableRel (α:=α) (.≤.)]
 
 scoped instance instOrd : Ord α := ⟨compareOfLE⟩
 
-instance instOrientedOrd [Total (α:=α) (.≤.)] : OrientedOrd α where
+scoped instance instOrientedOrd [Total (α:=α) (.≤.)] : OrientedOrd α where
   symm := symm
 
-instance instTransOrd [Total (α:=α) (.≤.)] [Transitive (α:=α) (.≤.)] : TransOrd α where
+scoped instance instTransOrd [Total (α:=α) (.≤.)] [Transitive (α:=α) (.≤.)] : TransOrd α where
   symm := symm
   le_trans := le_trans
 
-instance instLinearOrd [Total (α:=α) (.≤.)] [Transitive (α:=α) (.≤.)] [Antisymmetric (α:=α) (.≤.)] : LinearOrd α where
+scoped instance instLinearOrd [Total (α:=α) (.≤.)] [Transitive (α:=α) (.≤.)] [Antisymmetric (α:=α) (.≤.)] : LinearOrd α where
   symm := symm
   le_trans := le_trans
   eq_strict := eq_strict
@@ -89,14 +89,14 @@ variable {α} [inst : LT α] [DecidableRel (α:=α) (.<.)]
 theorem symm [Asymmetric (α:=α) (.<.)] (x y : α) : (compareOfLT x y).swap = compareOfLT y x := by
   unfold compareOfLT
   split
-  next hxy => 
+  next hxy =>
     split
-    next hyx  => 
+    next hyx  =>
       absurd hxy
       exact Asymmetric.asymm hyx
     next => rfl
   next =>
-    split 
+    split
     next => rfl
     next => rfl
 
@@ -105,39 +105,39 @@ theorem le_trans {x y z : α} [Transitive (α:=α) (.<.)] [Comparison (α:=α) (
   intro cxy cyz
   split
   next => intro; contradiction
-  next nxz => 
+  next nxz =>
     split
     next hzx =>
       split at cxy
-      next => 
+      next =>
         split at cyz
-        next => 
+        next =>
           absurd nxz
           transitivity y
           · assumption
           · assumption
-        next => 
+        next =>
           split at cyz
           next => contradiction
-          next nzy => 
+          next nzy =>
             absurd nzy
             transitivity x
             · assumption
             . assumption
-      next => 
+      next =>
         split at cxy
         next => contradiction
-        next nyx => 
+        next nyx =>
           split at cyz
-          next => 
+          next =>
             absurd nyx
             transitivity z
             · assumption
             . assumption
-          next => 
+          next =>
             split at cyz
             next => contradiction
-            next => 
+            next =>
               cases Comparison.compare hzx y with
               | inl _ => contradiction
               | inr _ => contradiction
@@ -148,12 +148,12 @@ theorem eq_strict {x y : α} [StableEq α] [Connex (α:=α) (.<.)] : compareOfLT
   intro cxy
   split at cxy
   next => contradiction
-  next => 
+  next =>
     split at cxy
     next => contradiction
     next =>
       by_contradiction
-      | assuming hne => 
+      | assuming hne =>
         cases Connex.connex (r:=(.<.)) hne with
         | inl _ => contradiction
         | inr _ => contradiction
@@ -162,14 +162,14 @@ variable (α) [LT α] [DecidableRel (α:=α) (.<.)]
 
 scoped instance instOrd : Ord α := ⟨compareOfLT⟩
 
-instance instOrientedOrd [Asymmetric (α:=α) (.<.)] : OrientedOrd α where
+scoped instance instOrientedOrd [Asymmetric (α:=α) (.<.)] : OrientedOrd α where
   symm := symm
 
-instance instTransOrd [Asymmetric (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Comparison (α:=α) (.<.)] : TransOrd α where
+scoped instance instTransOrd [Asymmetric (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Comparison (α:=α) (.<.)] : TransOrd α where
   symm := symm
   le_trans := le_trans
 
-instance instLinearOrd [StableEq α] [Asymmetric (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Comparison (α:=α) (.<.)] [Connex (α:=α) (.<.)] : LinearOrd α where
+scoped instance instLinearOrd [StableEq α] [Asymmetric (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Comparison (α:=α) (.<.)] [Connex (α:=α) (.<.)] : LinearOrd α where
   symm := symm
   le_trans := le_trans
   eq_strict := eq_strict
@@ -182,45 +182,45 @@ variable {α} [LT α] [DecidableRel (α:=α) (.<.)] [DecidableEq α]
 theorem symm [Irreflexive (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Connex (α:=α) (.<.)] (x y : α) : (compareOfLessAndEq x y).swap = compareOfLessAndEq y x := by
   unfold compareOfLessAndEq
   split
-  next hlt => 
+  next hlt =>
     split
-    next => 
+    next =>
       absurd Irreflexive.irrefl (r:=(.<.)) x
       transitivity y
       · assumption
       · assumption
-    next => 
+    next =>
       split
-      next heq => 
+      next heq =>
         absurd hlt
         rw [heq]
         exact Irreflexive.irrfl
       next => rfl
-  next => 
-    split 
-    next heq => 
+  next =>
+    split
+    next heq =>
       split
-      next hlt => 
+      next hlt =>
         absurd hlt
         rw [heq]
         exact Irreflexive.irrfl
-      next => 
+      next =>
         split
         next => rfl
-        next hne => 
+        next hne =>
           absurd hne
           symmetry
           assumption
-    next hne => 
+    next hne =>
       split
       next => rfl
-      next => 
+      next =>
         split
-        next => 
+        next =>
           absurd hne
           symmetry
           assumption
-        next => 
+        next =>
           cases Connex.connex (r:=(.<.)) hne with
           | inl _ => contradiction
           | inr _ => contradiction
@@ -230,41 +230,41 @@ theorem le_trans [Transitive (α:=α) (.<.)] [Connex (α:=α) (.<.)]  {x y z : �
   intro cxy cyz
   split
   next => intro; contradiction
-  next nxz => 
+  next nxz =>
     split
     next => intro; contradiction
-    next hne => 
+    next hne =>
       split at cxy
-      next => 
+      next =>
         split at cyz
-        next => 
+        next =>
           absurd nxz
           transitivity y
           · assumption
           · assumption
-        next => 
+        next =>
           split at cyz
-          next heq => 
+          next heq =>
             absurd nxz
             rw [←heq]
             assumption
           next => contradiction
-      next => 
+      next =>
         split at cxy
-        next heq => 
+        next heq =>
           split at cyz
-          next => 
+          next =>
             absurd nxz
             rw [heq]
             assumption
-          next => 
+          next =>
             split at cyz
-            next => 
+            next =>
               absurd hne
               transitivity y
               · assumption
               · assumption
-            next => 
+            next =>
               cases Connex.connex (r:=(.<.)) hne with
               | inl _ => contradiction
               | inr _ => contradiction
@@ -275,7 +275,7 @@ theorem eq_strict {x y : α} : compareOfLessAndEq x y = eq → x = y := by
   intro cxy
   split at cxy
   next => contradiction
-  next => 
+  next =>
     split at cxy
     next => assumption
     next => contradiction
@@ -284,14 +284,14 @@ variable (α) [LT α] [DecidableRel (α:=α) (.<.)] [DecidableEq α]
 
 scoped instance instOrd : Ord α := ⟨fun x y => compareOfLessAndEq x y⟩
 
-instance instOrientedOrd [Irreflexive (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Connex (α:=α) (.<.)] : OrientedOrd α where
+scoped instance instOrientedOrd [Irreflexive (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Connex (α:=α) (.<.)] : OrientedOrd α where
   symm := symm
 
-instance instTransOrd [Irreflexive (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Connex (α:=α) (.<.)] : TransOrd α where
+scoped instance instTransOrd [Irreflexive (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Connex (α:=α) (.<.)] : TransOrd α where
   symm := symm
   le_trans := le_trans
 
-instance instLinearOrd [Irreflexive (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Connex (α:=α) (.<.)] : LinearOrd α where
+scoped instance instLinearOrd [Irreflexive (α:=α) (.<.)] [Transitive (α:=α) (.<.)] [Connex (α:=α) (.<.)] : LinearOrd α where
   symm := symm
   le_trans := le_trans
   eq_strict := eq_strict
@@ -299,5 +299,4 @@ instance instLinearOrd [Irreflexive (α:=α) (.<.)] [Transitive (α:=α) (.<.)] 
 end compareOfLessAndEq
 
 instance : LinearOrd Nat := compareOfLessAndEq.instLinearOrd Nat
-
 instance : LinearOrd Int := compareOfLessAndEq.instLinearOrd Int

@@ -4,17 +4,19 @@ import GMLInit.Meta.Decidable
 
 open Ordering (lt eq gt)
 
-abbrev OrientedOrd (α) [Ord α] : Prop := Std.LawfulCmp (α:=α) Ord.compare
+class Std.LinearCmp {α} (cmp : α → α → Ordering) extends TransCmp cmp : Prop where
+  eq_strict {x y : α} : cmp x y = eq → x = y
 
-abbrev TransOrd (α) [Ord α] : Prop := Std.TransCmp (α:=α) Ord.compare
+class abbrev OrientedOrd (α) [Ord α] : Prop := Std.OrientedCmp (α:=α) Ord.compare
 
-class LinearOrd (α) [Ord α] extends Std.TransCmp (α:=α) Ord.compare : Prop where
-  eq_strict {x y : α} : compare x y = eq → x = y
+class abbrev TransOrd (α) [Ord α] : Prop := Std.TransCmp (α:=α) Ord.compare
+
+class abbrev LinearOrd (α) [Ord α] : Prop := Std.LinearCmp (α:=α) Ord.compare
 
 namespace Ord
 variable {α} [Ord α]
 
-theorem eq_refl [OrientedOrd α] (x : α) : compare x x = eq := Std.LawfulCmp.cmp_refl
+theorem eq_refl [OrientedOrd α] (x : α) : compare x x = eq := Std.OrientedCmp.cmp_refl
 
 theorem lt_irrefl [OrientedOrd α] (x : α) : compare x x ≠ lt := eq_refl x ▸ Ordering.noConfusion
 
@@ -26,11 +28,11 @@ theorem le_refl [OrientedOrd α] (x : α) : compare x x ≠ gt := gt_irrefl x
 
 theorem ge_refl [OrientedOrd α] (x : α) : compare x x ≠ lt := lt_irrefl x
 
-theorem eq_symm [OrientedOrd α] {x y : α} : compare x y = eq → compare y x = eq := Std.LawfulCmp.cmp_eq_eq_symm.mp
+theorem eq_symm [OrientedOrd α] {x y : α} : compare x y = eq → compare y x = eq := Std.OrientedCmp.cmp_eq_eq_symm.mp
 
-theorem gt_of_lt_opp [OrientedOrd α] {x y : α} : compare x y = lt → compare y x = gt := Std.LawfulCmp.cmp_eq_gt.mpr
+theorem gt_of_lt_opp [OrientedOrd α] {x y : α} : compare x y = lt → compare y x = gt := Std.OrientedCmp.cmp_eq_gt.mpr
 
-theorem lt_of_gt_opp [OrientedOrd α] {x y : α} : compare x y = gt → compare y x = lt := Std.LawfulCmp.cmp_eq_gt.mp
+theorem lt_of_gt_opp [OrientedOrd α] {x y : α} : compare x y = gt → compare y x = lt := Std.OrientedCmp.cmp_eq_gt.mp
 
 theorem lt_asymm [OrientedOrd α] {x y : α} : compare x y = lt → compare y x ≠ lt := fun hxy => gt_of_lt_opp hxy ▸ Ordering.noConfusion
 
@@ -80,7 +82,7 @@ theorem le_or_ge [TransOrd α] (x y : α) : compare x y ≠ gt ∨ compare x y �
   | eq => Or.inl Ordering.noConfusion
   | gt => Or.inr Ordering.noConfusion
 
-export LinearOrd (eq_strict)
+theorem eq_strict [LinearOrd α] {x y : α} : compare x y = eq → x = y := Std.LinearCmp.eq_strict
 
 theorem connex [LinearOrd α] {x y : α} : x ≠ y → compare x y = lt ∨ compare x y = gt :=
   fun hne => match hxy : compare x y with
@@ -127,4 +129,3 @@ instance [TransOrd α] : HTransitive (α:=α) (β:=α) (γ:=α) (.>=.) (.>.) (.>
 end
 
 end Ord
-
