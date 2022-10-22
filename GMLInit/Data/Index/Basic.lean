@@ -14,20 +14,19 @@ protected abbrev casesNilOn {α} {motive : Index ([]:List α) → Sort _} (i : I
 
 lemma val_head {α} (a : α) (as : List α) : (@head α a as).val = a := rfl
 
-@[simp] lemma val_tail {α} (a : α) (as : List α) (i : Index as) : (@tail α a as i).val = i.val := rfl
+lemma val_tail {α} (a : α) (as : List α) (i : Index as) : (@tail α a as i).val = i.val := rfl
 
-@[simp] lemma val_ndrec {xs ys : List α} (i : Index xs) : (h : xs = ys) → val (h ▸ i : Index ys) = i.val | rfl => rfl
+lemma val_ndrec {xs ys : List α} (i : Index xs) : (h : xs = ys) → val (h ▸ i : Index ys) = i.val | rfl => rfl
 
-open Ordering in
 protected def compare : Index xs → Index xs → Ordering
-| head, head => eq
-| head, tail _ => lt
-| tail _, head => gt
+| head, head => .eq
+| head, tail _ => .lt
+| tail _, head => .gt
 | tail i, tail j => Index.compare i j
 
 instance instOrd (xs : List α) : Ord (Index xs) := ⟨Index.compare⟩
 
-open Ordering in instance instLinearOrd : (xs : List α) → LinearOrd (Index xs)
+instance instLinearOrd : (xs : List α) → LinearOrd (Index xs)
 | [] => {
   symm := (nomatch .)
   le_trans := (nomatch .)
