@@ -145,4 +145,68 @@ theorem search_ext {α} {xs : List α} {p q : Index xs → Prop} [DecidablePred 
   funext i
   exact propext (h i)
 
+protected def toNat {α} : {xs : List α} → (i : Index xs) → Nat
+| _, head => 0
+| _, tail i => Index.toNat i + 1
+
+theorem toNat_lt_length {α} {xs : List α} (i : Index xs) : i.toNat < xs.length := by
+  induction xs with
+  | nil => cases i
+  | cons x xs ih =>
+    cases i with
+    | head =>
+      exact Nat.zero_lt_succ ..
+    | tail i =>
+      apply Nat.succ_lt_succ
+      exact ih ..
+
+protected def toFin {α} {xs : List α} (i : Index xs) : Fin xs.length := ⟨i.toNat, i.toNat_lt_length⟩
+
+protected def ofFin {α} : {xs : List α} → Fin xs.length → Index xs
+| _::_, ⟨0,_⟩ => head
+| _::_, ⟨i+1,h⟩ => tail (Index.ofFin ⟨i, Nat.lt_of_succ_lt_succ h⟩)
+
+theorem ofFin_toFin {α} {xs : List α} (i : Index xs) : Index.ofFin i.toFin = i := by
+  induction xs with
+  | nil => cases i
+  | cons x xs ih =>
+    cases i with
+    | head => rfl
+    | tail i =>
+      apply congrArg tail
+      exact ih ..
+
+theorem toNat_ofFin {α} {xs : List α} (i : Fin xs.length) : (Index.ofFin i).toNat = i.val := by
+  induction xs with
+  | nil => cases i; contradiction
+  | cons x xs ih =>
+    match i with
+    | ⟨0,_⟩ => rfl
+    | ⟨i+1,h⟩ =>
+      apply congrArg Nat.succ
+      rw [ih]; rfl
+
+theorem toFin_ofFin {α} {xs : List α} (i : Fin xs.length) : (Index.ofFin i).toFin = i := by
+  apply Fin.eq_of_val_eq
+  apply toNat_ofFin
+
+def equivFin {α} (xs : List α) : Equiv (Index xs) (Fin xs.length) where
+  fwd := Index.toFin
+  rev := Index.ofFin
+  spec {_ _} := by
+    constr
+    · intro | rfl => exact ofFin_toFin ..
+    · intro | rfl => exact toFin_ofFin ..
+
+theorem val_ofFin_eq_get {α} (xs : List α) (i : Fin xs.length) : (Index.ofFin i).val = xs.get i := by
+  induction xs with
+  | nil => cases i; contradiction
+  | cons x xs ih =>
+    match i with
+    | ⟨0, _⟩ => rfl
+    | ⟨i+1, hi⟩ =>
+      unfold Index.ofFin
+      rw [val_tail, ih]
+      rfl
+
 end Index
