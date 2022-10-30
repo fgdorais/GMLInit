@@ -16,38 +16,22 @@ variable {α} [LE α] [DecidableRel (α:=α) (.≤.)]
 
 theorem symm [Total (α:=α) (.≤.)] (x y : α) : (compareOfLE x y).swap = compareOfLE y x := by
   unfold compareOfLE
-  split
-  next =>
-    split
-    next => rfl
-    next => rfl
-  next =>
-    split
-    next => rfl
-    next nxy nyx =>
-      cases Total.total (r:=(.≤.)) x y with
-      | inl hxy => contradiction
-      | inr hyx => contradiction
+  by_cases x ≤ y, y ≤ x with
+  | isTrue _, isTrue _ => split <;> rfl
+  | isTrue _, isFalse _ => split <;> rfl
+  | isFalse _, isTrue _ => split <;> rfl
+  | isFalse _, isFalse _ =>
+    cases Total.total (r:=(.≤.)) x y with
+    | inl hxy => absurd hxy; assumption
+    | inr hyx => absurd hyx; assumption
 
 theorem le_trans [Transitive (α:=α) (.≤.)] {x y z : α} : compareOfLE x y ≠ gt → compareOfLE y z ≠ gt → compareOfLE x z ≠ gt := by
   unfold compareOfLE
   intro cxy cyz
-  split
-  next =>
-    split
-    next => intro; contradiction
-    next => intro; contradiction
-  next nxz =>
-    split at cxy
-    next hxy =>
-      split at cyz
-      next hyz =>
-        absurd nxz
-        transitivity y
-        · exact hxy
-        · exact hyz
-      next => contradiction
-    next => contradiction
+  have : x ≤ y := by by_contradiction | assuming h => split at cxy <;> contradiction
+  have : y ≤ z := by by_contradiction | assuming h => split at cyz <;> contradiction
+  have : x ≤ z := by transitivity y <;> assumption
+  split <;> split <;> (intro; contradiction)
 
 theorem eq_strict [Antisymmetric (α:=α) (.≤.)] {x y : α} : compareOfLE x y = eq → x = y := by
   unfold compareOfLE
@@ -297,6 +281,3 @@ scoped instance instLinearOrd [Irreflexive (α:=α) (.<.)] [Transitive (α:=α) 
   eq_strict := eq_strict
 
 end compareOfLessAndEq
-
-instance : LinearOrd Nat := compareOfLessAndEq.instLinearOrd Nat
-instance : LinearOrd Int := compareOfLessAndEq.instLinearOrd Int

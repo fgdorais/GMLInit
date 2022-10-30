@@ -34,6 +34,22 @@ theorem gt_of_lt_opp [OrientedOrd α] {x y : α} : compare x y = lt → compare 
 
 theorem lt_of_gt_opp [OrientedOrd α] {x y : α} : compare x y = gt → compare y x = lt := Std.OrientedCmp.cmp_eq_gt.mp
 
+theorem ge_of_le_opp [OrientedOrd α] {x y : α} : compare x y ≠ gt → compare y x ≠ lt := mt gt_of_lt_opp
+
+theorem le_of_ge_opp [OrientedOrd α] {x y : α} : compare x y ≠ lt → compare y x ≠ gt := mt lt_of_gt_opp
+
+theorem le_total [OrientedOrd α] (x y : α) : compare x y ≠ gt ∨ compare y x ≠ gt :=
+  match hxy : compare x y with
+  | lt => Or.inl Ordering.noConfusion
+  | eq => Or.inl Ordering.noConfusion
+  | gt => Or.inr fun h => Ordering.noConfusion (Eq.trans (lt_of_gt_opp h).symm hxy)
+
+theorem ge_total [OrientedOrd α] (x y : α) : compare x y ≠ lt ∨ compare y x ≠ lt :=
+  match hxy : compare x y with
+  | lt => Or.inr fun h => Ordering.noConfusion (Eq.trans (gt_of_lt_opp h).symm hxy)
+  | eq => Or.inl Ordering.noConfusion
+  | gt => Or.inl Ordering.noConfusion
+
 theorem lt_asymm [OrientedOrd α] {x y : α} : compare x y = lt → compare y x ≠ lt := fun hxy => gt_of_lt_opp hxy ▸ Ordering.noConfusion
 
 theorem gt_asymm [OrientedOrd α] {x y : α} : compare x y = gt → compare y x ≠ gt := fun hxy => lt_of_gt_opp hxy ▸ Ordering.noConfusion
@@ -96,36 +112,44 @@ theorem antisymm [LinearOrd α] {x y : α} : compare x y ≠ lt → compare x y 
   | eq => eq_strict hxy
   | gt => absurd hxy ngt
 
-namespace Notation
-set_option quotPrecheck false
-scoped infix:50 (priority:=high) " < " => fun x y => Ord.compare x y = lt
-scoped infix:50 (priority:=high) " <= " => fun x y => Ord.compare x y ≠ gt
-scoped infix:50 (priority:=high) " > " => fun x y => Ord.compare x y = gt
-scoped infix:50 (priority:=high) " >= " => fun x y => Ord.compare x y ≠ lt
-scoped infix:50 (priority:=high) " == " => fun x y => Ord.compare x y = eq
-scoped infix:50 (priority:=high) " != " => fun x y => Ord.compare x y ≠ eq
-end Notation
+theorem le_antisymm [LinearOrd α] {x y : α} : compare x y ≠ gt → compare y x ≠ gt → x = y :=
+  fun nxy nyx => antisymm (ge_of_le_opp nyx) nxy
 
-section
-variable (α) [Ord α]
-open Notation Relation
+theorem ge_antisymm [LinearOrd α] {x y : α} : compare x y ≠ lt → compare y x ≠ lt → x = y :=
+  fun nxy nyx => antisymm nxy (le_of_ge_opp nyx)
 
-instance [OrientedOrd α] : Reflexive (α:=α) (.==.) := ⟨eq_refl⟩
-instance [OrientedOrd α] : Reflexive (α:=α) (.<=.) := ⟨le_refl⟩
-instance [OrientedOrd α] : Reflexive (α:=α) (.>=.) := ⟨ge_refl⟩
-instance [OrientedOrd α] : Irreflexive (α:=α) (.!=.) := ⟨ne_irrefl⟩
+theorem lt_or_gt_of_ne {x y : α} : compare x y ≠ eq → compare x y = lt ∨ compare x y = gt :=
+  fun hne => match h : compare x y with
+  | lt => .inl rfl
+  | eq => absurd h hne
+  | gt => .inr rfl
+
+theorem lt_connex [LinearOrd α] {x y : α} : x ≠ y → compare x y = lt ∨ compare y x = lt :=
+  fun hne => match lt_or_gt_of_ne (mt eq_strict hne) with
+  | .inl h => .inl h
+  | .inr h => .inr (lt_of_gt_opp h)
+
+theorem gt_connex [LinearOrd α] {x y : α} : x ≠ y → compare x y = gt ∨ compare y x = gt :=
+  fun hne => match lt_or_gt_of_ne (mt eq_strict hne) with
+  | .inr h => .inl h
+  | .inl h => .inr (gt_of_lt_opp h)
+
+section LELT
+open Relation
+
+local instance instLE : LE α := ⟨fun x y => compare x y ≠ gt⟩
+local instance instLT : LT α := ⟨fun x y => compare x y = lt⟩
+
+instance [OrientedOrd α] : Reflexive (α:=α) (.≤.) := ⟨le_refl⟩
 instance [OrientedOrd α] : Irreflexive (α:=α) (.<.) := ⟨lt_irrefl⟩
-instance [OrientedOrd α] : Irreflexive (α:=α) (.>.) := ⟨gt_irrefl⟩
-instance [TransOrd α] : Transitive (α:=α) (.==.) := ⟨eq_trans⟩
+instance [OrientedOrd α] : Total (α:=α) (.≤.) := ⟨le_total⟩
+instance [TransOrd α] : Transitive (α:=α) (.≤.) := ⟨le_trans⟩
 instance [TransOrd α] : Transitive (α:=α) (.<.) := ⟨lt_trans⟩
-instance [TransOrd α] : Transitive (α:=α) (.<=.) := ⟨le_trans⟩
-instance [TransOrd α] : Transitive (α:=α) (.>.) := ⟨gt_trans⟩
-instance [TransOrd α] : Transitive (α:=α) (.>=.) := ⟨ge_trans⟩
-instance [TransOrd α] : HTransitive (α:=α) (β:=α) (γ:=α) (.<.) (.<=.) (.<.) := ⟨lt_of_lt_of_le⟩
-instance [TransOrd α] : HTransitive (α:=α) (β:=α) (γ:=α) (.<=.) (.<.) (.<.) := ⟨lt_of_le_of_lt⟩
-instance [TransOrd α] : HTransitive (α:=α) (β:=α) (γ:=α) (.>.) (.>=.) (.>.) := ⟨gt_of_gt_of_ge⟩
-instance [TransOrd α] : HTransitive (α:=α) (β:=α) (γ:=α) (.>=.) (.>.) (.>.) := ⟨gt_of_ge_of_gt⟩
+instance [TransOrd α] : HTransitive (α:=α) (β:=α) (γ:=α) (.≤.) (.<.) (.<.) := ⟨lt_of_le_of_lt⟩
+instance [TransOrd α] : HTransitive (α:=α) (β:=α) (γ:=α) (.<.) (.≤.) (.<.) := ⟨lt_of_lt_of_le⟩
+instance [LinearOrd α] : Antisymmetric (α:=α) (.≤.) := ⟨le_antisymm⟩
+instance [LinearOrd α] : Connex (α:=α) (.<.) := ⟨lt_connex⟩
 
-end
+end LELT
 
 end Ord
