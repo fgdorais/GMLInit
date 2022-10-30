@@ -1,5 +1,5 @@
 import GMLInit.Data.Basic
-import GMLInit.Data.Bool.Basic
+import GMLInit.Data.Bool
 import GMLInit.Data.Equiv
 import GMLInit.Data.Nat
 import GMLInit.Logic.ListConnectives
