@@ -149,11 +149,9 @@ protected theorem add_neg_self_right (i : Int) : i + -i = 0 := by
 
 protected theorem sub_eq (i j : Int) : i - j = i + -j := rfl
 
-protected theorem sub_zero (i : Int) : i - 0 = i := by
-  rw [Int.sub_eq, Int.neg_zero, Int.add_zero]
+-- assert theorem sub_zero (i : Int) : i - 0 = i
 
-protected theorem zero_sub (i : Int) : 0 - i = -i := by
-  rw [Int.sub_eq, Int.zero_add]
+-- assert theorem zero_sub (i : Int) : 0 - i = -i
 
 -- assert theorem sub_self (i : Int) : i - i = 0
 

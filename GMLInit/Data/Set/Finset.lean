@@ -21,7 +21,7 @@ protected instance union (s t : Set α) [hs : IsFinite s] [ht : IsFinite t] : Is
     exact ht
   | insert s a H =>
     rw [insert_union_left]
-    exact IsFinite.insert (inst:=H) (s ∪ t) a
+    exact IsFinite.insert (inst:=H) ..
 
 protected instance map (f : α → β) (s : Set α) [hs : IsFinite s] : IsFinite (s.map f) := by
   induction hs with
@@ -30,7 +30,7 @@ protected instance map (f : α → β) (s : Set α) [hs : IsFinite s] : IsFinite
     exact IsFinite.empty
   | insert s a H =>
     rw [insert_map]
-    exact IsFinite.insert (inst:=H) (s.map f) (f a)
+    exact IsFinite.insert (inst:=H) ..
 
 protected instance bind (f : α → Set β) [hf : (x : α) → IsFinite (f x)] (s : Set α) [hs : IsFinite s] : IsFinite (s.bind f) := by
   induction hs with
@@ -39,7 +39,7 @@ protected instance bind (f : α → Set β) [hf : (x : α) → IsFinite (f x)] (
     exact IsFinite.empty
   | insert s a H =>
     rw [insert_bind]
-    exact IsFinite.union (ht:=H) (f a) (s.bind f)
+    exact IsFinite.union (ht:=H) ..
 
 protected instance seq (f : Set (α → β)) [hf : IsFinite f] (s : Set α) [hs : IsFinite s] : IsFinite (Set.seq f s) := by
   induction hs with
@@ -48,7 +48,7 @@ protected instance seq (f : Set (α → β)) [hf : IsFinite f] (s : Set α) [hs 
     exact IsFinite.empty
   | insert s a H =>
     rw [insert_seq]
-    exact IsFinite.union (ht:=H) (f.map λ f => f a) (Set.seq f s)
+    exact IsFinite.union (ht:=H) ..
 
 protected instance seqLeft (s : Set α) [hs : IsFinite s] (t : Set β) [ht : IsFinite t] : IsFinite (Set.seqLeft s t) := by
   clean unfold Set.seqLeft

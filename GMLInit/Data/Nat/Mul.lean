@@ -17,11 +17,9 @@ attribute [local eliminator] Nat.recDiagAux
 
 -- assert theorem one_mul (x : Nat) : 1 * x = x
 
-protected theorem mul_two (x : Nat) : x * 2 = x + x := by
-  rw [Nat.mul_succ, Nat.mul_one]
+-- assert theorem mul_two (x : Nat) : x * 2 = x + x
 
-protected theorem two_mul (x : Nat) : 2 * x = x + x := by
-  rw [Nat.succ_mul, Nat.one_mul]
+-- assert theorem two_mul (x : Nat) : 2 * x = x + x
 
 protected theorem mul_succ' (x y : Nat) : x * (y + 1) = x * y + x := Nat.mul_succ x y
 

@@ -34,7 +34,7 @@ protected instance union (s t : Set α) [hs : IsSubfinite s] [ht : IsSubfinite t
     exact ht
   | insertIf s a p H =>
     rw [insertIf_union_left]
-    apply IsSubfinite.insertIf (inst:=H) (s ∪ t) a p
+    exact IsSubfinite.insertIf (inst:=H) (p := p) ..
 
 protected instance inter_left (s t : Set α) [hs : IsSubfinite s] : IsSubfinite (Set.inter s t) := by
   induction hs with
@@ -43,7 +43,7 @@ protected instance inter_left (s t : Set α) [hs : IsSubfinite s] : IsSubfinite 
     exact IsSubfinite.empty
   | insertIf s a p H =>
     rw [insertIf_inter_left]
-    apply IsSubfinite.insertIf (inst:=H) (s ∩ t) a (p ∧ a ∈ t)
+    exact IsSubfinite.insertIf (inst:=H) (p := p ∧ a ∈ t) ..
 
 protected instance inter_right (s t : Set α) [ht : IsSubfinite t] : IsSubfinite (Set.inter s t) := by
   induction ht with
@@ -52,7 +52,7 @@ protected instance inter_right (s t : Set α) [ht : IsSubfinite t] : IsSubfinite
     exact IsSubfinite.empty
   | insertIf t a p H =>
     rw [insertIf_inter_right]
-    apply IsSubfinite.insertIf (inst:=H) (s ∩ t) a (p ∧ a ∈ s)
+    exact IsSubfinite.insertIf (inst:=H) (p := p ∧ a ∈ s) ..
 
 protected instance map (f : α → β) (s : Set α) [hs : IsSubfinite s] : IsSubfinite (s.map f) := by
   induction hs with
@@ -61,7 +61,7 @@ protected instance map (f : α → β) (s : Set α) [hs : IsSubfinite s] : IsSub
     exact IsSubfinite.empty
   | insertIf s a p H =>
     rw [insertIf_map]
-    apply IsSubfinite.insertIf (inst:=H) (s.map f) (f a) p
+    exact IsSubfinite.insertIf (inst:=H) (p := p) ..
 
 protected instance bind (f : α → Set β) [hf : (x : α) → IsSubfinite (f x)] (s : Set α) [hs : IsSubfinite s] : IsSubfinite (s.bind f) := by
   induction hs with
@@ -70,7 +70,7 @@ protected instance bind (f : α → Set β) [hf : (x : α) → IsSubfinite (f x)
     exact IsSubfinite.empty
   | insertIf s a p H =>
     rw [insertIf_bind]
-    apply IsSubfinite.union (ht:=H) (f a ∩ Set.const p) (s.bind f)
+    exact IsSubfinite.union (ht:=H) ..
 
 protected instance seq (f : Set (α → β)) [hf : IsSubfinite f] (s : Set α) [hs : IsSubfinite s] : IsSubfinite (Set.seq f s) := by
   induction hs with
@@ -78,9 +78,8 @@ protected instance seq (f : Set (α → β)) [hf : IsSubfinite f] (s : Set α) [
     rw [empty_seq]
     exact IsSubfinite.empty
   | insertIf s a p H =>
-    let rec @[instance] inst : IsSubfinite (Set.seq f s) := H
     rw [insertIf_seq]
-    apply IsSubfinite.union (ht:=H) (f.map (λ f => f a) ∩ Set.const p) (Set.seq f s)
+    exact IsSubfinite.union (ht:=H) ..
 
 protected instance seqLeft (s : Set α) [hs : IsSubfinite s] (t : Set β) [ht : IsSubfinite t] : IsSubfinite (Set.seqLeft s t) := by
   clean unfold Set.seqLeft

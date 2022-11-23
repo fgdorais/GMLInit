@@ -5,7 +5,7 @@ namespace Meta
 
 syntax "by_contradiction" withPosition(colGe ("|" "assuming" (ident <|> "_") "=>" tacticSeq)) : tactic
 macro_rules
-| `(tactic|by_contradiction | assuming $h => $rest) =>
+| `(tactic|by_contradiction | assuming $h:ident => $rest) =>
   `(tactic|apply Stable.by_contradiction _; intro $h:ident; ($rest))
 
 syntax "by_contrapositive" ("with" term)? : tactic
@@ -17,7 +17,7 @@ macro_rules
 
 syntax "by_no_counterexample" term:51 " = " ident withPosition(colGe ("|" "assuming" (ident <|> "_") "=>" tacticSeq)) : tactic
 macro_rules
-| `(tactic|by_no_counterexample $t:term = $x:ident | assuming $h => $rest) =>
+| `(tactic|by_no_counterexample $t:term = $x:ident | assuming $h:ident => $rest) =>
   `(tactic|apply Stable.by_no_counterexample _ $t; intro ⟨$x,$h⟩; ($rest))
 
 end Meta

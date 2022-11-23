@@ -21,9 +21,10 @@ scoped macro_rules (kind := hlist)
 protected theorem cons_hcongr {α β} {αs βs : List (Sort _)} {a : α} {b : β} {as : HList αs} {bs : HList βs} : α = β → αs = βs → a ≅ b → as ≅ bs → HList.cons a as ≅ HList.cons b bs
 | rfl, rfl, HEq.rfl, HEq.rfl => HEq.rfl
 
-protected def ofList {α} : (as : List α) → HList (as.map λ _ => α)
-| [] => []
-| a::as => a :: HList.ofList as
+-- FIXME
+-- def ofList {α : Type _} : (as : List α) → HList (as.map fun x => α)
+-- | [] => []
+-- | a::as => a :: ofList as
 
 protected def ofListHVal : (vs : List HVal) → HList (vs.map HVal.sort)
 | [] => []
