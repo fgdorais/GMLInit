@@ -7,9 +7,6 @@ namespace Prod
 protected def eq {α β} : {p q : α × β} → (fst : p.fst = q.fst) → (snd : p.snd = q.snd) → p = q
 | (_,_), (_,_), rfl, rfl => rfl
 
-protected def eta {α β} : (p : α × β) → p = (p.fst, p.snd)
-| (_,_) => rfl
-
 def swap {α β} : α × β → β × α
 | (a, b) => (b, a)
 
