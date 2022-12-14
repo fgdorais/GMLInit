@@ -19,7 +19,7 @@ theorem succ_mk_zero (m) : (m + 1 ⊖ 0) = Int.ofNat (m+1) := by
 theorem succ_mk_succ (m n) : (m + 1 ⊖ n + 1) = (m ⊖ n) := by
   rw [Int.mk, Int.subNatNat, Int.subNatNat, Nat.succ_sub_succ, Nat.succ_sub_succ]
 
-theorem mk_zero (m) : (m ⊖ 0) = m := by
+theorem mk_zero (m) : (m ⊖ 0) = ofNat m := by
   rw [Int.mk, Int.subNatNat, Nat.zero_sub, Nat.sub_zero]
 
 theorem zero_mk (n) : (0 ⊖ n) = negOfNat n :=
@@ -251,7 +251,7 @@ theorem le.intro' (i : Int) (k : Nat) : i ≤ i + k :=
   rw [Int.sub_eq, Int.add_right_comm, Int.add_neg_self_right, Int.zero_add]
   apply NonNeg.mk
 
-theorem le.dest' {i j : Int} : i ≤ j → ∃ (k : Nat), j = i + k := by
+theorem le.dest' {i j : Int} : i ≤ j → ∃ (k : Nat), j = i + ofNat k := by
   intro (h : NonNeg (j - i))
   match hk : j - i with
   | ofNat k => exists k; rw [←hk, Int.sub_eq, Int.add_left_comm, Int.add_neg_self_right, Int.add_zero]
