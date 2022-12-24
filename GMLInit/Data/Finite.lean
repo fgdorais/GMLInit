@@ -1,13 +1,8 @@
 import GMLInit.Data.Basic
+import GMLInit.Data.Equiv
 import GMLInit.Data.Fin
 import GMLInit.Data.Index
 import GMLInit.Data.List
-import GMLInit.Data.Option
-import GMLInit.Data.Prod
-import GMLInit.Data.Pi
-import GMLInit.Data.Sigma
-import GMLInit.Data.Sum
-import GMLInit.Data.Subtype
 
 protected theorem Quotient.liftBeta {s : Setoid α} (f : α → β) (h : ∀ x₁ x₂, x₁ ≈ x₂ → f x₁ = f x₂) (x : α) : Quotient.lift f h (Quotient.mk s x) = f x := rfl
 
@@ -116,7 +111,7 @@ instance : Finite (α → β) :=
   Finite.ofEquiv (Index (List.arr (enum α) (enum β))) (α → β) (Equiv.comp e₁ e₂).inv
 where
   e₁ := Index.arrEquiv (enum α) (enum β)
-  e₂ := Function.equiv (Finite.equivIndex α) (Finite.equivIndex β)
+  e₂ := Fun.equivND (Finite.equivIndex α) (Finite.equivIndex β)
 
 instance (p : α → Prop) [DecidablePred p] : Finite { x // p x } :=
   Finite.ofEquiv (Index ((enum α).sublist p)) {x // p x} (Equiv.comp e₁ e₂).inv

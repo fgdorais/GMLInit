@@ -1,7 +1,6 @@
 import GMLInit.Data.Basic
 import GMLInit.Data.Equiv
 import GMLInit.Data.Nat
-import GMLInit.Data.Option
 import GMLInit.Logic.Relation
 
 class Enum (α : Type _) where
@@ -27,7 +26,7 @@ instance (α) [Enum α] : DecidableEq α
 def ofEquiv (α β) [Enum α] (e : Equiv α β) : Enum β where
   enum n := (enum n).map e.fwd
   find x := find (e.rev x)
-  spec x := by clean; simp [spec, Option.some_map, e.fwd_rev]
+  spec x := by clean; simp [spec, Option.map_some, e.fwd_rev]
 
 instance : Enum Empty where
   enum _ := none
@@ -75,7 +74,9 @@ instance (α) [Enum α] : Enum (Option α) where
   spec
   | none => rfl
   | some x => by
-    clean
+    clean 
+    rw [Nat.add_eq]
+    rw [Nat.add_zero]
     rw [spec x]
 
 instance (α β) [Enum α] [Enum β] : Enum (Sum α β) where
@@ -91,7 +92,7 @@ instance (α β) [Enum α] [Enum β] : Enum (Sum α β) where
     rw [if_pos this]
     rw [Nat.half_inl_eq]
     rw [spec]
-    rw [Option.some_map]
+    rw [Option.map_some']
   | Sum.inr y => by
     clean
     have : ¬ (find y).inr.is_even := by
@@ -101,7 +102,7 @@ instance (α β) [Enum α] [Enum β] : Enum (Sum α β) where
     rw [if_neg this]
     rw [Nat.half_inr_eq]
     rw [spec]
-    rw [Option.some_map]
+    rw [Option.map_some']
 
 instance (α β) [Enum α] [Enum β] : Enum (α × β) where
   enum n :=
@@ -268,7 +269,8 @@ theorem search_prop {α} [Enum α] (p : α → Bool) (h : ∃ x, p x = true) : p
   clean at this
   split at this
   next x' hsome =>
-    clean unfold search
+    unfold search
+    clean
     split
     next h =>
       rw [hsome] at h

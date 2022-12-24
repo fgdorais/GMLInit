@@ -3,9 +3,6 @@ import GMLInit.Data.Equiv
 import GMLInit.Data.Index
 import GMLInit.Data.Fin
 import GMLInit.Data.Finite
-import GMLInit.Data.Option
-import GMLInit.Data.Sigma
-import GMLInit.Data.Subtype
 
 class Find (α : Sort _) where
   find? : (α → Bool) → Option α
