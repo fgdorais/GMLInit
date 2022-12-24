@@ -1,10 +1,8 @@
-import GMLInit.Data.Basic
-import GMLInit.Data.Equiv
-import GMLInit.Meta.Basic
+import GMLInit.Data.Equiv.Basic
 
-namespace Function
+namespace Fun
 
-def equiv {α₁ α₂ β₁ β₂} (e : Equiv α₁ α₂) (f : Equiv β₁ β₂) : Equiv (α₁ → β₁) (α₂ → β₂) where
+def equivND {α₁ α₂ β₁ β₂} (e : Equiv α₁ α₂) (f : Equiv β₁ β₂) : Equiv (α₁ → β₁) (α₂ → β₂) where
   fwd h₁ := f.fwd ∘ h₁ ∘ e.rev
   rev h₂ := f.rev ∘ h₂ ∘ e.fwd
   spec := by
@@ -20,10 +18,6 @@ def equiv {α₁ α₂ β₁ β₂} (e : Equiv α₁ α₂) (f : Equiv β₁ β�
         funext x₂
         simp only [Function.comp]
         rw [e.fwd_rev, f.fwd_rev]
-
-end Function
-
-namespace Pi
 
 def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equiv ((x₁ : α₁) → β x₁) ((x₂ : α₂) → β (e.rev x₂)) where
   fwd f₁ x₂ := f₁ (e.rev x₂)
@@ -65,6 +59,4 @@ protected def equiv {α₁ α₂} {β₁ : α₁ → Sort _} {β₂ : α₂ → 
       constr <;> (intro | rfl => funext x; rw [eqNdrec_symm])
   }
 
-protected def equivFun (α β): Equiv (α → β) ((x : α) → (fun _ : α => β) x) := Equiv.id
-
-end Pi
+end Fun

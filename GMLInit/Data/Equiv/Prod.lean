@@ -1,11 +1,6 @@
-import GMLInit.Data.Basic
-import GMLInit.Data.Equiv
-import GMLInit.Meta.Basic
+import GMLInit.Data.Equiv.Basic
 
 namespace Prod
-
-protected theorem eq {α β} : {p q : α × β} → (fst : p.fst = q.fst) → (snd : p.snd = q.snd) → p = q
-| (_, _), (_, _), rfl, rfl => rfl
 
 def idLeftEquiv.{u} (β) : Equiv (PUnit.{u+1} × β) β where
   fwd := Prod.snd
@@ -16,8 +11,6 @@ def idRightEquiv.{u} (α) : Equiv (α × PUnit.{u+1}) α where
   fwd := Prod.fst
   rev := (., PUnit.unit)
   spec := by intro | (a, PUnit.unit), a' => constr <;> intro | rfl => rfl
-
-@[inline] def swap {α β} : α × β → β × α | (a, b) => (b, a)
 
 def commEquiv (α β) : Equiv (α × β) (β × α) where
   fwd := swap

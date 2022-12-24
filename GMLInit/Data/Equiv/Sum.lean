@@ -1,12 +1,6 @@
-import GMLInit.Data.Basic
-import GMLInit.Data.Equiv
-import GMLInit.Meta.Basic
+import GMLInit.Data.Equiv.Basic
 
 namespace Sum
-
-@[inline] def swap {α β} : Sum α β → Sum β α
-| inl a => inr a
-| inr b => inl b
 
 def idLeftEquiv (β) : Equiv (Sum Empty β) β where
   fwd | inr b => b

@@ -1,9 +1,7 @@
-import GMLInit.Data.Basic
-import GMLInit.Data.Equiv
-import GMLInit.Meta.Basic
+import GMLInit.Data.Equiv.Basic
 
 namespace Subtype
-variable {α₁ α₂} {p₁ : α₁ → Prop} {p₂ : α₂ → Prop}
+variable {α₁ α₂ : Sort _} {p₁ : α₁ → Prop} {p₂ : α₂ → Prop}
 
 protected def equiv (e : Equiv α₁ α₂) (h : ∀ x, p₁ x ↔ p₂ (e.fwd x)) : Equiv { x // p₁ x } { x // p₂ x} where
   fwd | ⟨x₁, h₁⟩ => ⟨e.fwd x₁, (h x₁).mp h₁⟩

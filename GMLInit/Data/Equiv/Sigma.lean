@@ -1,17 +1,8 @@
-import GMLInit.Data.Basic
-import GMLInit.Data.Equiv
-import GMLInit.Meta.Basic
+import GMLInit.Data.Equiv.Basic
 
 namespace Sigma
 
-protected theorem eq {α} {β : α → Sort _} : {x₁ x₂ : Sigma β} → x₁.fst = x₂.fst → x₁.snd ≅ x₂.snd → x₁ = x₂
-| ⟨_, _⟩, ⟨_, _⟩, rfl, .rfl => rfl
-
-protected theorem eta {α} {β : α → Sort _} (p : Sigma β) : p = ⟨p.fst, p.snd⟩ := Sigma.eq rfl .rfl
-
-variable {α₁} {β₁ : α₁ → Sort _} {α₂} {β₂ : α₂ → Sort _}
-
-def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equiv ((x₁ : α₁) × β x₁) ((x₂ : α₂) × β (e.rev x₂)) where
+def equivFst {α₁ α₂ : Type _} {β : α₁ → Type _} (e : Equiv α₁ α₂) : Equiv ((x₁ : α₁) × β x₁) ((x₂ : α₂) × β (e.rev x₂)) where
   fwd | ⟨x₁, y₁⟩ => ⟨e.fwd x₁, (e.rev_fwd x₁).symm ▸ y₁⟩
   rev | ⟨x₂, y₂⟩ => ⟨e.rev x₂, y₂⟩
   spec := by intro
@@ -30,7 +21,7 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
           · elim_casts
             reflexivity
 
-def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) → Equiv (β₁ x) (β₂ x)) : Equiv ((x : α) × β₁ x) ((x : α) × β₂ x) where
+def equivSnd {α : Type _} {β₁ : α → Type _} {β₂ : α → Type _} (e : (x : α) → Equiv (β₁ x) (β₂ x)) : Equiv ((x : α) × β₁ x) ((x : α) × β₂ x) where
   fwd | ⟨x, y₁⟩ => ⟨x, (e x).fwd y₁⟩
   rev | ⟨x, y₂⟩ => ⟨x, (e x).rev y₂⟩
   spec := by intro
@@ -49,10 +40,10 @@ def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) 
           · apply heq_of_eq
             exact (e x₂).fwd_rev ..
 
-protected def equiv (e : Equiv α₁ α₂) (f : (x : α₁) → Equiv (β₁ x) (β₂ (e.fwd x))) : Equiv ((x : α₁) × β₁ x) ((x : α₂) × β₂ x) :=
+protected def equiv {α₁ α₂ : Type _} {β₁ : α₁ → Type _} {β₂ : α₂ → Type _} (e : Equiv α₁ α₂) (f : (x : α₁) → Equiv (β₁ x) (β₂ (e.fwd x))) : Equiv ((x : α₁) × β₁ x) ((x : α₂) × β₂ x) :=
   Equiv.comp h3 (Equiv.comp h2 h1)
 where
-  h1 := equivFst β₁ e
+  h1 := equivFst e
   h2 := equivSnd fun x₂ => f (e.rev x₂)
   h3 := {
     fwd := fun ⟨x₁, y₁⟩ => ⟨x₁, (e.fwd_rev x₁).symm ▸ y₁⟩
@@ -74,7 +65,7 @@ where
               reflexivity
   }
 
-protected def equivProd (α β) : Equiv (α × β) (Sigma (fun _ : α => β)) where
+protected def equivProd (α β) : Equiv (α × β) (Sigma fun _ : α => β) where
   fwd | (x,y) => ⟨x,y⟩
   rev | ⟨x,y⟩ => (x,y)
   spec := by intro | (x₁,y₁), ⟨x₂,y₂⟩ => constr <;> intro | rfl => rfl

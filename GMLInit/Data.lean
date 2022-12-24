@@ -10,13 +10,7 @@ import GMLInit.Data.Index
 import GMLInit.Data.Int
 import GMLInit.Data.List
 import GMLInit.Data.Nat
-import GMLInit.Data.Option
 import GMLInit.Data.Ord
 import GMLInit.Data.OrdInstances
-import GMLInit.Data.Pi
 import GMLInit.Data.Pos
-import GMLInit.Data.Prod
 import GMLInit.Data.Set
-import GMLInit.Data.Sigma
-import GMLInit.Data.Subtype
-import GMLInit.Data.Sum

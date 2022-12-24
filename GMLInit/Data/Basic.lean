@@ -1,5 +1,34 @@
 import GMLInit.Prelude
 
+namespace Prod
+variable {α β : Type _}
+
+protected theorem eq : {p q : α × β} → (fst : p.fst = q.fst) → (snd : p.snd = q.snd) → p = q
+| (_, _), (_, _), rfl, rfl => rfl
+
+abbrev swap {α β} : α × β → β × α
+| (a, b) => (b, a)      
+
+end Prod
+
+namespace Sigma
+variable {α : Type _} {β : α → Type _}
+
+protected theorem eq : {x₁ x₂ : Sigma β} → x₁.fst = x₂.fst → x₁.snd ≅ x₂.snd → x₁ = x₂
+| ⟨_, _⟩, ⟨_, _⟩, rfl, HEq.rfl => rfl
+
+protected theorem eta (p : Sigma β) : p = ⟨p.fst, p.snd⟩ := Sigma.eq rfl HEq.rfl
+
+end Sigma
+
+namespace Sum
+
+@[inline] def swap {α β} : Sum α β → Sum β α
+| inl a => inr a
+| inr b => inl b
+
+end Sum
+
 namespace Ordering
 
 def opp : Ordering → Ordering
