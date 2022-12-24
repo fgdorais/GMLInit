@@ -1,3 +1,4 @@
+import GMLInit.Data.Equiv
 import GMLInit.Data.Nat.Basic
 import GMLInit.Data.Nat.Order
 

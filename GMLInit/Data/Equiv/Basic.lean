@@ -2,6 +2,11 @@ import GMLInit.Data.Basic
 import GMLInit.Meta.Basic
 import GMLInit.Meta.Relation
 
+structure Equiv.{u,v} (α : Sort u) (β : Sort v) : Sort (max 1 (max u v)) where
+  fwd : α → β
+  rev : β → α
+  spec {x y} : fwd x = y ↔ rev y = x
+
 namespace Equiv
 variable {α β γ δ}
 

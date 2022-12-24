@@ -49,11 +49,6 @@ theorem eq_opp_iff_opp_eq (x y) : opp x = y ↔ x = opp y := by
 
 end Ordering
 
-structure Equiv.{u,v} (α : Sort u) (β : Sort v) : Sort (max 1 (max u v)) where
-  fwd : α → β
-  rev : β → α
-  spec {x y} : fwd x = y ↔ rev y = x
-
 inductive Index.{u} {α : Type u} : List α → Type u where
 | head {a : α} {as : List α} : Index (a :: as)
 | tail {a : α} {as : List α} : Index as → Index (a :: as)
