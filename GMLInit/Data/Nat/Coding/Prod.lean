@@ -29,11 +29,11 @@ theorem tri_mono {m n : Nat} : m ≤ n → tri m ≤ tri n := by
 theorem two_tri_eq (n : Nat) : 2 * tri n = n * (n + 1) := by
   induction n with
   | zero => rfl
-  | succ n H =>
+  | succ n ih =>
     calc
     _ = 2 * (tri n + (n + 1)) := by rfl
     _ = 2 * tri n + 2 * (n + 1) := by rw [Nat.mul_add]
-    _ = n * (n + 1) + 2 * (n + 1) := by rw [H]
+    _ = n * (n + 1) + 2 * (n + 1) := by rw [ih]
     _ = (n + 2) * (n + 1) := by rw [Nat.add_mul]
     _ = (n + 1) * (n + 1 + 1) := by rw [Nat.mul_comm]
 
@@ -161,6 +161,10 @@ theorem pair_fst_snd (n) : pair n.fst n.snd = n := by
   | ⟨t,⟨s,hs⟩⟩ =>
     rw [Nat.add_comm s, Nat.sub_add_cancel (Nat.le_of_lt_succ hs)]
     rw [←split_eq n, h]
+
+def encodeProd (a : Nat × Nat) : Nat := pair a.fst a.snd
+
+def decodeProd (n : Nat) : Nat × Nat := (n.fst, n.snd)
 
 def prodEquiv : Equiv Nat (Nat × Nat) where
   fwd n := (n.fst, n.snd)
