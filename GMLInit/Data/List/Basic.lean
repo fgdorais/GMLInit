@@ -40,34 +40,18 @@ protected theorem ext'Eq {α} (as₁ as₂ : List α) : All (List.ext'Aux as₁ 
 
 instance (x : α) (xs : List α) : Nat.IsPos (List.length (x :: xs)) := ⟨Nat.zero_lt_succ _⟩
 
-@[simp] lemma map_pure {α β} (f : α → β) (a : α) : [a].map f = [f a] := rfl
+lemma map_pure {α β} (f : α → β) (a : α) : [a].map f = [f a] := rfl
 
-@[simp] lemma id_map {α} (as : List α) : as.map id = as := by
-  induction as with
-  | nil => rfl
-  | cons a as H => clean unfold map; rw [H]; rfl
-
-lemma comp_map {α β γ} (f : α → β) (g : β → γ) (as : List α) : as.map (g ∘ f) = (as.map f).map g := by
-  induction as with
-  | nil => rfl
-  | cons a as H => simp only [map]; rw [H, Function.comp_apply]
-
--- assert nil_bind {α β} (f : α → List β) : [].bind f = []
-
--- assert cons_bind {α β} (f : α → List β) (a : α) (as : List α) : (a :: as).bind f = f a ++ as.bind f
+lemma map_comp {α β γ} (f : α → β) (g : β → γ) (as : List α) : as.map (g ∘ f) = (as.map f).map g := by
+  symmetry
+  exact map_map ..
 
 @[simp] lemma pure_bind {α β} (f : α → List β) (a : α) : [a].bind f = f a := by rw [cons_bind, nil_bind, append_nil]
-
--- assert append_bind {α β} (f : α → List β) (as bs : List α) : (as ++ bs).bind f = as.bind f ++ bs.bind f
 
 lemma bind_assoc {α β γ} (f : α → List β) (g : β → List γ) (as : List α) : (as.bind f).bind g = as.bind (λ a => (f a).bind g) := by
   induction as with
   | nil => rfl
   | cons a as H => rw [cons_bind, cons_bind, append_bind, H]
-
--- assert all_nil {α} (p : α → Bool) : [].all p = true
-
--- assert all_cons {α} (p : α → Bool) (x : α) (xs : List α) : (x :: xs).all p = (p x && xs.all p)
 
 lemma all_eq_true_iff_all_true {α} (p : α → Bool) (xs : List α) : xs.all p = true ↔ All (xs.map λ x => p x = true) := by
   induction xs generalizing p with
@@ -91,10 +75,8 @@ lemma any_eq_false_iff_all_false {α} (p : α → Bool) (xs : List α) : xs.any 
 
 theorem replicate_zero {α} (a : α) : replicate 0 a = [] := rfl
 
--- assert replicate_succ {α} (a : α) (n : Nat) : replicate (n+1) a = a :: replicate n a
-
 theorem replicate_add {α} (a : α) : (m n : Nat) → replicate n a ++ replicate m a = replicate (m + n) a
 | _, 0 => rfl
-| _, _+1 => congrArg (a::.) (replicate_add ..)
+| _, _+1 => congrArg (a :: .) (replicate_add ..)
 
 end List
