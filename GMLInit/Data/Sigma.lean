@@ -4,14 +4,10 @@ import GMLInit.Meta.Basic
 
 namespace Sigma
 
-protected lemma eq {α} {β : α → Sort _} {x₁ x₂ : α} {y₁ : β x₁} {y₂ : β x₂} :
-  (fst : x₁ = x₂) → (snd : y₁ ≅ y₂) → Sigma.mk x₁ y₁ = Sigma.mk x₂ y₂ := by
-  intro | rfl, HEq.rfl => rfl
+protected theorem eq {α} {β : α → Sort _} : {x₁ x₂ : Sigma β} → x₁.fst = x₂.fst → x₁.snd ≅ x₂.snd → x₁ = x₂
+| ⟨_, _⟩, ⟨_, _⟩, rfl, .rfl => rfl
 
-protected lemma eta {α} {β : α → Sort _} (p : Sigma β) : p = ⟨p.fst, p.snd⟩ := by
-  apply Sigma.eq
-  · reflexivity
-  · reflexivity using (.≅.)
+protected theorem eta {α} {β : α → Sort _} (p : Sigma β) : p = ⟨p.fst, p.snd⟩ := Sigma.eq rfl .rfl
 
 variable {α₁} {β₁ : α₁ → Sort _} {α₂} {β₂ : α₂ → Sort _}
 
@@ -24,15 +20,15 @@ def equivFst {α₁ α₂} (β : α₁ → Sort _) (e : Equiv α₁ α₂) : Equ
       · intro
         | rfl =>
           apply Sigma.eq
-          · exact e.rev_fwd x₁
+          · exact e.rev_fwd ..
           · elim_casts
-            reflexivity using (.≅.)
+            reflexivity
       · intro
         | rfl =>
           apply Sigma.eq
-          · exact e.fwd_rev x₂
+          · exact e.fwd_rev ..
           · elim_casts
-            reflexivity using (.≅.)
+            reflexivity
 
 def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) → Equiv (β₁ x) (β₂ x)) : Equiv ((x : α) × β₁ x) ((x : α) × β₂ x) where
   fwd | ⟨x, y₁⟩ => ⟨x, (e x).fwd y₁⟩
@@ -44,21 +40,23 @@ def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) 
         | rfl =>
           apply Sigma.eq
           · reflexivity
-          · rw [(e x₁).rev_fwd]
+          · apply heq_of_eq
+            exact (e x₁).rev_fwd ..
       · intro
         | rfl =>
           apply Sigma.eq
           · reflexivity
-          · rw [(e x₂).fwd_rev]
+          · apply heq_of_eq
+            exact (e x₂).fwd_rev ..
 
 protected def equiv (e : Equiv α₁ α₂) (f : (x : α₁) → Equiv (β₁ x) (β₂ (e.fwd x))) : Equiv ((x : α₁) × β₁ x) ((x : α₂) × β₂ x) :=
   Equiv.comp h3 (Equiv.comp h2 h1)
 where
   h1 := equivFst β₁ e
-  h2 := equivSnd (λ x₂ => f (e.rev x₂))
+  h2 := equivSnd fun x₂ => f (e.rev x₂)
   h3 := {
-    fwd := λ ⟨x₁, y₁⟩ => ⟨x₁, (e.fwd_rev x₁).symm ▸ y₁⟩
-    rev := λ ⟨x₂, y₂⟩ => ⟨x₂, (e.fwd_rev x₂).symm ▸ y₂⟩
+    fwd := fun ⟨x₁, y₁⟩ => ⟨x₁, (e.fwd_rev x₁).symm ▸ y₁⟩
+    rev := fun ⟨x₂, y₂⟩ => ⟨x₂, (e.fwd_rev x₂).symm ▸ y₂⟩
     spec := by intro
       | ⟨x₁, y₁⟩, ⟨x₂, y₂⟩ =>
         constr
@@ -67,16 +65,16 @@ where
             apply Sigma.eq
             · reflexivity
             · elim_casts
-              reflexivity using (.≅.)
+              reflexivity
         · intro
           | rfl =>
             apply Sigma.eq
             · reflexivity
             · elim_casts
-              reflexivity using (.≅.)
+              reflexivity
   }
 
-protected def equivProd (α β): Equiv (α × β) (Sigma (λ _ : α => β)) where
+protected def equivProd (α β) : Equiv (α × β) (Sigma (fun _ : α => β)) where
   fwd | (x,y) => ⟨x,y⟩
   rev | ⟨x,y⟩ => (x,y)
   spec := by intro | (x₁,y₁), ⟨x₂,y₂⟩ => constr <;> intro | rfl => rfl

@@ -4,21 +4,20 @@ import GMLInit.Meta.Basic
 
 namespace Prod
 
-protected def eq {α β} : {p q : α × β} → (fst : p.fst = q.fst) → (snd : p.snd = q.snd) → p = q
-| (_,_), (_,_), rfl, rfl => rfl
+protected theorem eq {α β} : {p q : α × β} → (fst : p.fst = q.fst) → (snd : p.snd = q.snd) → p = q
+| (_, _), (_, _), rfl, rfl => rfl
 
-def swap {α β} : α × β → β × α
-| (a, b) => (b, a)
+def idLeftEquiv.{u} (β) : Equiv (PUnit.{u+1} × β) β where
+  fwd := Prod.snd
+  rev := (PUnit.unit, .)
+  spec := by intro | (PUnit.unit, b), b' => constr <;> intro | rfl => rfl
 
-def idLeftEquiv (β) : Equiv (PUnit × β) β where
-  fwd := snd
-  rev := ((),.)
-  spec := by intro | ((), b), b' => constr <;> intro | rfl => rfl
+def idRightEquiv.{u} (α) : Equiv (α × PUnit.{u+1}) α where
+  fwd := Prod.fst
+  rev := (., PUnit.unit)
+  spec := by intro | (a, PUnit.unit), a' => constr <;> intro | rfl => rfl
 
-def idRightEquiv (α) : Equiv (α × PUnit) α where
-  fwd := fst
-  rev := (.,())
-  spec := by intro | (a,()), a' => constr <;> intro | rfl => rfl
+@[inline] def swap {α β} : α × β → β × α | (a, b) => (b, a)
 
 def commEquiv (α β) : Equiv (α × β) (β × α) where
   fwd := swap

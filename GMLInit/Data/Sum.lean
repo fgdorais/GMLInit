@@ -4,7 +4,7 @@ import GMLInit.Meta.Basic
 
 namespace Sum
 
-def swap {α β} : Sum α β → Sum β α
+@[inline] def swap {α β} : Sum α β → Sum β α
 | inl a => inr a
 | inr b => inl b
 

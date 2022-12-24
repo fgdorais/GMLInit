@@ -56,15 +56,15 @@ def equivSnd {α} {β₁ : α → Sort _} {β₂ : α → Sort _} (e : (x : α) 
 protected def equiv {α₁ α₂} {β₁ : α₁ → Sort _} {β₂ : α₂ → Sort _} (e : Equiv α₁ α₂) (f : (x₁ : α₁) → Equiv (β₁ x₁) (β₂ (e.fwd x₁))) : Equiv ((x₁ : α₁) → β₁ x₁) ((x₂ : α₂) → β₂ x₂) :=
   Equiv.comp h3 (Equiv.comp h2 h1) where
   h1 := equivFst β₁ e
-  h2 := equivSnd (λ x₂ => f (e.rev x₂))
+  h2 := equivSnd fun x₂ => f (e.rev x₂)
   h3 := {
-    rev := λ m x => (e.fwd_rev x).symm ▸ m x
-    fwd := λ n x => (e.fwd_rev x) ▸ n x
+    rev := fun m x => (e.fwd_rev x).symm ▸ m x
+    fwd := fun n x => (e.fwd_rev x) ▸ n x
     spec := by
       intros
       constr <;> (intro | rfl => funext x; rw [eqNdrec_symm])
   }
 
-protected def equivFun (α β): Equiv (α → β) ((x : α) → (λ _ : α => β) x) := Equiv.id
+protected def equivFun (α β): Equiv (α → β) ((x : α) → (fun _ : α => β) x) := Equiv.id
 
 end Pi
