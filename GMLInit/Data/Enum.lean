@@ -10,7 +10,7 @@ class Enum (α : Type _) where
 
 namespace Enum
 
-instance (α) [Enum α] : DecidableEq α
+instance (priority:=low) (α) [Enum α] : DecidableEq α
 | x, y =>
   if h: find x = find y
   then
@@ -26,7 +26,7 @@ instance (α) [Enum α] : DecidableEq α
 def ofEquiv (α β) [Enum α] (e : Equiv α β) : Enum β where
   enum n := (enum n).map e.fwd
   find x := find (e.rev x)
-  spec x := by clean; simp [spec, Option.map_some, e.fwd_rev]
+  spec x := by simp only [spec, Option.map_some', e.fwd_rev]
 
 instance : Enum Empty where
   enum _ := none
@@ -62,7 +62,7 @@ instance : Enum Nat where
 instance (n) : Enum (Fin n) where
   enum m := if h : m < n then some ⟨m,h⟩ else none
   find | ⟨m,_⟩ => m
-  spec | ⟨m,h⟩ => by simp [dif_pos h]
+  spec | ⟨m,h⟩ => by simp only [dif_pos h]
 
 instance (α) [Enum α] : Enum (Option α) where
   enum
@@ -74,9 +74,7 @@ instance (α) [Enum α] : Enum (Option α) where
   spec
   | none => rfl
   | some x => by
-    clean 
-    rw [Nat.add_eq]
-    rw [Nat.add_zero]
+    simp only [Nat.add_eq, Nat.add_zero]
     rw [spec x]
 
 instance (α β) [Enum α] [Enum β] : Enum (Sum α β) where

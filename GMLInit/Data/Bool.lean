@@ -116,6 +116,15 @@ instance : Relation.Transitive (α:=Bool) (.<.) := ⟨Bool.lt_trans⟩
 instance : Relation.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.<.) (.≤.) (.<.) := ⟨Bool.lt_of_lt_of_le⟩
 instance : Relation.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.≤.) (.<.) (.<.) := ⟨Bool.lt_of_le_of_lt⟩
 
+theorem not_inj {x y : Bool} : (!x) = (!y) → x = y := by
+  bool_tt using simp x y
+
+theorem and_or_inj_right {m x y : Bool}: (x && m) = (y && m) → (x || m) = (y || m) → x = y := by
+  bool_tt using simp m x y
+
+theorem and_or_inj_left {m x y : Bool} : (m && x) = (m && y) → (m || x) = (m || y) → x = y := by
+  bool_tt using simp m x y
+
 section
 variable (xs ys : List Bool)
 
