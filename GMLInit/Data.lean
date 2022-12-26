@@ -10,6 +10,7 @@ import GMLInit.Data.Index
 import GMLInit.Data.Int
 import GMLInit.Data.List
 import GMLInit.Data.Nat
+import GMLInit.Data.Option
 import GMLInit.Data.Ord
 import GMLInit.Data.OrdInstances
 import GMLInit.Data.Pos
