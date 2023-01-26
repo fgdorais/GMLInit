@@ -23,6 +23,8 @@ instance : LinearOrd Bool where
 instance : LE Bool := leOfOrd
 instance : LT Bool := ltOfOrd
 
+theorem eq_iff_iff : x = y ↔ (x ↔ y) := by bool_tt using simp x y
+
 -- assert not_not : !(!x) = x := by bool_tt x
 theorem not_and : !(x && y) = (!x || !y) := by bool_tt x y
 theorem not_or : !(x || y) = (!x && !y) := by bool_tt x y

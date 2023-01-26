@@ -11,6 +11,9 @@ protected theorem eq : {i j : Fin n} → i.val = j.val → i = j
 
 protected abbrev modulus (_ : Fin n) := n
 
+theorem val_eq_val_of_heq : {m n : Nat} → m = n → (x : Fin m) → (y : Fin n) → HEq x y → x.val = y.val
+| _, _, rfl, ⟨_,_⟩, ⟨_,_⟩, HEq.rfl => rfl
+
 instance (i : Fin n) : Nat.IsPos i.modulus where
   is_pos := Nat.lt_of_le_of_lt (Nat.zero_le i.val) i.isLt
 
@@ -20,6 +23,12 @@ protected def last (is_pos : n > 0 := by nat_is_pos) : Fin n := ⟨n.pred, Nat.p
 
 protected def lift : Fin n → Fin (n+1)
 | ⟨i, hi⟩ => ⟨i, Nat.lt_succ_of_le (Nat.le_of_lt hi)⟩
+
+protected def next : Fin n → Option (Fin n)
+| ⟨i, _⟩ => if h : i+1 < n then some ⟨i+1, h⟩ else none
+
+protected def pred : Fin n → Option (Fin n)
+| ⟨i, h⟩ => if i ≠ 0 then some ⟨i-1, Nat.lt_of_le_of_lt (Nat.pred_le i) h⟩ else none
 
 protected def recZeroSucc {motive : Fin (n+1) → Sort _} (zero : motive Fin.zero) (succ : (i : Fin n) → motive (Fin.succ i)) : (i : Fin (n+1)) → motive i
 | ⟨0, _⟩ => zero
