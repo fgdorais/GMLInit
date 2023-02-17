@@ -17,11 +17,11 @@ variable {α β : Type _}
 protected theorem eq : {xs ys : List1 α} → xs.toList = ys.toList → xs = ys
 | ⟨_, _⟩, ⟨_, _⟩, rfl => rfl
 
-protected theorem eta (xs : List1 α) : ⟨xs.toList, xs.ne_nil⟩ = xs := List1.eq rfl  
+protected theorem eta (xs : List1 α) : ⟨xs.toList, xs.ne_nil⟩ = xs := List1.eq rfl
 
 @[match_pattern, inline]
 protected def cons (x : α) (xs : List α) : List1 α := ⟨x :: xs, List.noConfusion⟩
- 
+
 @[match_pattern, inline]
 protected def pure (x : α) := List1.cons x []
 
@@ -29,7 +29,7 @@ theorem cons_toList (x : α) (xs : List α) : (List1.cons x xs).toList = x :: xs
 
 theorem sizeOf_toList (xs : List1 α ) : sizeOf xs = 1 + sizeOf xs.toList := rfl
 
-theorem sizeOf_cons (x : α) (xs : List α) : sizeOf (List1.cons x xs) = 1 + (1 + sizeOf xs) := rfl
+@[simp] theorem sizeOf_cons (x : α) (xs : List α) : sizeOf (List1.cons x xs) = 1 + (1 + sizeOf xs) := rfl
 
 @[inline] def IndView.toList1 : List1.IndView α → List1 α
 | pure x => .cons x []
@@ -38,27 +38,26 @@ theorem sizeOf_cons (x : α) (xs : List α) : sizeOf (List1.cons x xs) = 1 + (1 
 @[inline] def toIndView : List1 α → List1.IndView α
 | .cons x [] => .pure x
 | .cons x (x' :: xs') => .cons x (toIndView (.cons x' xs'))
-decreasing_by simp_wf; simp_arith [List1.sizeOf_cons]
 
 theorem toList1_eq_iff_toIndView_eq {xs : List1.IndView α} {ys : List1 α} :
   xs.toList1 = ys ↔ ys.toIndView = xs := by
   match xs, ys with
-  | .pure x, .cons y [] => 
+  | .pure x, .cons y [] =>
     clean unfold IndView.toList1 toIndView
     constr
     · intro | rfl => rfl
     · intro | rfl => rfl
-  | .pure x, .cons y (_ :: _) => 
+  | .pure x, .cons y (_ :: _) =>
     clean unfold IndView.toList1 toIndView
     constr
     · intro h; injection h with h; injection h with hh ht; contradiction
-    · intro; contradiction 
-  | .cons x xs, .cons y [] => 
+    · intro; contradiction
+  | .cons x xs, .cons y [] =>
     clean unfold IndView.toList1 toIndView
     constr
     · intro h; injection h with h; injection h with hh ht; absurd ht; exact List1.ne_nil xs.toList1
     · intro; contradiction
-  | .cons x xs, .cons y (_ :: _) => 
+  | .cons x xs, .cons y (_ :: _) =>
     clean unfold IndView.toList1 toIndView
     rw [←cons_toList]
     constr
@@ -68,9 +67,15 @@ theorem toList1_eq_iff_toIndView_eq {xs : List1.IndView α} {ys : List1 α} :
       congr
       exact toList1_eq_iff_toIndView_eq.mp ht
     · intro h; injection h with hh ht
-      cases hh   
+      cases hh
       congr
       exact toList1_eq_iff_toIndView_eq.mpr ht
+
+@[simp] theorem toIndView_toList1 (xs : List1.IndView α) : xs.toList1.toIndView = xs :=
+  toList1_eq_iff_toIndView_eq.mp rfl
+
+@[simp] theorem toList1_toIndView (xs : List1 α) : xs.toIndView.toList1 = xs :=
+  toList1_eq_iff_toIndView_eq.mpr rfl
 
 def equivIndView (α : Type _) : Equiv (List1 α) (List1.IndView α) where
   fwd := List1.toIndView
@@ -105,7 +110,7 @@ decreasing_by simp_wf; simp_arith [IndView.sizeOf_toList1, this, List1.sizeOf_co
 @[inline] def tail : List1 α → List α
 | .cons _ xs => xs
 
-@[inline] def last : List1 α → α 
+@[inline] def last : List1 α → α
 | .cons x [] => x
 | .cons _ (x :: xs) => last (.cons x xs)
 decreasing_by simp_wf; simp_arith [List1.sizeOf_cons]

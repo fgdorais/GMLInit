@@ -125,7 +125,7 @@ def equiv (α n) : Equiv (LList α n) (Fin n → α) where
       | succ n ih =>
         funext i
         rw [LList.mk_succ]
-        cases i using Fin.casesZeroSuccOn with
+        cases i using Fin.casesIndOn with
         | zero => rw [LList.eval_cons_zero]
         | succ i => rw [LList.eval_cons_succ, ih]
 
