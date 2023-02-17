@@ -146,37 +146,68 @@ theorem val_iotaFind {n : Nat} (i : Fin n) : i.iotaFind.val = i := by
       apply Fin.eq
       open Index in rw [iotaFind, val_tail, val_map, H, Fin.succ]
 
-protected def find? : {n : Nat} → (p : Fin n → Bool) → Option (Fin n)
-| 0, _ => none
-| n+1, p =>
-  match p Fin.zero, Fin.find? (λ x => p x.succ) with
-  | true, _ => some Fin.zero
-  | false, some x => some x.succ
-  | false, none => none
+protected def find? (p : Fin n → Bool) : Option (Fin n) :=
+  let rec loop : (i : Nat) → i ≤ n → Option (Fin n)
+  | i, hi =>
+    if h : i = n then
+      none
+    else
+      have hi : i < n := Nat.lt_of_le_of_ne hi h
+      if p ⟨i, hi⟩ then
+        some ⟨i, hi⟩
+      else
+        loop (i+1) (Nat.succ_le_of_lt hi)
+  loop 0 (Nat.zero_le n)
+termination_by loop i _ => n - i
 
-def find_some {p : Fin n → Bool} (i) : Fin.find? p = some i → p i = true := by
-  induction n with
-  | zero => exact i.elim0
-  | succ n H =>
-    intro h
-    clean unfold Fin.find? at h
+theorem find?.loop_some {p : Fin n → Bool} (i hi) (k : Fin n) : Fin.find?.loop p i hi = some k → p k = true := by
+  intro h
+  unfold loop at h
+  split at h
+  next => contradiction
+  next hne =>
+    have hi : i < n := Nat.lt_of_le_of_ne hi hne
+    simp only at h
     split at h
-    next h0 => cases h; exact h0
-    next hs => cases h; exact H _ hs
-    next => contradiction
+    next hp =>
+      cases h
+      exact hp
+    next =>
+      exact loop_some (i+1) (Nat.succ_le_of_lt hi) k h
+termination_by loop_some i _ _ _ => n - i
 
-def find_none {p : Fin n → Bool} (x) : Fin.find? p = none → p x = false := by
-  induction n with
-  | zero => absurd x.isLt; apply Nat.not_lt_zero
-  | succ n H =>
-    intro h
-    clean unfold Fin.find? at h
+private theorem find?.loop_none {p : Fin n → Bool} (i hi) (k : Fin n) : i ≤ k.val → Fin.find?.loop p i hi = none → p k = false := by
+  intro hik h
+  unfold loop at h
+  split at h
+  next heq =>
+    absurd hik
+    rw [heq]
+    apply Nat.not_le_of_gt
+    exact k.isLt
+  next hne =>
+    have hi : i < n := Nat.lt_of_le_of_ne hi hne
+    simp only at h
     split at h
-    next => contradiction
-    next => contradiction
-    next h0 hs =>
-      match x with
-      | ⟨0,_⟩ => exact h0
-      | ⟨x+1,hx⟩ => exact H ⟨x, Nat.lt_of_succ_lt_succ hx⟩ hs
+    next hp =>
+      contradiction
+    next hp =>
+      by_cases i = k.val with
+      | isTrue heq =>
+        rw [Bool.eq_false_iff]
+        intro hk
+        apply hp
+        rw [←hk]
+        congr
+      | isFalse hik' =>
+        have hik : i < k.val := Nat.lt_of_le_of_ne hik hik'
+        exact loop_none (i+1) (Nat.succ_le_of_lt hi) k (Nat.succ_le_of_lt hik) h
+termination_by loop_none i _ _ _ _ => n - i
+
+theorem find?_some {p : Fin n → Bool} (k : Fin n) : Fin.find? p = some k → p k = true :=
+  find?.loop_some 0 (Nat.zero_le n) k
+
+theorem find?_none {p : Fin n → Bool} (k : Fin n) : Fin.find? p = none → p k = false :=
+  find?.loop_none 0 (Nat.zero_le n) k (Nat.zero_le k.val)
 
 end Fin
