@@ -2,28 +2,41 @@ import GMLInit.Data.Nat
 
 structure Pos where
   protected toNat : Nat
-  protected is_pos : toNat > 0
+  protected ne_zero : toNat ≠ 0
 
 namespace Pos
 
-lemma toNat.inj : {x y : Pos} → x.toNat = y.toNat → x = y
+protected theorem eq : {x y : Pos} → x.toNat = y.toNat → x = y
 | ⟨_,_⟩, ⟨_,_⟩, rfl => rfl
 
-@[simp] lemma toNat.injEq (x y : Pos) : (x.toNat = y.toNat) = (x = y) :=
-  propext ⟨toNat.inj, congrArg Pos.toNat⟩
+protected theorem eta (x : Pos) : x = ⟨x.toNat, x.ne_zero⟩ := Pos.eq rfl
+
+@[match_pattern, inline]
+protected def succ (n : Nat) : Pos := ⟨n.succ, Nat.noConfusion⟩
+
+@[simp] theorem sizeOf_succ (n : Nat) : sizeOf (Pos.succ n) = 1 + (n + 1) := rfl
+
+theorem is_pos : (x : Pos) → x.toNat > 0
+| .succ n => Nat.zero_lt_succ n
 
 instance (x : Pos) : Nat.IsPos x.toNat := ⟨x.is_pos⟩
 
-protected abbrev one : Pos := ⟨1, by nat_is_pos⟩
+protected def ofNat? : Nat → Option Pos
+| 0 => none
+| n+1 => some (.succ n)
+
+protected def ofNat (n : Nat) [Nat.IsPos n] : Pos := ⟨n, n.is_nonzero⟩
+
+protected abbrev one : Pos := .succ 0
 instance : OfNat Pos (nat_lit 1) := ⟨Pos.one⟩
 
-protected abbrev add (x y : Pos) : Pos := ⟨x.toNat + y.toNat, by nat_is_pos⟩
+protected abbrev add (x y : Pos) : Pos := ⟨x.toNat + y.toNat, Nat.is_nonzero _⟩
 instance : Add Pos := ⟨Pos.add⟩
 
-protected abbrev mul (x y : Pos) : Pos := ⟨x.toNat * y.toNat, by nat_is_pos⟩
+protected abbrev mul (x y : Pos) : Pos := ⟨x.toNat * y.toNat, Nat.is_nonzero _⟩
 instance : Mul Pos := ⟨Pos.mul⟩
 
-protected abbrev pow (x : Pos) (y : Nat) : Pos := ⟨x.toNat ^ y, by nat_is_pos⟩
+protected abbrev pow (x : Pos) (y : Nat) : Pos := ⟨x.toNat ^ y, Nat.is_nonzero _⟩
 instance : Pow Pos Nat := ⟨Pos.pow⟩
 
 protected def le (x y : Pos) : Prop := x.toNat ≤ y.toNat
@@ -32,42 +45,42 @@ instance : LE Pos := ⟨Pos.le⟩
 protected def lt (x y : Pos) : Prop := x.toNat < y.toNat
 instance : LT Pos := ⟨Pos.lt⟩
 
-@[simp,clean] protected lemma one_eq : Pos.one = 1 := rfl
+@[clean] theorem one_eq : Pos.one = 1 := rfl
 
-@[simp,clean] protected lemma add_eq (x y : Pos) : Pos.add x y = x + y := rfl
+@[clean] theorem add_eq (x y : Pos) : Pos.add x y = x + y := rfl
 
-@[simp,clean] protected lemma mul_eq (x y : Pos) : Pos.mul x y = x * y := rfl
+@[clean] theorem mul_eq (x y : Pos) : Pos.mul x y = x * y := rfl
 
-@[simp,clean] protected lemma pow_eq (x : Pos) (y : Nat) : Pos.pow x y = x ^ y := rfl
+@[clean] theorem pow_eq (x : Pos) (y : Nat) : Pos.pow x y = x ^ y := rfl
 
-@[simp,clean] protected lemma le_eq (x y : Pos) : Pos.le x y = (x ≤ y) := rfl
+@[clean] theorem le_eq (x y : Pos) : Pos.le x y = (x ≤ y) := rfl
 
-@[simp,clean] protected lemma lt_eq (x y : Pos) : Pos.lt x y = (x < y) := rfl
+@[clean] theorem lt_eq (x y : Pos) : Pos.lt x y = (x < y) := rfl
 
-instance (n : Nat) : OfNat Pos n.succ := ⟨n.succ, by nat_is_pos⟩
+instance (n : Nat) : OfNat Pos n.succ := ⟨.succ n⟩
 
-unif_hint succ (x : Pos) (y : Nat) where
+unif_hint (x : Pos) (y : Nat) where
   x =?= OfNat.ofNat y.succ ⊢ x + 1 =?= OfNat.ofNat y.succ.succ
 
 @[eliminator] protected def recAux {motive : Pos → Sort _} (one : motive 1) (succ : (x : Pos) → motive x → motive (x+1)) : (x : Pos) → motive x
-| ⟨1,_⟩ => one
-| ⟨x+2,_⟩ => succ _ (Pos.recAux one succ ⟨x.succ, by nat_is_pos⟩)
+| .succ 0 => one
+| .succ (n+1) => succ _ (Pos.recAux one succ (.succ n))
 
 protected def recAuxOn {motive : Pos → Sort _} (x : Pos) (one : motive 1) (succ : (x : Pos) → motive x → motive (x+1)) : motive x :=
   Pos.recAux one succ x
 
 protected def casesAuxOn {motive : Pos → Sort _} (x : Pos) (one : motive 1) (succ : (x : Pos) → motive (x+1)) : motive x :=
-  Pos.recAux one (λ x _ => succ x) x
+  Pos.recAux one (fun x _ => succ x) x
 
 protected def recDiagAux.{u} {motive : Pos → Pos → Sort u}
   (left : (x : Pos) → motive x 1)
   (right : (y : Pos) → motive 1 y)
   (diag : (x y : Pos) → motive x y → motive (x + 1) (y + 1)) :
   (x y : Pos) → motive x y :=
-  Pos.recAux (motive := λ x => (y : Pos) → motive x y) right succ
+  Pos.recAux (motive := fun x => (y : Pos) → motive x y) right succ
 where
   succ (x : Pos) (h : (y : Pos) → motive x y) (y : Pos) : motive (x+1) y :=
-    Pos.casesAuxOn y (left (x+1)) (λ y => diag x y (h y))
+    Pos.casesAuxOn y (left (x+1)) (fun y => diag x y (h y))
 
 protected def recDiagAuxOn.{u} {motive : Pos → Pos → Sort u} (x y : Pos)
   (left : (x : Pos) → motive x 1)
@@ -79,7 +92,7 @@ protected def casesDiagAuxOn.{u} {motive : Pos → Pos → Sort u} (x y : Pos)
   (left : (x : Pos) → motive x 1)
   (right : (y : Pos) → motive 1 y)
   (diag : (x y : Pos) → motive (x + 1) (y + 1)) :
-  motive x y := Pos.recDiagAux left right (λ x y _ => diag x y) x y
+  motive x y := Pos.recDiagAux left right (fun x y _ => diag x y) x y
 
 @[local eliminator] protected def recDiag.{u} {motive : Pos → Pos → Sort u}
   (one_one : motive 1 1)
@@ -89,7 +102,7 @@ protected def casesDiagAuxOn.{u} {motive : Pos → Pos → Sort u} (x y : Pos)
   (x y : Pos) → motive x y :=
   Pos.recDiagAux left right succ_succ
 where
-  left (x : Pos) : motive x 1 := Pos.recAuxOn (motive := λ x => motive x 1) x one_one succ_one
+  left (x : Pos) : motive x 1 := Pos.recAuxOn (motive := fun x => motive x 1) x one_one succ_one
   right (y : Pos) : motive 1 y := Pos.recAuxOn y one_one one_succ
 
 protected def recDiagOn.{u} {motive : Pos → Pos → Sort u} (x y : Pos)
@@ -104,27 +117,27 @@ protected def casesDiagOn.{u} {motive : Pos → Pos → Sort u} (x y : Pos)
   (succ_one : (x : Pos) → motive (x + 1) 1)
   (one_succ : (y : Pos) → motive 1 (y + 1))
   (succ_succ : (x y : Pos) → motive (x + 1) (y + 1)) :
-  motive x y := Pos.recDiag one_one (λ x _ => succ_one x) (λ y _ => one_succ y) (λ x y _ => succ_succ x y) x y
+  motive x y := Pos.recDiag one_one (fun x _ => succ_one x) (fun y _ => one_succ y) (fun x y _ => succ_succ x y) x y
 
-lemma toNat_one : (1:Pos).toNat = 1 := rfl
+theorem toNat_one : (1:Pos).toNat = 1 := rfl
 
-lemma toNat_add (x y : Pos) : (x + y).toNat = x.toNat + y.toNat := rfl
+theorem toNat_add (x y : Pos) : (x + y).toNat = x.toNat + y.toNat := rfl
 
-lemma toNat_mul (x y : Pos) : (x * y).toNat = x.toNat * y.toNat := rfl
+theorem toNat_mul (x y : Pos) : (x * y).toNat = x.toNat * y.toNat := rfl
 
-lemma toNat_pow (x : Pos) (y : Nat) : (x ^ y).toNat = x.toNat ^ y := rfl
+theorem toNat_pow (x : Pos) (y : Nat) : (x ^ y).toNat = x.toNat ^ y := rfl
 
-lemma toNat_eq (x y : Pos) : x = y ↔ x.toNat = y.toNat := ⟨congrArg Pos.toNat, Pos.toNat.inj⟩
+theorem toNat_eq (x y : Pos) : x = y ↔ x.toNat = y.toNat := ⟨congrArg Pos.toNat, Pos.eq⟩
 
-lemma toNat_ne (x y : Pos) : x ≠ y ↔ x.toNat ≠ y.toNat := Iff.mt (toNat_eq x y).symm
+theorem toNat_ne (x y : Pos) : x ≠ y ↔ x.toNat ≠ y.toNat := Iff.mt (toNat_eq x y).symm
 
-lemma toNat_le (x y : Pos) : x ≤ y ↔ x.toNat ≤ y.toNat := Iff.rfl
+theorem toNat_le (x y : Pos) : x ≤ y ↔ x.toNat ≤ y.toNat := Iff.rfl
 
-lemma toNat_ge (x y : Pos) : x ≥ y ↔ x.toNat ≥ y.toNat := Iff.rfl
+theorem toNat_ge (x y : Pos) : x ≥ y ↔ x.toNat ≥ y.toNat := Iff.rfl
 
-lemma toNat_lt (x y : Pos) : x < y ↔ x.toNat < y.toNat := Iff.rfl
+theorem toNat_lt (x y : Pos) : x < y ↔ x.toNat < y.toNat := Iff.rfl
 
-lemma toNat_gt (x y : Pos) : x > y ↔ x.toNat > y.toNat := Iff.rfl
+theorem toNat_gt (x y : Pos) : x > y ↔ x.toNat > y.toNat := Iff.rfl
 
 local macro "by_toNat" : tactic => `(tactic| simp only [toNat_eq, toNat_ge, toNat_gt, toNat_le, toNat_lt, toNat_ne, toNat_one, toNat_add, toNat_mul, toNat_pow])
 
@@ -493,5 +506,128 @@ protected theorem lt.dest {x y : Pos} : x < y → ∃ z, x + z = y := by
 
 protected theorem lt.intro {x y z : Pos} : x + z = y → x < y := by
   intro h; rw [←h]; exact Pos.lt_add_right x z
+
+protected inductive asInd
+| one : Pos.asInd
+| succ : Pos.asInd → Pos.asInd
+deriving Repr
+
+protected def toInd : Pos → Pos.asInd
+| .succ 0 => .one
+| .succ (n+1) => .succ (Pos.toInd (.succ n))
+
+theorem toInd_one : (1 : Pos).toInd = asInd.one := rfl
+theorem toInd_succ (n : Pos) : (n + 1).toInd = n.toInd.succ := by
+  match n with
+  | .succ n => simp only [Pos.one, Pos.succ, HAdd.hAdd, Add.add, Pos.add, OfNat.ofNat, Nat.succ_eq, Nat.add_eq, Pos.toInd]
+
+protected def asInd.toNat : Pos.asInd → Nat
+| .one => 1
+| .succ n => asInd.toNat n + 1
+
+theorem asInd.toNat_one : asInd.one.toNat = 1 := rfl
+theorem asInd.toNat_succ (n : Pos.asInd) : n.succ.toNat = n.toNat + 1 := rfl
+
+protected def ofInd (n : Pos.asInd) : Pos where
+  toNat := n.toNat
+  ne_zero :=
+    match n with
+    | .one => Nat.noConfusion
+    | .succ n => Nat.succ_ne_zero n.toNat
+
+theorem ofInd_one : Pos.ofInd asInd.one = 1 := rfl
+theorem ofInd_succ (n : Pos.asInd) : Pos.ofInd n.succ = Pos.ofInd n + 1 := rfl
+
+theorem toInd_ofInd (n : Pos.asInd) : Pos.toInd (Pos.ofInd n) = n := by
+  induction n with
+  | one => rfl
+  | succ n ih =>
+    rw [ofInd_succ]
+    rw [toInd_succ]
+    rw [ih]
+
+theorem ofInd_toInd (n : Pos) : Pos.ofInd n.toInd = n := by
+  induction n with
+  | one => rfl
+  | succ n ih =>
+    rw [toInd_succ]
+    rw [ofInd_succ]
+    rw [ih]
+
+theorem asIndEquiv : Equiv Pos Pos.asInd where
+  fwd := Pos.toInd
+  rev := Pos.ofInd
+  spec := by
+    intros
+    constr
+    · intro | rfl => exact ofInd_toInd ..
+    · intro | rfl => exact toInd_ofInd ..
+
+protected inductive asBin
+| one : Pos.asBin
+| bit0 : Pos.asBin → Pos.asBin
+| bit1 : Pos.asBin → Pos.asBin
+deriving Repr
+
+protected def asBin.toNat : Pos.asBin → Nat
+| one => 1
+| bit0 n => 2 * asBin.toNat n
+| bit1 n => 2 * asBin.toNat n + 1
+
+theorem asBin.toNat_one : asBin.one.toNat = 1 := rfl
+theorem asBin.toNat_bit0 (n : Pos.asBin) : n.bit0.toNat = 2 * n.toNat := rfl
+theorem asBin.toNat_bit1 (n : Pos.asBin) : n.bit1.toNat = 2 * n.toNat + 1 := rfl
+
+theorem asBin.toNat_ne_zero (n : Pos.asBin) : n.toNat ≠ 0 := by
+  induction n with
+  | one => exact Nat.one_ne_zero
+  | bit0 n ih =>
+    rw [←Nat.mul_zero 2, asBin.toNat_bit0]
+    intro h
+    absurd ih
+    exact Nat.eq_of_mul_eq_mul_left (Nat.is_pos 2) h
+  | bit1 n _ => exact Nat.succ_ne_zero (2 * n.toNat)
+
+def ofBin (n : Pos.asBin) : Pos := ⟨n.toNat, n.toNat_ne_zero⟩
+
+def div2 : Nat → Nat × Fin 2
+| 0 => (0,0)
+| 1 => (0,1)
+| n+2 => match div2 n with | (q,r) => (q+1,r)
+
+theorem div2_eq : (n : Nat) → 2 * (div2 n).fst + (div2 n).snd.val = n
+| 0 => rfl
+| 1 => rfl
+| n+2 => by
+  simp only [div2]
+  rw [Nat.mul_succ]
+  rw [Nat.add_right_comm]
+  congr
+  exact div2_eq n
+
+def toBin (n : Pos) : Pos.asBin :=
+  match h : div2 n.toNat with
+  | (0,0) => absurd n.is_pos $ by
+      rw [←div2_eq n.toNat, h]
+      intro; contradiction
+  | (0,1) => .one
+  | (q+1,0) =>
+    have : q + 1 < n.toNat := by
+      rw [←div2_eq n.toNat, h]
+      rw [Nat.mul_succ, Nat.two_mul]
+      apply Nat.add_lt_add_right
+      apply Nat.lt_succ_of_le
+      apply Nat.le_add_right
+    .bit0 (toBin (Pos.succ q))
+  | (q+1,1) =>
+    have : q + 1 < n.toNat := by
+      rw [←div2_eq n.toNat, h]
+      rw [Nat.mul_succ, Nat.two_mul]
+      apply Nat.add_lt_add_right
+      apply Nat.lt_succ_of_le
+      rw [Nat.add_eq, Nat.add_assoc]
+      apply Nat.le_add_right
+    .bit1 (toBin (Pos.succ q))
+termination_by _ => n.toNat
 
 end Pos
