@@ -73,6 +73,84 @@ lemma any_eq_false_iff_all_false {α} (p : α → Bool) (xs : List α) : xs.any 
   | nil => rw [any_nil, map_nil, All.nil_eq]; simp
   | cons x xs H => rw [any_cons, map_cons, All.cons_eq, ←H, Bool.or_eq_false_iff]
 
+/- take -/
+
+theorem take_nil {α} (n : Nat) : take n [] = ([] : List α) := by cases n <;> rfl
+
+theorem take_cons {α} (a : α) (as : List α) (n : Nat) : take (n+1) (a :: as) = a :: take n as := rfl
+
+theorem take_zero {α} (as : List α) : take 0 as = [] := rfl
+
+theorem take_all {α} (as : List α) : take as.length as = as := by
+  induction as with
+  | nil => rfl
+  | cons a as ih =>
+    rw [length_cons]
+    rw [take_cons]
+    rw [ih]
+
+/- drop -/
+
+theorem drop_cons {α} (a : α) (as : List α) (n : Nat) : drop (n+1) (a :: as) = drop n as := rfl
+
+theorem drop_get {α} (as : List α) (n : Nat) (hn : n < as.length) : drop n as = as[n] :: drop (n+1) as := by
+  induction as generalizing n with
+  | nil => absurd hn; exact Nat.not_lt_zero n
+  | cons a as ih =>
+    match n with
+    | 0 =>
+      rw [drop_cons]
+      rw [drop]
+      rw [getElem_eq_get]
+      rw [get_cons_zero]
+      rw [drop]
+    | n+1 =>
+      rw [drop_cons]
+      rw [drop_cons]
+      rw [getElem_eq_get]
+      rw [get_cons_succ]
+      rw [←getElem_eq_get]
+      exact ih ..
+
+theorem drop_all {α} (as : List α) : as.drop as.length = [] := by
+  induction as with
+  | nil =>
+    rw [drop_nil]
+  | cons a as ih =>
+    rw [length_cons]
+    rw [drop_cons]
+    rw [ih]
+
+/- extract -/
+
+def extract (as : List α) (start stop : Nat) := (as.drop start).take (stop - start)
+
+theorem extract_stop (as : List α) (stop : Nat) : as.extract stop stop = [] := by
+  unfold extract
+  rw [Nat.sub_self]
+  rw [take_zero]
+
+theorem extract_step (as : List α) (start stop : Nat) (hstart : start < stop) (hstop : stop ≤ as.length) :
+  as.extract start stop = as.get ⟨start, Nat.lt_of_lt_of_le hstart hstop⟩ :: as.extract (start+1) stop := by
+  unfold extract
+  induction start, stop using Nat.recDiag generalizing as with
+  | zero_zero => contradiction
+  | succ_zero start => contradiction
+  | zero_succ stop => match as with | a :: as => simp
+  | succ_succ start stop ih =>
+    match as with
+    | a :: as =>
+      simp
+      rw [ih]
+      exact Nat.lt_of_succ_lt_succ hstart
+      exact Nat.le_of_succ_le_succ hstop
+
+theorem extract_all (as : List α) : as.extract 0 as.length = as := by
+  unfold extract
+  rw [Nat.sub_zero]
+  rw [List.drop]
+  rw [List.take_all]
+
 /- replicate -/
 
 theorem replicate_zero {α} (a : α) : replicate 0 a = [] := rfl
