@@ -34,7 +34,7 @@ def encodeOptionSome : Fin n → Fin (n+1)
 def decodeOption : Fin (n+1) → Option (Fin n)
 | ⟨k, _⟩ => if hk : k < n then some ⟨k, hk⟩ else none
 
-def equivOption : Equiv (Fin (n+1)) (Option (Fin n)) where
+def equivOption (n : Nat) : Equiv (Fin (n+1)) (Option (Fin n)) where
   fwd := decodeOption
   rev
   | some i => encodeOptionSome i
@@ -111,7 +111,7 @@ def decodeSum : Fin (m + n) → Sum (Fin m) (Fin n)
       exact hk
     Sum.inr ⟨k - m, hkm⟩
 
-def equivSum : Equiv (Fin (m + n)) (Sum (Fin m) (Fin n)) where
+def equivSum (m n : Nat) : Equiv (Fin (m + n)) (Sum (Fin m) (Fin n)) where
   fwd := decodeSum
   rev
   | .inl x => encodeSumLeft x
@@ -192,7 +192,7 @@ def decodeProdRight : Fin (m * n) → Fin n
     contradiction
   ⟨k % n, Nat.mod_lt k hn⟩
 
-def equivProd : Equiv (Fin (m * n)) (Fin m × Fin n) where
+def equivProd (m n : Nat) : Equiv (Fin (m * n)) (Fin m × Fin n) where
   fwd k := (decodeProdLeft k, decodeProdRight k)
   rev := encodeProd
   spec {k x} := match k, x with
@@ -252,7 +252,7 @@ def decodeFun : {m : Nat} → Fin (n ^ m) → Fin m → Fin n
 theorem specFun (k : Fin (n ^ m)) (x : Fin m → Fin n) :
   decodeFun k = x ↔ encodeFun x = k := sorry
 
-def equivFun : Equiv (Fin (n ^ m)) (Fin m → Fin n) where
+def equivFun (n m : Nat) : Equiv (Fin (n ^ m)) (Fin m → Fin n) where
   fwd := decodeFun
   rev := encodeFun
   spec {k x} := specFun k x
