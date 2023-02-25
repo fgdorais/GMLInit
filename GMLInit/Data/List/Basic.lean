@@ -93,6 +93,17 @@ theorem take_all {α} (as : List α) : take as.length as = as := by
 
 theorem drop_cons {α} (a : α) (as : List α) (n : Nat) : drop (n+1) (a :: as) = drop n as := rfl
 
+theorem drop_zero {α} (as : List α) : drop 0 as = as := rfl
+
+theorem drop_all {α} (as : List α) : as.drop as.length = [] := by
+  induction as with
+  | nil =>
+    rw [drop_nil]
+  | cons a as ih =>
+    rw [length_cons]
+    rw [drop_cons]
+    rw [ih]
+
 theorem drop_get {α} (as : List α) (n : Nat) (hn : n < as.length) : drop n as = as[n] :: drop (n+1) as := by
   induction as generalizing n with
   | nil => absurd hn; exact Nat.not_lt_zero n
@@ -111,15 +122,6 @@ theorem drop_get {α} (as : List α) (n : Nat) (hn : n < as.length) : drop n as 
       rw [get_cons_succ]
       rw [←getElem_eq_get]
       exact ih ..
-
-theorem drop_all {α} (as : List α) : as.drop as.length = [] := by
-  induction as with
-  | nil =>
-    rw [drop_nil]
-  | cons a as ih =>
-    rw [length_cons]
-    rw [drop_cons]
-    rw [ih]
 
 /- extract -/
 
