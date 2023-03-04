@@ -1,11 +1,13 @@
 import GMLInit.Data.Index.Basic
+import GMLInit.Data.Index.ReverseAux
 
 open Sum (inl inr)
 
 namespace Index
 variable {α} {xs ys : List α}
 
-def append : {xs ys : List α} → Sum (Index xs) (Index ys) → Index (xs ++ ys)
+@[implemented_by Index.appendTR] -- TODO: use csimp
+def append : {xs ys : List α} → Sum (Index xs) (Index ys) → Index (List.append xs ys)
 | [], _, inr i => i
 | _::_, _, inr i => tail (append (inr i))
 | _::_, _, inl head => head
