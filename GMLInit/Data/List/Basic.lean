@@ -179,4 +179,72 @@ theorem get_dropLast (as : List α) (i : Fin as.dropLast.length) :
     | _ :: _, ⟨0, _⟩ => simp [dropLast]
     | _ :: _, ⟨i+1, hi⟩ => simp [dropLast, ih]
 
+/- all/any -/
+
+theorem not_all_eq_any_not (p : α → Bool) (as : List α) : (!as.all p) = as.any fun a => !p a := by
+  induction as with
+  | nil => rfl
+  | cons a as ih =>
+    rw [all_cons]
+    rw [any_cons]
+    rw [Bool.not_and]
+    rw [ih]
+
+theorem not_any_eq_all_not (p : α → Bool) (as : List α) : (!as.any p) = as.all fun a => !p a := by
+  induction as with
+  | nil => rfl
+  | cons a as ih =>
+    rw [any_cons]
+    rw [all_cons]
+    rw [Bool.not_or]
+    rw [ih]
+
+theorem or_all_distrib_left (p : α → Bool) (q : Bool) (as : List α) : (q || as.all p) = as.all fun a => q || p a := by
+  induction as with
+  | nil =>
+    rw [all_nil]
+    rw [all_nil]
+    rw [Bool.or_true]
+  | cons a as ih =>
+    rw [all_cons]
+    rw [all_cons]
+    rw [Bool.or_and_distrib_left]
+    rw [ih]
+
+theorem or_all_distrib_right (p : α → Bool) (q : Bool) (as : List α) : (as.all p || q) = as.all fun a => p a || q := by
+  induction as with
+  | nil =>
+    rw [all_nil]
+    rw [all_nil]
+    rw [Bool.true_or]
+  | cons a as ih =>
+    rw [all_cons]
+    rw [all_cons]
+    rw [Bool.or_and_distrib_right]
+    rw [ih]
+
+theorem and_any_distrib_left (p : α → Bool) (q : Bool) (as : List α) : (q && as.any p) = as.any fun a => q && p a := by
+  induction as with
+  | nil =>
+    rw [any_nil]
+    rw [any_nil]
+    rw [Bool.and_false]
+  | cons a as ih =>
+    rw [any_cons]
+    rw [any_cons]
+    rw [Bool.and_or_distrib_left]
+    rw [ih]
+
+theorem and_any_distrib_right (p : α → Bool) (q : Bool) (as : List α) : (as.any p && q) = as.any fun a => p a && q := by
+  induction as with
+  | nil =>
+    rw [any_nil]
+    rw [any_nil]
+    rw [Bool.false_and]
+  | cons a as ih =>
+    rw [any_cons]
+    rw [any_cons]
+    rw [Bool.and_or_distrib_right]
+    rw [ih]
+
 end List

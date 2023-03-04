@@ -26,8 +26,8 @@ instance : LT Bool := ltOfOrd
 theorem eq_iff_iff : x = y ↔ (x ↔ y) := by bool_tt using simp x y
 
 -- assert not_not : !(!x) = x := by bool_tt x
-theorem not_and : !(x && y) = (!x || !y) := by bool_tt x y
-theorem not_or : !(x || y) = (!x && !y) := by bool_tt x y
+theorem not_and : (!(x && y)) = (!x || !y) := by bool_tt x y
+theorem not_or : (!(x || y)) = (!x && !y) := by bool_tt x y
 
 theorem and_false_left : (false && x) = false := by bool_tt x
 theorem and_false_right : (x && false) = false := by bool_tt x
