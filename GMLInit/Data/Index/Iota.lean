@@ -1,9 +1,24 @@
 import GMLInit.Data.Index.Basic
+import GMLInit.Data.Index.Append
 import GMLInit.Data.Index.Map
 
-def List.indexIota {α} : (xs : List α) → List (Index xs)
+namespace List
+
+def indexIotaTR {α} (xs : List α) : List (Index xs) :=
+  let rec loop : (xs : List α) → (ys : List α) → Array (Index (ys.reverse ++ xs)) → List (Index (ys.reverse ++ xs))
+  | [], ys, rs => List.append_nil ys.reverse ▸ rs.data
+  | x :: xs, ys, rs =>
+    have : ys.reverse ++ (x :: xs) = (x :: ys).reverse ++ xs := by
+      rw [reverse_cons, append_assoc, singleton_append]
+    this ▸ loop xs (x :: ys) (this ▸ rs.push (Index.append_inr Index.head))
+  loop xs [] #[]
+
+@[implemented_by indexIotaTR] -- TODO: use csimp
+def indexIota {α} : (xs : List α) → List (Index xs)
 | [] => []
 | _::xs => Index.head :: (indexIota xs).map Index.tail
+
+end List
 
 namespace Index
 variable {α} {xs : List α}
