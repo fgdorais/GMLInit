@@ -181,6 +181,26 @@ theorem get_dropLast (as : List α) (i : Fin as.dropLast.length) :
 
 /- all/any -/
 
+@[specialize] def allTR : List α → (α → Bool) → Bool
+| [], _ => true
+| x :: xs, p => p x && allTR xs p
+
+@[csimp] theorem all_eq_allTR : @List.all = @List.allTR := by
+  funext α xs p
+  induction xs with
+  | nil => rfl
+  | cons _ _ ih => exact congrArg _ ih
+
+@[specialize] def anyTR : List α → (α → Bool) → Bool
+| [], _ => false
+| x :: xs, p => p x || anyTR xs p
+
+@[csimp] theorem any_eq_anyTR : @List.any = @List.anyTR := by
+  funext α xs p
+  induction xs with
+  | nil => rfl
+  | cons _ _ ih => exact congrArg _ ih
+
 theorem not_all_eq_any_not (p : α → Bool) (as : List α) : (!as.all p) = as.any fun a => !p a := by
   induction as with
   | nil => rfl
