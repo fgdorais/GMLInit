@@ -192,14 +192,16 @@ def decodeProdRight : Fin (m * n) → Fin n
     contradiction
   ⟨k % n, Nat.mod_lt k hn⟩
 
+abbrev decodeProd (k : Fin (m * n)) := (decodeProdLeft k, decodeProdRight k)
+
 def equivProd (m n : Nat) : Equiv (Fin (m * n)) (Fin m × Fin n) where
-  fwd k := (decodeProdLeft k, decodeProdRight k)
+  fwd := decodeProd
   rev := encodeProd
   spec {k x} := match k, x with
   | ⟨k, hk⟩, (⟨i,hi⟩, ⟨j,hj⟩) => by
     constr
     · intro h
-      unfold decodeProdLeft decodeProdRight at h
+      unfold decodeProd decodeProdLeft decodeProdRight at h
       unfold encodeProd
       simp at h ⊢
       cases h with
@@ -208,7 +210,7 @@ def equivProd (m n : Nat) : Equiv (Fin (m * n)) (Fin m × Fin n) where
         cases hr
         exact Nat.div_add_mod ..
     · intro h
-      unfold decodeProdLeft decodeProdRight
+      unfold decodeProd decodeProdLeft decodeProdRight
       unfold encodeProd at h
       simp at h ⊢
       cases h
@@ -250,7 +252,76 @@ def decodeFun : {m : Nat} → Fin (n ^ m) → Fin m → Fin n
     decodeFun ⟨k / n, h⟩ ⟨i, Nat.lt_of_succ_lt_succ hi⟩
 
 theorem specFun (k : Fin (n ^ m)) (x : Fin m → Fin n) :
-  decodeFun k = x ↔ encodeFun x = k := sorry
+  decodeFun k = x ↔ encodeFun x = k := by
+  induction m with
+  | zero =>
+    match k with
+    | ⟨0, _⟩ =>
+      constr
+      · intro | rfl => rfl
+      · intro; funext ⟨_,_⟩; contradiction
+  | succ m ih =>
+    have ih1 : decodeFun (encodeFun (fun k => x (succ k))) = fun k => x (succ k) := by rw [ih]
+    match k with
+    | ⟨k, hk⟩ =>
+      have hnpos : n > 0 := by
+        apply Nat.pos_of_nonzero
+        intro h
+        rw [h] at hk
+        contradiction
+      constr
+      · intro h
+        clean at h
+        unfold encodeFun
+        apply Fin.eq
+        clean
+        transitivity (n * (k / n) + k % n)
+        · congr
+          · have : k / n < n ^ m := by rw [Nat.div_lt_iff_lt_mul hnpos]; exact hk
+            have : (encodeFun fun k => x (succ k)) = ⟨k / n, this⟩ := by rw [←ih, ←h]; rfl
+            erw [this]
+            done
+          · rw [←h]
+            unfold decodeFun
+            clean
+            split
+            next => rfl
+            next heq => injection heq; contradiction
+        · rw [Nat.add_comm]
+          exact Nat.mod_add_div ..
+      · intro h
+        unfold encodeFun at h
+        injection h with h
+        unfold decodeFun
+        funext ⟨i, hi⟩
+        clean
+        split
+        next heq =>
+          cases heq
+          apply Fin.eq
+          simp only [←h]
+          rw [Nat.add_comm]
+          rw [Nat.add_mul_mod_self_left]
+          rw [Nat.mod_eq_of_lt (x 0).isLt]
+          rfl
+        next i _ heq =>
+          cases heq
+          rw [Nat.add_comm] at h
+          have : (encodeFun fun k => x (succ k)) = k / n := by
+            rw [←h]
+            rw [Nat.add_mul_div_left (H := hnpos)]
+            rw [Nat.div_eq_of_lt (x 0).isLt]
+            rw [Nat.zero_add]
+            rfl
+          transitivity ((decodeFun (encodeFun fun k => x (succ k))) ⟨i, Nat.lt_of_succ_lt_succ hi⟩)
+          · congr
+            rw [←h]
+            rw [Nat.add_mul_div_left (H := hnpos)]
+            rw [Nat.div_eq_of_lt (x 0).isLt]
+            rw [Nat.zero_add]
+            rfl
+          · rw [ih1]
+            rfl
 
 def equivFun (n m : Nat) : Equiv (Fin (n ^ m)) (Fin m → Fin n) where
   fwd := decodeFun
@@ -317,6 +388,8 @@ theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin 
           sorry
       · intro h
         sorry
+
+#exit
 
 def equivSigma (f : Fin n → Nat) : Equiv (Fin (sum f)) ((i : Fin n) × Fin (f i)) where
   fwd := decodeSigma f
