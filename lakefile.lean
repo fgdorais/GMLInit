@@ -8,4 +8,4 @@ package GMLInit {
 @[default_target]
 lean_lib GMLInit {}
 
-require std from git "https://github.com/leanprover/std4.git"@"main"
+require Std from git "https://github.com/leanprover/std4"@"main"
