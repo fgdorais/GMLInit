@@ -26,6 +26,26 @@ def equivBool : Equiv (Fin 2) Bool where
   | ⟨1, _⟩, false  => ⟨Bool.noConfusion, fun h => Nat.noConfusion (Fin.val_eq_of_eq h)⟩
   | ⟨1, _⟩, true  => ⟨fun _ => rfl, fun _ => rfl⟩
 
+def equivOrdering : Equiv (Fin 3) Ordering where
+  fwd
+  | ⟨0, _⟩ => .eq
+  | ⟨1, _⟩ => .lt
+  | ⟨2, _⟩ => .gt
+  rev
+  | .eq => ⟨0, Nat.zero_lt_succ 2⟩
+  | .lt => ⟨1, Nat.succ_lt_succ (Nat.zero_lt_succ 1)⟩
+  | .gt => ⟨2, Nat.succ_lt_succ (Nat.succ_lt_succ Nat.zero_lt_one)⟩
+  spec {k x} := match k, x with
+  | ⟨0, _⟩, .eq  => ⟨fun _ => rfl, fun _ => rfl⟩
+  | ⟨0, _⟩, .lt  => ⟨Ordering.noConfusion, fun h => Nat.noConfusion (Fin.val_eq_of_eq h)⟩
+  | ⟨0, _⟩, .gt  => ⟨Ordering.noConfusion, fun h => Nat.noConfusion (Fin.val_eq_of_eq h)⟩
+  | ⟨1, _⟩, .eq  => ⟨Ordering.noConfusion, fun h => Nat.noConfusion (Fin.val_eq_of_eq h)⟩
+  | ⟨1, _⟩, .lt  => ⟨fun _ => rfl, fun _ => rfl⟩
+  | ⟨1, _⟩, .gt  => ⟨Ordering.noConfusion, fun h => Nat.noConfusion (Nat.succ.inj (Fin.val_eq_of_eq h))⟩
+  | ⟨2, _⟩, .eq  => ⟨Ordering.noConfusion, fun h => Nat.noConfusion (Fin.val_eq_of_eq h)⟩
+  | ⟨2, _⟩, .lt  => ⟨Ordering.noConfusion, fun h => Nat.noConfusion (Nat.succ.inj (Fin.val_eq_of_eq h))⟩
+  | ⟨2, _⟩, .gt  => ⟨fun _ => rfl, fun _ => rfl⟩
+
 def encodeOptionNone : Fin (n+1) := ⟨n, Nat.lt_succ_self n⟩
 
 def encodeOptionSome : Fin n → Fin (n+1)
@@ -379,17 +399,73 @@ theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin 
     | ⟨k, hk⟩, ⟨⟨i+1, hi⟩, ⟨j, hj⟩⟩ =>
       constr
       · intro h
-        unfold decodeSigma at h
+        simp only [decodeSigma] at h
         split at h
-        next =>
-          cases h
-          done
-        next =>
-          sorry
+        next => cases h
+        next hge =>
+          have hge := Nat.ge_of_not_lt hge
+          have hpos : 0 < sum fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := by
+            apply Nat.pos_of_nonzero
+            intro hz
+            rw [Fin.sum, hz, Nat.add_zero] at hk
+            contradiction
+          have hk' : k - f ⟨0, Nat.zero_lt_succ n⟩ < sum fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := by
+            rw [Nat.sub_lt_iff_lt_add_of_pos _ _ _ hpos]
+            exact hk
+          have : encodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, ⟨j, hj⟩⟩ = ⟨k - f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩ := by
+            rw [←ih]
+            injection h with h1 h2
+            cases h1
+            apply Sigma.eq
+            · rfl
+            · exact h2
+          simp [encodeSigma]
+          transitivity (f ⟨0, Nat.zero_lt_succ n⟩ + (encodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, ⟨j, hj⟩⟩).val)
+          · rfl
+          · rw [this]
+            rw [Nat.add_comm, Nat.sub_add_cancel]
+            exact hge
       · intro h
-        sorry
-
-#exit
+        simp only [decodeSigma]
+        simp only [encodeSigma] at h
+        split
+        next hlt => 
+          cases h
+          absurd hlt
+          apply Nat.not_lt_of_ge
+          exact Nat.le_add_right ..
+        next hge =>
+          have hge := Nat.ge_of_not_lt hge
+          have hpos : 0 < sum fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := by
+            apply Nat.pos_of_nonzero
+            intro hz
+            rw [Fin.sum, hz] at hk
+            contradiction
+          have hk' : k - f ⟨0, Nat.zero_lt_succ n⟩ < sum fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := by
+            rw [Nat.sub_lt_iff_lt_add_of_pos _ _ _ hpos]
+            exact hk
+          have : decodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨k - f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩ = ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, ⟨j,hj⟩⟩ := by
+            rw [ih]
+            cases h
+            apply Fin.eq
+            clean
+            rw [Nat.add_sub_cancel_left]
+            rfl
+          congr 1
+          · apply Fin.eq
+            transitivity ((decodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨k - f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩).1.1+1)
+            · rfl
+            · rw [this]
+          · have t' : (decodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨k - f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩).fst.val = i := by
+              rw [this]
+            cases t'
+            apply heq_of_eq
+            transitivity ((decodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨k - f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩).2)
+            · apply Fin.eq
+              rfl
+            · apply Fin.eq
+              clean
+              rw [this]
 
 def equivSigma (f : Fin n → Nat) : Equiv (Fin (sum f)) ((i : Fin n) × Fin (f i)) where
   fwd := decodeSigma f
