@@ -146,6 +146,14 @@ theorem search_ext {α} {xs : List α} {p q : Index xs → Prop} [DecidablePred 
   funext i
   exact propext (h i)
 
+@[inline]
+def toNatTR {α} {xs : List α} (i : Index xs) : Nat :=
+  let rec loop : {xs : List α} → Index xs → Nat → Nat
+  | _, .head, n => n
+  | _, .tail i, n => loop i (n+1)
+  loop i 0
+
+@[implemented_by toNatTR]
 protected def toNat {α} : {xs : List α} → (i : Index xs) → Nat
 | _, head => 0
 | _, tail i => Index.toNat i + 1
@@ -161,8 +169,17 @@ theorem toNat_lt_length {α} {xs : List α} (i : Index xs) : i.toNat < xs.length
       apply Nat.succ_lt_succ
       exact ih ..
 
-protected def toFin {α} {xs : List α} (i : Index xs) : Fin xs.length := ⟨i.toNat, i.toNat_lt_length⟩
+protected abbrev toFin {α} {xs : List α} (i : Index xs) : Fin xs.length := ⟨i.toNat, i.toNat_lt_length⟩
 
+def ofFinTR {α} {xs : List α} (i : Fin xs.length) : Index xs :=
+  let rec loop : {xs ys : List α} → Sum (Fin xs.length) (Index ys) → Index (List.reverseAux xs ys)
+  | [], _, .inr i => i
+  | _ :: _, _, .inr i => loop (ys:=_::_) (.inr (.tail i))
+  | _ :: _, _, .inl ⟨0, _⟩ => loop (ys:=_::_) (.inr .head)
+  | _ :: _, _, .inl ⟨i+1, hi⟩ => loop (ys:=_::_) (.inl ⟨i, Nat.lt_of_succ_lt_succ hi⟩)
+  xs.reverse_reverse ▸ loop (ys:=[]) (.inl ⟨i.val, xs.length_reverse.symm ▸ i.isLt⟩)
+
+@[implemented_by ofFinTR]
 protected def ofFin {α} : {xs : List α} → Fin xs.length → Index xs
 | _::_, ⟨0,_⟩ => head
 | _::_, ⟨i+1,h⟩ => tail (Index.ofFin ⟨i, Nat.lt_of_succ_lt_succ h⟩)

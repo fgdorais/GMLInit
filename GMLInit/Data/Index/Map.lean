@@ -3,10 +3,20 @@ import GMLInit.Data.Index.Basic
 namespace Index
 variable {α β} (f : α → β)
 
+@[inline]
+def map'impl {xs : List α} (i : Index xs) : Index (xs.map f) :=
+  Index.ofFin ⟨i.toNat, xs.length_map f ▸ i.toNat_lt_length⟩
+
+@[implemented_by map'impl]
 def map : {xs : List α} → Index xs → Index (xs.map f)
 | _, Index.head => Index.head
 | _, Index.tail i => Index.tail (map i)
 
+@[inline]
+def unmap'impl {xs : List α} (i : Index (xs.map f)) : Index xs :=
+  Index.ofFin ⟨i.toNat, xs.length_map f ▸ i.toNat_lt_length⟩
+
+@[implemented_by unmap'impl]
 def unmap : {xs : List α} → Index (xs.map f) → Index xs
 | _::_, Index.head => Index.head
 | _::_, Index.tail i => Index.tail (unmap i)
