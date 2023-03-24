@@ -515,7 +515,6 @@ theorem specPi (f : Fin n → Nat) (k : Fin (prod f)) (x : (i : Fin n) → Fin (
         funext ⟨_,_⟩
         contradiction
     | succ n ih =>
-      have ih1 : decodePi (fun i => f (succ i)) (encodePi (fun i => f (succ i)) (fun k => x (succ k))) = fun k => x (succ k) := by rw [ih]
       constr
       · intro h
         match k with
