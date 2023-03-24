@@ -429,7 +429,7 @@ theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin 
         simp only [decodeSigma]
         simp only [encodeSigma] at h
         split
-        next hlt => 
+        next hlt =>
           cases h
           absurd hlt
           apply Nat.not_lt_of_ge
@@ -504,7 +504,90 @@ def decodePi (f : Fin n → Nat) (k : Fin (prod f)) : (i : Fin n) → Fin (f i) 
       | ⟨i+1, hi⟩ => x ⟨i, Nat.lt_of_succ_lt_succ hi⟩
 
 theorem specPi (f : Fin n → Nat) (k : Fin (prod f)) (x : (i : Fin n) → Fin (f i)) :
-  decodePi f k = x ↔ encodePi f x = k := sorry
+  decodePi f k = x ↔ encodePi f x = k := by
+    induction n with
+    | zero =>
+      constr
+      · intro
+        match k with
+        | ⟨0, _⟩ => rfl
+      · intro
+        funext ⟨_,_⟩
+        contradiction
+    | succ n ih =>
+      have ih1 : decodePi (fun i => f (succ i)) (encodePi (fun i => f (succ i)) (fun k => x (succ k))) = fun k => x (succ k) := by rw [ih]
+      constr
+      · intro h
+        match k with
+        | ⟨k, hk⟩ =>
+          apply Fin.eq
+          simp only [encodePi]
+          transitivity (f ⟨0, Nat.zero_lt_succ n⟩ * (k / f ⟨0, Nat.zero_lt_succ n⟩) + k % f ⟨0, Nat.zero_lt_succ n⟩)
+          · congr 1
+            · congr 1
+              have hpos : f ⟨0, Nat.zero_lt_succ n⟩ > 0 := by
+                apply Nat.pos_of_nonzero
+                intro hz
+                rw [Fin.prod, hz, Nat.zero_mul] at hk
+                contradiction
+              have hk' : k / f ⟨0, Nat.zero_lt_succ n⟩ < Fin.prod fun k => f (succ k) := by
+                rw [Nat.div_lt_iff_lt_mul hpos]
+                rw [Nat.mul_comm]
+                exact hk
+              have : encodePi (fun i => f (succ i)) (fun i => x (succ i)) = ⟨k / f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩ := by
+                rw [←ih]
+                funext i
+                rw [←h]
+                rfl
+              transitivity (encodePi (fun i => f (succ i)) (fun i => x (succ i))).val
+              · rfl
+              · rw [this]
+            · rw [←h]
+              rfl
+          · rw [Nat.add_comm]
+            exact Nat.mod_add_div ..
+      · intro h
+        funext i
+        simp only [decodePi]
+        split
+        next =>
+          apply Fin.eq
+          clean
+          rw [←h]
+          simp only [encodePi]
+          rw [Nat.add_comm]
+          rw [Nat.add_mul_mod_self_left]
+          rw [Nat.mod_eq_of_lt]
+          exact (x ⟨0, Nat.zero_lt_succ n⟩).isLt
+        next i hi =>
+          match k with
+          | ⟨k, hk⟩ =>
+            simp only [encodePi] at h
+            apply Fin.eq
+            have hpos : f ⟨0, Nat.zero_lt_succ n⟩ > 0 := by
+              apply Nat.pos_of_nonzero
+              intro hz
+              rw [Fin.prod, hz, Nat.zero_mul] at hk
+              contradiction
+            have hk' : k / f ⟨0, Nat.zero_lt_succ n⟩ < Fin.prod fun k => f (succ k) := by
+              rw [Nat.div_lt_iff_lt_mul hpos]
+              rw [Nat.mul_comm]
+              exact hk
+            have : decodePi (fun i => f (succ i)) ⟨k / f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩ = fun i => x (succ i) := by
+              rw [ih]
+              cases h
+              apply Fin.eq
+              clean
+              rw [Nat.add_comm]
+              rw [Nat.add_mul_div_left _ _ hpos]
+              rw [Nat.div_eq_of_lt (x ⟨0, Nat.zero_lt_succ n⟩).isLt]
+              rw [Nat.zero_add]
+              rfl
+            clean
+            transitivity (decodePi (fun i => f (succ i)) ⟨k / f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩ ⟨i, Nat.lt_of_succ_lt_succ hi⟩).val
+            · rfl
+            · rw [this]
+              rfl
 
 def equivPi (f : Fin n → Nat) : Equiv (Fin (prod f)) ((i : Fin n) → Fin (f i)) where
   fwd := decodePi f
