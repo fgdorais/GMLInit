@@ -747,4 +747,148 @@ def equivSubtype (p : Fin n → Prop) [DecidablePred p] : Equiv (Fin (count p)) 
   rev := encodeSubtype p
   spec {k x} := specSubtype p k x
 
+abbrev repr (s : Setoid (Fin n)) [DecidableRel s.r] (i : Fin n) : Prop := Fin.find? (s.r i) = some i
+
+def quot (s : Setoid (Fin n)) [DecidableRel s.r] : Nat := count (repr s)
+
+private def getRepr (s : Setoid (Fin n)) [DecidableRel s.r] (i : Fin n) : Fin (quot s) :=
+    match h : Fin.find? (s.r i) with
+    | some j =>
+      have : repr s j := by
+        have hij := of_decide_eq_true <| Fin.find?_some _ h
+        unfold repr
+        rw [←h]
+        congr
+        funext k
+        rw [decide_eq_decide]
+        constr
+        · intro hjk
+          transitivity j
+          · exact hij
+          · exact hjk
+        · intro hik
+          transitivity i
+          · symmetry
+            exact hij
+          · exact hik
+      encodeSubtype (repr s) ⟨j, this⟩
+    | none => absurd (Fin.find?_none i h) $ by
+      rw [decide_eq_false_iff_not]
+      intro h
+      apply h
+      exact Setoid.refl ..
+
+private theorem getRepr_eq_getRepr_of_equiv (s : Setoid (Fin n)) [DecidableRel s.r] {{i j : Fin n}} : s.r i j → getRepr s i = getRepr s j := by
+  intro hij
+  unfold getRepr
+  split
+  next i' hi' =>
+    split
+    next j' hj' =>
+      clean
+      congr
+      apply Option.some.inj
+      rw [←hi', ←hj']
+      congr
+      funext k
+      rw [decide_eq_decide]
+      constr
+      · intro hik
+        transitivity i
+        · symmetry
+          exact hij
+        · exact hik
+      · intro hjk
+        transitivity j
+        · exact hij
+        · exact hjk
+    next h =>
+      absurd (Fin.find?_none j h)
+      rw [decide_eq_false_iff_not]
+      intro h
+      apply h
+      exact Setoid.refl ..
+  next h =>
+    absurd (Fin.find?_none i h)
+    rw [decide_eq_false_iff_not]
+    intro h
+    apply h
+    exact Setoid.refl ..
+
+private theorem subtype_eq_of_val_equiv_val (s : Setoid (Fin n)) [DecidableRel s.r] {{i j : Subtype (repr s)}} : s.r i.val j.val → i = j := by
+  intro hij
+  match i, j with
+  | ⟨i, hri⟩, ⟨j, hrj⟩ =>
+    unfold repr at hri hrj
+    apply Subtype.eq
+    apply Option.some.inj
+    rw [←hri, ←hrj]
+    congr
+    funext k
+    rw [decide_eq_decide]
+    constr
+    · intro hik
+      transitivity i
+      · symmetry
+        exact hij
+      · exact hik
+    · intro hjk
+      transitivity j
+      · exact hij
+      · exact hjk
+
+def encodeQuotient (s : Setoid (Fin n)) [DecidableRel s.r] (i : Quotient s) : Fin (quot s) :=
+  Quotient.liftOn i (getRepr s) (getRepr_eq_getRepr_of_equiv s)
+
+def decodeQuotient (s : Setoid (Fin n)) [DecidableRel s.r] (i : Fin (quot s)) : Quotient s :=
+  Quotient.mk s (decodeSubtype (repr s) i)
+
+theorem specQuotient (s : Setoid (Fin n)) [DecidableRel s.r] (k : Fin (quot s)) (i : Quotient s) :
+  decodeQuotient s k = i ↔ encodeQuotient s i = k := by
+  induction i using Quotient.inductionOn with
+  | _ i =>
+  unfold decodeQuotient encodeQuotient
+  constr
+  · intro h
+    have h := Quotient.exact h
+    transitivity (getRepr s i)
+    · rfl
+    · unfold getRepr
+      split
+      next j hj =>
+        rw [←specSubtype]
+        have hij := of_decide_eq_true (Fin.find?_some j hj)
+        apply subtype_eq_of_val_equiv_val
+        transitivity i
+        · exact h
+        · exact hij
+      next hnone =>
+        absurd (Fin.find?_none i hnone)
+        rw [decide_eq_false_iff_not]
+        intro h
+        apply h
+        exact Setoid.refl ..
+  · intro h
+    have h : getRepr s i = k := h
+    apply Quotient.sound
+    unfold getRepr at h
+    split at h
+    next j hj =>
+      rw [←specSubtype] at h
+      rw [h]
+      symmetry
+      apply of_decide_eq_true
+      exact Fin.find?_some j hj
+    next hnone =>
+      absurd (Fin.find?_none i hnone)
+      rw [decide_eq_false_iff_not]
+      intro h
+      apply h
+      exact Setoid.refl ..
+
+def equivQuotient (s : Setoid (Fin n)) [DecidableRel s.r] : Equiv (Fin (quot s)) (Quotient s) where
+  fwd := decodeQuotient s
+  rev := encodeQuotient s
+  spec {k i} := specQuotient s k i
+
 end Fin
