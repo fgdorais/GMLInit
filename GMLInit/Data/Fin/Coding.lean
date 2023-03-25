@@ -2,6 +2,8 @@ import GMLInit.Data.Fin.Basic
 
 namespace Fin
 
+def val_ndrec (i : Fin n) (h : n = m) : (h ▸ i : Fin m).val = i.val := by cases h; rfl
+
 def equivEmpty : Equiv (Fin 0) Empty where
   fwd := (nomatch .)
   rev := (nomatch .)
@@ -592,5 +594,157 @@ def equivPi (f : Fin n → Nat) : Equiv (Fin (prod f)) ((i : Fin n) → Fin (f i
   fwd := decodePi f
   rev := encodePi f
   spec {k x} := specPi f k x
+
+def count (p : Fin n → Prop) [DecidablePred p] : Nat :=
+  sum fun i => if p i then 1 else 0
+
+def encodeSubtype (p : Fin n → Prop) [inst : DecidablePred p] (i : { i // p i }) : Fin (count p) :=
+  match n, p, inst, i with
+  | n+1, p, inst, ⟨⟨0, _⟩, hp⟩ =>
+    have : count p > 0 := by simp_arith only [count, sum, if_pos hp]
+    ⟨0, this⟩
+  | n+1, p, inst, ⟨⟨i+1, hi⟩, hp⟩ =>
+    match encodeSubtype (fun i => p (succ i)) ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, hp⟩ with
+    | ⟨k, hk⟩ =>
+      if h0 : p ⟨0, Nat.zero_lt_succ n⟩ then
+        have : count p = count (fun i => p (succ i)) + 1 := by
+          simp_arith only [count, sum, if_pos h0]; rfl
+        this ▸ ⟨k+1, Nat.succ_lt_succ hk⟩
+      else
+        have : count p = count (fun i => p (succ i)) := by
+          simp_arith only [count, sum, if_neg h0]; rfl
+        this ▸ ⟨k, hk⟩
+
+def decodeSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (count p)) : { i // p i } :=
+  match n, p, inst, k with
+  | n+1, p, inst, ⟨k, hk⟩ =>
+    if h0 : p ⟨0, Nat.zero_lt_succ n⟩ then
+      have : count p = count (fun i => p (succ i)) + 1 := by
+        simp_arith only [count, sum, if_pos h0]; rfl
+      match k with
+      | 0 => ⟨⟨0, Nat.zero_lt_succ n⟩, h0⟩
+      | k + 1 =>
+        match decodeSubtype (fun i => p (succ i)) ⟨k, Nat.lt_of_succ_lt_succ' (this ▸ hk)⟩ with
+        | ⟨⟨i, hi⟩, hp⟩ => ⟨⟨i+1, Nat.succ_lt_succ hi⟩, hp⟩
+    else
+      have : count p = count (fun i => p (succ i)) := by
+        simp_arith only [count, sum, if_neg h0]; rfl
+      match decodeSubtype (fun i => p (succ i)) ⟨k, this ▸ hk⟩ with
+      | ⟨⟨i, hi⟩, hp⟩ => ⟨⟨i+1, Nat.succ_lt_succ hi⟩, hp⟩
+
+theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (count p)) (i : { i // p i }) :
+  decodeSubtype p k = i ↔ encodeSubtype p i = k := by
+  induction n with
+  | zero =>
+    simp [count, sum] at k
+    cases k
+    contradiction
+  | succ n ih =>
+    constr
+    · intro h
+      simp only [decodeSubtype] at h
+      split at h
+      next h0 =>
+        have : count p = count (fun i => p (succ i)) + 1 := by
+          simp_arith only [count, sum, if_pos h0]; rfl
+        split at h
+        next =>
+          cases h
+          simp only [encodeSubtype]
+          apply Fin.eq
+          symmetry
+          assumption
+        next heq _ =>
+          cases h
+          simp only [encodeSubtype, dif_pos h0]
+          apply Fin.eq
+          simp only [val_ndrec]
+          match k with
+          | ⟨0, _⟩ => contradiction
+          | ⟨k+1, hk⟩ =>
+            cases heq
+            congr 1
+            transitivity (Fin.mk k (Nat.lt_of_succ_lt_succ (this ▸ hk))).val
+            · apply Fin.val_eq_of_eq
+              rw [←ih]
+              rfl
+            · rfl
+      next h0 =>
+        have : count p = count (fun i => p (succ i)) := by
+          simp_arith only [count, sum, if_neg h0]; rfl
+        match k, i with
+        | ⟨_, _⟩, ⟨⟨0, _⟩, _⟩ => contradiction
+        | ⟨k, hk⟩, ⟨⟨i+1, hi⟩, hp⟩ =>
+          apply Fin.eq
+          simp only [encodeSubtype, dif_neg h0, val_ndrec]
+          clean at h
+          transitivity (Fin.mk k (this ▸ hk)).val
+          · apply Fin.val_eq_of_eq
+            rw [←ih]
+            cases h
+            rfl
+          · rfl
+    · intro h
+      simp only [decodeSubtype]
+      split
+      next h0 =>
+        have : count p = count (fun i => p (succ i)) + 1 := by
+          simp_arith only [count, sum, if_pos h0]; rfl
+        split
+        next heq _ =>
+          match k, i with
+          | ⟨_,_⟩, ⟨⟨0,_⟩, _⟩ => rfl
+          | ⟨k,hk⟩, ⟨⟨i+1,hi⟩, hp⟩ =>
+            cases heq
+            simp only [encodeSubtype, dif_pos h0] at h
+            have h := val_eq_of_eq h
+            rw [val_ndrec] at h
+            contradiction
+        next k' hk' heq _ =>
+          match k, i with
+          | ⟨_,_⟩, ⟨⟨0, _⟩, _⟩ =>
+            simp only [encodeSubtype] at h
+            cases h
+            contradiction
+          | ⟨k,hk⟩, ⟨⟨i+1, hi⟩, hp⟩ =>
+            cases heq
+            have : decodeSubtype (fun i => p (succ i)) ⟨k', Nat.lt_of_succ_lt_succ' (this ▸ hk')⟩ = ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, hp⟩ := by
+              rw [ih]
+              simp only [encodeSubtype, dif_pos h0] at h
+              let h := val_eq_of_eq h
+              rw [val_ndrec] at h
+              cases h
+              rfl
+            congr
+            transitivity (⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, hp⟩ : { i // p (succ i) }).val.val
+            · apply congrArg Fin.val
+              apply congrArg Subtype.val
+              rw [ih]
+              have h := Fin.val_eq_of_eq h
+              simp only [encodeSubtype, dif_pos h0, val_ndrec] at h
+              cases h
+              rfl
+            · rfl
+      next h0 =>
+        match k, i with
+        | ⟨k, hk⟩, ⟨⟨0, _⟩, hp⟩ =>
+          contradiction
+        | ⟨k, hk⟩, ⟨⟨i+1, hi⟩, hp⟩ =>
+          congr
+          transitivity (⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, hp⟩ : { i // p (succ i) }).val.val
+          · apply congrArg Fin.val
+            apply congrArg Subtype.val
+            rw [ih]
+            apply Fin.eq
+            have h := Fin.val_eq_of_eq h
+            simp only [encodeSubtype, dif_neg h0, val_ndrec] at h
+            cases h
+            rfl
+          · rfl
+
+def equivSubtype (p : Fin n → Prop) [DecidablePred p] : Equiv (Fin (count p)) { i // p i } where
+  fwd := decodeSubtype p
+  rev := encodeSubtype p
+  spec {k x} := specSubtype p k x
 
 end Fin
