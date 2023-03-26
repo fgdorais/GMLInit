@@ -1,7 +1,4 @@
-import GMLInit.Data.Basic
 import GMLInit.Data.Equiv
-import GMLInit.Data.Index
-import GMLInit.Data.Fin
 
 class Find (α : Sort _) where
   find? : (α → Bool) → Option α
@@ -80,10 +77,10 @@ protected def ofEquiv {α β} [Find α] (e : Equiv α β) : Find β where
       rw [←e.fwd_rev x]
       apply find_none _ h'
 
-instance {α} (xs : List α) : Find (Index xs) where
-  find? := Index.find?
-  find_some := Index.find_some
-  find_none := Index.find_none
+-- instance {α} (xs : List α) : Find (Index xs) where
+--   find? := Index.find?
+--   find_some := Index.find_some
+--   find_none := Index.find_none
 
 -- instance (α) [Finite α] : Find α :=
 --   Find.ofEquiv (Finite.equivIndex α).inv
@@ -99,38 +96,38 @@ instance [Find α] : Find (Option α) where
     | p, some x, h =>
       clean at h
       split at h;
-      next h => cases h
-      next h =>
+      next => cases h
+      next =>
         apply Find.find_some (p := λ x => p (some x))
         split at h
         next h => cases h; assumption
-        next h => cases h
+        next => cases h
     | p, none, h =>
       clean at h
       split at h
       next => assumption
-      next h =>
+      next =>
         split at h
-        next h => cases h
-        next h => cases h
+        next => cases h
+        next => cases h
   find_none := by intro
     | p, some x, h =>
       clean at h
       split at h
-      next h => cases h
-      next h =>
+      next => cases h
+      next =>
         split at h
-        next h => cases h
+        next => cases h
         next =>
           apply find_none (p := λ x => p (some x))
           assumption
     | p, none, h =>
       clean at h
       split at h
-      next h => cases h
+      next => cases h
       next h =>
         split at h
-        next h => cases h
+        next => cases h
         next => assumption
 
 instance (α β) [Find α] [Find β] : Find (Sum α β) where
@@ -143,17 +140,17 @@ instance (α β) [Find α] [Find β] : Find (Sum α β) where
     | p, Sum.inl x, h =>
       clean at h
       split at h
-      next h =>
+      next =>
         cases h
         apply Find.find_some (p := λ x => p (Sum.inl x))
         assumption
-      next h => cases h
-      next h => cases h
+      next => cases h
+      next => cases h
     | p, Sum.inr y, h =>
       clean at h
       split at h
-      next h => cases h
-      next h =>
+      next => cases h
+      next =>
         cases h
         apply Find.find_some (p := λ y => p (Sum.inr y))
         assumption
@@ -172,8 +169,8 @@ instance (α β) [Find α] [Find β] : Find (Sum α β) where
     | p, Sum.inr y, h =>
       clean at h
       split at h
-      next h => cases h
-      next h => cases h
+      next => cases h
+      next => cases h
       next _ h' =>
         apply Find.find_none (p := λ x => p (Sum.inr x))
         cases h: find? (λ x => p (Sum.inr x)) with
@@ -270,20 +267,20 @@ instance (α) (r : α → α → Prop) [Find α] : Find (Quot r) where
       | mk x =>
         clean at h
         split at h
-        next h =>
+        next =>
           injection h with h
           rw [←h]
           apply Find.find_some (p := λ x => p (Quot.mk r x))
           assumption
-        next h => cases h
+        next => cases h
   find_none := by intro
     | p, x, h =>
       induction x using Quot.ind with
       | mk x =>
         clean at h
         split at h
-        next h => cases h
-        next h =>
+        next => cases h
+        next =>
           apply Find.find_none (p := λ x => p (Quot.mk r x))
           assumption
 

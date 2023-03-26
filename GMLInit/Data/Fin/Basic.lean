@@ -211,6 +211,7 @@ theorem find?_some {p : Fin n → Bool} (k : Fin n) : Fin.find? p = some k → p
 theorem find?_none {p : Fin n → Bool} (k : Fin n) : Fin.find? p = none → p k = false :=
   find?.loop_none 0 (Nat.zero_le n) k (Nat.zero_le k.val)
 
+@[specialize]
 protected def foldl : {n : Nat} → (α → Fin n → α) → α → α
 | 0, _, i => i
 | n+1, f, i => Fin.foldl (fun x i => f x i.succ) (f i ⟨0, Nat.zero_lt_succ n⟩)
@@ -222,6 +223,7 @@ theorem foldl_succ {n} (f : α → Fin (n+1) → α) (i : α) : Fin.foldl f i = 
   | zero => rfl
   | succ n ih => conv => lhs; unfold Fin.foldl; rw [ih]
 
+@[specialize]
 protected def foldr : {n : Nat} → (Fin n → α → α) → α → α
 | 0, _, i => i
 | n+1, f, i => Fin.foldr (fun i => f i.lift) (f ⟨n, Nat.lt_succ_self n⟩ i)
