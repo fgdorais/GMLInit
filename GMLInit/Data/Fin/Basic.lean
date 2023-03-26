@@ -16,6 +16,8 @@ protected abbrev modulus (_ : Fin n) := n
 theorem val_eq_val_of_heq : {m n : Nat} → m = n → (x : Fin m) → (y : Fin n) → HEq x y → x.val = y.val
 | _, _, rfl, ⟨_,_⟩, ⟨_,_⟩, HEq.rfl => rfl
 
+theorem val_ndrec (i : Fin n) (h : n = m) : (h ▸ i : Fin m).val = i.val := by cases h; rfl
+
 instance (i : Fin n) : Nat.IsPos i.modulus where
   is_pos := Nat.lt_of_le_of_lt (Nat.zero_le i.val) i.isLt
 

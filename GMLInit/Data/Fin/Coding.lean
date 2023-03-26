@@ -2,8 +2,6 @@ import GMLInit.Data.Fin.Basic
 
 namespace Fin
 
-def val_ndrec (i : Fin n) (h : n = m) : (h ▸ i : Fin m).val = i.val := by cases h; rfl
-
 def equivEmpty : Equiv (Fin 0) Empty where
   fwd := (nomatch .)
   rev := (nomatch .)
