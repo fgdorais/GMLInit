@@ -2,7 +2,6 @@ import GMLInit.Data.Basic
 import GMLInit.Data.Equiv
 import GMLInit.Data.Index
 import GMLInit.Data.Fin
-import GMLInit.Data.Finite
 
 class Find (α : Sort _) where
   find? : (α → Bool) → Option α
@@ -86,8 +85,8 @@ instance {α} (xs : List α) : Find (Index xs) where
   find_some := Index.find_some
   find_none := Index.find_none
 
-instance (α) [Finite α] : Find α :=
-  Find.ofEquiv (Finite.equivIndex α).inv
+-- instance (α) [Finite α] : Find α :=
+--   Find.ofEquiv (Finite.equivIndex α).inv
 
 instance [Find α] : Find (Option α) where
   find? p :=
