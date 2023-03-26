@@ -211,4 +211,88 @@ theorem find?_some {p : Fin n → Bool} (k : Fin n) : Fin.find? p = some k → p
 theorem find?_none {p : Fin n → Bool} (k : Fin n) : Fin.find? p = none → p k = false :=
   find?.loop_none 0 (Nat.zero_le n) k (Nat.zero_le k.val)
 
+protected def foldl : {n : Nat} → (α → Fin n → α) → α → α
+| 0, _, i => i
+| n+1, f, i => Fin.foldl (fun x i => f x i.succ) (f i ⟨0, Nat.zero_lt_succ n⟩)
+
+theorem foldl_zero (f : α → Fin 0 → α) (i : α) : Fin.foldl f i = i := rfl
+
+theorem foldl_succ {n} (f : α → Fin (n+1) → α) (i : α) : Fin.foldl f i = f (Fin.foldl (fun x i => f x i.lift) i) ⟨n, Nat.lt_succ_self n⟩ := by
+  induction n generalizing i with
+  | zero => rfl
+  | succ n ih => conv => lhs; unfold Fin.foldl; rw [ih]
+
+protected def foldr : {n : Nat} → (Fin n → α → α) → α → α
+| 0, _, i => i
+| n+1, f, i => Fin.foldr (fun i => f i.lift) (f ⟨n, Nat.lt_succ_self n⟩ i)
+
+theorem foldr_zero (f : Fin 0 → α → α) (i : α) : Fin.foldr f i = i := rfl
+
+theorem foldr_succ {n} (f : Fin (n+1) → α → α) (i : α) : Fin.foldr f i = f ⟨0, Nat.zero_lt_succ n⟩ (Fin.foldr (fun i => f i.succ) i) := by
+  induction n generalizing i with
+  | zero => rfl
+  | succ n ih => conv => lhs; unfold Fin.foldr; rw [ih]
+
+protected abbrev all {n} (p : Fin n → Bool) : Bool :=
+  Fin.foldr (fun i v => p i && v) true
+
+theorem forall_eq_true_of_all_eq_true : {n : Nat} → {p : Fin n → Bool} → Fin.all p = true → ∀ i, p i = true
+| n+1, p, h, ⟨0, _⟩ => by
+  rw [Fin.all, Fin.foldr_succ, Bool.and_eq_true] at h
+  exact h.left
+| n+1, p, h, ⟨i+1, hi⟩ => by
+  rw [Fin.all, Fin.foldr_succ, Bool.and_eq_true] at h
+  exact forall_eq_true_of_all_eq_true h.right ⟨i, Nat.lt_of_succ_lt_succ hi⟩
+
+theorem exists_eq_false_of_all_eq_false : {n : Nat} → {p : Fin n → Bool} → Fin.all p = false → ∃ i, p i = false
+| 0, _, h => Bool.noConfusion h
+| n+1, p, h => by
+  rw [Fin.all, Fin.foldr_succ, Bool.and_eq_false_iff] at h
+  match h with
+  | .inl h => exists ⟨0, Nat.zero_lt_succ n⟩
+  | .inr h => match exists_eq_false_of_all_eq_false h with
+    | ⟨⟨i,hi⟩,hp⟩ => exists ⟨i+1, Nat.succ_lt_succ hi⟩
+
+instance (p : Fin n → Prop) [DecidablePred p] : Decidable (∀ i, p i) :=
+  match hall : Fin.all fun i => decide (p i) with
+  | true => isTrue $ by
+    intro i
+    apply of_decide_eq_true
+    exact forall_eq_true_of_all_eq_true hall i
+  | false => isFalse $ by
+    intro h
+    match exists_eq_false_of_all_eq_false hall with
+    | ⟨i, hi⟩ => absurd h i; exact of_decide_eq_false hi
+
+protected abbrev any {n} (p : Fin n → Bool) : Bool :=
+  Fin.foldr (fun i v => p i || v) false
+
+theorem exists_eq_true_of_any_eq_true : {n : Nat} → {p : Fin n → Bool} → Fin.any p = true → ∃ i, p i = true
+| 0, _, h => Bool.noConfusion h
+| n+1, p, h => by
+  rw [Fin.any, Fin.foldr_succ, Bool.or_eq_true] at h
+  match h with
+  | .inl h => exists ⟨0, Nat.zero_lt_succ n⟩
+  | .inr h => match exists_eq_true_of_any_eq_true h with
+    | ⟨⟨i,hi⟩,hp⟩ => exists ⟨i+1, Nat.succ_lt_succ hi⟩
+
+theorem forall_eq_false_of_any_eq_false : {n : Nat} → {p : Fin n → Bool} → Fin.any p = false → ∀ i, p i = false
+| n+1, p, h, ⟨0, _⟩ => by
+  rw [Fin.any, Fin.foldr_succ, Bool.or_eq_false_iff] at h
+  exact h.left
+| n+1, p, h, ⟨i+1, hi⟩ => by
+  rw [Fin.any, Fin.foldr_succ, Bool.or_eq_false_iff] at h
+  exact forall_eq_false_of_any_eq_false h.right ⟨i, Nat.lt_of_succ_lt_succ hi⟩
+
+instance (p : Fin n → Prop) [DecidablePred p] : Decidable (∃ i, p i) :=
+  match hany : Fin.any fun i => decide (p i) with
+  | true => isTrue $ by
+    match exists_eq_true_of_any_eq_true hany with
+    | ⟨i, h⟩ => exists i; exact of_decide_eq_true h
+  | false => isFalse $ by
+    intro ⟨i, h⟩
+    absurd h
+    apply of_decide_eq_false
+    exact forall_eq_false_of_any_eq_false hany i
+
 end Fin
