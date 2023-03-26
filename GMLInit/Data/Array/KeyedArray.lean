@@ -20,10 +20,10 @@ def locate? (key : α) : Option (Fin a.size) :=
   Fin.find? fun i => p (a.get i) == key
 
 theorem locate?_some (key : α) (i : Fin a.size) : a.locate? key = some i → p (a.get i) == key := by
-  intro h; rw [Fin.find_some i h]
+  intro h; rw [Fin.find?_some i h]
 
 theorem locate?_none (key : α) (i : Fin a.size) : a.locate? key = none → p (a.get i) != key := by
-  intro h; rw [bne, Fin.find_none i h]; rfl
+  intro h; rw [bne, Fin.find?_none i h]; rfl
 
 theorem locate?_some_iff [EquivBEq α] (key : α) (i : Fin a.size) : a.locate? key = some i ↔ p (a.get i) == key := by
   constr
