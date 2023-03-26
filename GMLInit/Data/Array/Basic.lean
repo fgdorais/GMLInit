@@ -9,6 +9,10 @@ protected theorem eq : {as bs : Array α} → as.data = bs.data → as = bs
 
 @[simp] theorem data_nil {α} : #[].data = ([] : List α) := rfl
 
+/- get -/
+
+theorem get_fin_eq_data_get_fin {α} (as : Array α) (i : Fin as.size) : as.get i = as.data.get i := rfl
+
 /- set -/
 
 theorem get_set_of_eq (as : Array α) {i : Fin as.size} {j : Nat} {x : α} {hj : j < (as.set i x).size} : i.val = j → (as.set i x)[j]'hj = x := by
@@ -451,5 +455,33 @@ def join_step (as : Array (Array α)) (start stop : Nat) (hstart : start < stop)
   · rw [foldl_assoc] <;> assumption
 
 end join
+
+section ofFun
+variable {α n} (f : Fin n → α)
+
+unsafe def ofFunUnsafe : Array α := Id.run do
+  let mut res := #[]
+  for i in [:n] do
+    res := res.push (f ⟨i, lcProof⟩)
+  return res
+
+@[implemented_by ofFunUnsafe]
+protected def ofFun : Array α where
+  data := List.ofFun f
+
+theorem ofFun_size : (Array.ofFun f).size = n := by
+  unfold Array.ofFun
+  rw [Array.size_mk]
+  rw [List.ofFun_length]
+
+theorem ofFun_getElem (i : Fin (Array.ofFun f).size) : (Array.ofFun f)[i] = f (Array.ofFun_size f ▸ i) := by
+  unfold Array.ofFun
+  rw [Array.getElem_fin_eq_data_get]
+  rw [List.ofFun_get]
+
+theorem ofFun_get (i : Fin (Array.ofFun f).size) : (Array.ofFun f).get i = f (Array.ofFun_size f ▸ i) :=
+  ofFun_getElem f i
+
+end ofFun
 
 end Array
