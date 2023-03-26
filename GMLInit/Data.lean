@@ -1,4 +1,5 @@
 import GMLInit.Data.Basic
+import GMLInit.Data.Array
 import GMLInit.Data.BEq
 import GMLInit.Data.Bool
 import GMLInit.Data.Equiv
