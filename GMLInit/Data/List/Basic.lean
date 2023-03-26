@@ -1,5 +1,6 @@
 import GMLInit.Data.Basic
 import GMLInit.Data.Bool
+import GMLInit.Data.Fin.Basic
 import GMLInit.Data.Nat
 import GMLInit.Logic.ListConnectives
 import GMLInit.Meta.Basic
@@ -266,5 +267,49 @@ theorem and_any_distrib_right (p : α → Bool) (q : Bool) (as : List α) : (as.
     rw [any_cons]
     rw [Bool.and_or_distrib_right]
     rw [ih]
+
+/- ofFun -/
+
+@[inline]
+def ofFunTR {α n} (f : Fin n → α) : List α :=
+  let rec loop : Fin (n+1) → List α → List α
+  | ⟨0, _⟩, xs => xs
+  | ⟨i+1, hi⟩, xs => loop ⟨i, Nat.lt_trans (Nat.lt_succ_self i) hi⟩ (f ⟨i, Nat.lt_of_succ_lt_succ hi⟩ :: xs)
+  loop ⟨n, Nat.lt_succ_self n⟩ []
+
+@[implemented_by List.ofFunTR]
+protected def ofFun {α} : {n : Nat} → (f : Fin n → α) → List α
+| 0, _ => []
+| n+1, f => f ⟨0, Nat.zero_lt_succ n⟩ :: List.ofFun fun i => f i.succ
+
+theorem ofFun_length {α n} (f : Fin n → α) : (List.ofFun f).length = n := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    unfold List.ofFun
+    rw [List.length_cons]
+    rw [ih]
+
+theorem ofFun_get {α n} (f : Fin n → α) (i : Fin (List.ofFun f).length) : (List.ofFun f).get i = f (ofFun_length f ▸ i) := by
+  induction n with
+  | zero =>
+    match i with
+    | ⟨_,_⟩ => contradiction
+  | succ n ih =>
+    match i with
+    | ⟨0, _⟩ =>
+      transitivity (f ⟨0, Nat.zero_lt_succ n⟩)
+      · simp only [List.ofFun]
+        rfl
+      · congr 1
+        apply Fin.eq
+        rw [Fin.val_ndrec]
+    | ⟨i+1, hi⟩ =>
+      simp only [List.ofFun, getElem]
+      rw [List.get_cons_succ]
+      rw [ih]
+      congr 1
+      apply Fin.eq
+      simp only [Fin.succ, Fin.val_ndrec]
 
 end List
