@@ -113,6 +113,8 @@ instance : Finite Bool := Finite.ofEquiv Fin.equivBool.inv
 
 instance : Finite Ordering := Finite.ofEquiv Fin.equivOrdering.inv
 
+instance (n) : Finite (Fin n) := Finite.ofEquiv Equiv.id
+
 instance [Finite α] : Finite (Option α) :=
   let e₁ := Fin.equivOption (Finite.size α)
   let e₂ := Option.equiv (Finite.toEquiv α)
