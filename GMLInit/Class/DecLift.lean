@@ -46,6 +46,11 @@ instance (priority:=low) (p : Prop) [Decidable p] : DecLift (decide p) where
   instDecidable := inferInstance
   decide_eq := rfl
 
+instance (priority:=low) (b : Bool) : DecLift b where
+  toProp := b = true
+  instDecidable := inferInstance
+  decide_eq := by cases b <;> rfl
+
 instance : DecLift true where
   toProp := True
   instDecidable := inferInstance

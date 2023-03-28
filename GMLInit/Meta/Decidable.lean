@@ -28,7 +28,7 @@ set_option hygiene false in macro_rules
 syntax "dec_lift_hyp" ident* : tactic
 macro_rules
 | `(tactic| dec_lift_hyp $h:ident $hs:ident*) =>
-  `(tactic| have htmp := iff_of_dec_lift_eq_dec_lift $h; clear $h; have $h := htmp; clear htmp; dec_lift_hyp $hs:ident*)
+  `(tactic| have htmp := iff_of_dec_lift_eq_dec_lift $h; try clear $h; have $h := htmp; clear htmp; dec_lift_hyp $hs:ident*)
 | `(tactic| dec_lift_hyp) => `(tactic| skip)
 
 syntax (name := dec_lift) "dec_lift" (location)? : tactic
