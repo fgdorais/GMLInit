@@ -1,3 +1,4 @@
+import GMLInit.Class.DecLift
 import GMLInit.Data.Array
 import GMLInit.Data.Fin
 
@@ -80,6 +81,26 @@ instance (p : α → Prop) [DecidablePred p] : Decidable (∀ x, p x) :=
     apply of_decide_eq_true
     exact forall_eq_true_of_all_eq_true hall ..
 
+theorem decide_forall (p : α → Prop) [DecidablePred p] : decide (∀ x, p x) = Finite.all fun x => decide (p x) := by
+  match h : Finite.all fun x => decide (p x) with
+  | false =>
+    apply decide_eq_false
+    match exists_eq_false_of_all_eq_false h with
+    | ⟨x, hx⟩ =>
+      intro h
+      rw [decide_eq_true (h x)] at hx
+      contradiction
+  | true =>
+    apply decide_eq_true
+    intro x
+    apply of_decide_eq_true
+    apply forall_eq_true_of_all_eq_true h
+
+instance {α} (p : α → Bool) [Finite α] [(x : α) → DecLift (p x)] : DecLift (Finite.all p) where
+  toProp := ∀ x, DecLift.toProp (p x)
+  instDecidable := inferInstance
+  decide_eq := by rw [decide_forall]; congr; funext x; rw [DecLift.decide_eq]
+
 protected abbrev any {α} [Finite α] (p : α → Bool) : Bool :=
   Fin.any fun i => p (Finite.get α i)
 
@@ -105,6 +126,26 @@ instance (p : α → Prop) [DecidablePred p] : Decidable (∃ x, p x) :=
     apply of_decide_eq_false
     exact forall_eq_false_of_any_eq_false hany ..
 
+theorem decide_exists (p : α → Prop) [DecidablePred p] : decide (∃ x, p x) = Finite.any fun x => decide (p x) := by
+  match h : Finite.any fun x => decide (p x) with
+  | true =>
+    apply decide_eq_true
+    match exists_eq_true_of_any_eq_true h with
+    | ⟨x, hx⟩ =>
+      exists x
+      exact of_decide_eq_true hx
+  | false =>
+    apply decide_eq_false
+    intro ⟨x, hx⟩
+    absurd forall_eq_false_of_any_eq_false h x
+    rw [decide_eq_true hx]
+    trivial
+
+instance {α} (p : α → Bool) [Finite α] [(x : α) → DecLift (p x)] : DecLift (Finite.any p) where
+  toProp := ∃ x, DecLift.toProp (p x)
+  instDecidable := inferInstance
+  decide_eq := by rw [decide_exists]; congr; funext x; rw [DecLift.decide_eq]
+
 instance : Finite Empty := Finite.ofEquiv Fin.equivEmpty.inv
 
 instance : Finite Unit := Finite.ofEquiv Fin.equivUnit.inv
@@ -115,22 +156,22 @@ instance : Finite Ordering := Finite.ofEquiv Fin.equivOrdering.inv
 
 instance (n) : Finite (Fin n) := Finite.ofEquiv Equiv.id
 
-instance [Finite α] : Finite (Option α) :=
+instance (α) [Finite α] : Finite (Option α) :=
   let e₁ := Fin.equivOption (Finite.size α)
   let e₂ := Option.equiv (Finite.toEquiv α)
   Finite.ofEquiv <| Equiv.comp e₁.inv e₂
 
-instance [Finite α] [Finite β] : Finite (α ⊕ β) :=
+instance (α β) [Finite α] [Finite β] : Finite (α ⊕ β) :=
   let e₁ := Fin.equivSum (Finite.size α) (Finite.size β)
   let e₂ := Sum.equiv (Finite.toEquiv α) (Finite.toEquiv β)
   Finite.ofEquiv <| Equiv.comp e₁.inv e₂
 
-instance [Finite α] [Finite β] : Finite (α × β) :=
+instance (α β) [Finite α] [Finite β] : Finite (α × β) :=
   let e₁ := Fin.equivProd (Finite.size α) (Finite.size β)
   let e₂ := Prod.equiv (Finite.toEquiv α) (Finite.toEquiv β)
   Finite.ofEquiv <| Equiv.comp e₁.inv e₂
 
-instance [Finite α] [Finite β] : Finite (α → β) :=
+instance (α β) [Finite α] [Finite β] : Finite (α → β) :=
   let e₁ := Fin.equivFun (Finite.size β) (Finite.size α)
   let e₂ := Fun.equivND (Finite.toEquiv α) (Finite.toEquiv β)
   Finite.ofEquiv <| Equiv.comp e₁.inv e₂
