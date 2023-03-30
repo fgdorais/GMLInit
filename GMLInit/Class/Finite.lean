@@ -2,27 +2,25 @@ import GMLInit.Class.DecLift
 import GMLInit.Data.Array
 import GMLInit.Data.Fin
 
+instance {α} (β : α → Type _) [DecidableEq α] [(x : α) → DecidableEq (β x)] : DecidableEq ((x : α) × β x)
+| a₁, a₂ =>
+  match a₁, a₂, inferInstanceAs (Decidable (a₁.fst = a₂.fst)) with
+  | ⟨_,y₁⟩, ⟨_,y₂⟩, isTrue rfl =>
+    if h : y₁ = y₂ then
+      isTrue <| Sigma.eq rfl (heq_of_eq h)
+    else
+      isFalse fun | rfl => h rfl
+  | ⟨_,_⟩, ⟨_,_⟩, isFalse hne => isFalse fun | rfl => hne rfl
+
 class Finite (α : Type _) extends Array α where
   find : α → Fin toArray.size
   find_eq_iff_get_eq (x : α) (i : Fin toArray.size) : find x = i ↔ toArray.get i = x
+  decEq : DecidableEq α := by infer_instance
+
+attribute [instance] Finite.decEq
 
 namespace Finite
 variable (α) [inst : Finite α]
-
-instance : DecidableEq α :=
-  fun x y =>
-    if h : find x = find y then
-      isTrue $ by
-        rw [find_eq_iff_get_eq] at h
-        rw [←h]
-        rw [←find_eq_iff_get_eq]
-    else
-      isFalse $ by
-        intro h'
-        apply h
-        rw [find_eq_iff_get_eq]
-        rw [h']
-        rw [←find_eq_iff_get_eq]
 
 protected abbrev size := inst.toArray.size
 
@@ -39,7 +37,7 @@ protected def toEquiv : Equiv α (Fin (Finite.size α)) where
   rev := Finite.get α
   spec {x i} := Finite.find_eq_iff_get_eq x i
 
-protected def ofEquiv {α n} (e : Equiv α (Fin n)) : Finite α where
+protected def ofEquiv {α n} [DecidableEq α] (e : Equiv α (Fin n)) : Finite α where
   toArray := Array.ofFun e.rev
   find x := (Array.ofFun_size e.rev).symm ▸ e.fwd x
   find_eq_iff_get_eq x i := by
@@ -161,25 +159,39 @@ instance (α) [Finite α] : Finite (Option α) :=
   let e₂ := Option.equiv (Finite.toEquiv α)
   Finite.ofEquiv <| Equiv.comp e₁.inv e₂
 
-instance (α β) [Finite α] [Finite β] : Finite (α ⊕ β) :=
+instance (α β) [DecidableEq β] [Finite α] [Finite β] : Finite (α ⊕ β) :=
   let e₁ := Fin.equivSum (Finite.size α) (Finite.size β)
   let e₂ := Sum.equiv (Finite.toEquiv α) (Finite.toEquiv β)
   Finite.ofEquiv <| Equiv.comp e₁.inv e₂
 
-instance (α β) [Finite α] [Finite β] : Finite (α × β) :=
+instance (α β) [DecidableEq β] [Finite α] [Finite β] : Finite (α × β) :=
   let e₁ := Fin.equivProd (Finite.size α) (Finite.size β)
   let e₂ := Prod.equiv (Finite.toEquiv α) (Finite.toEquiv β)
   Finite.ofEquiv <| Equiv.comp e₁.inv e₂
 
-instance (α β) [Finite α] [Finite β] : Finite (α → β) :=
+instance {α : Type _} (β : α → Type _) [Finite α] [(x : α) → Finite (β x)] : Finite ((x : α) × (β x)) :=
+  let e₁ := Fin.equivSigma (fun i => Finite.size (β ((Finite.toEquiv α).rev i)))
+  let e₂ := Sigma.equiv (Finite.toEquiv α).inv (fun i => (Finite.toEquiv (β ((Finite.toEquiv α).inv.fwd i))).inv)
+  Finite.ofEquiv <| Equiv.comp e₁.inv e₂.inv
+
+instance (α β) [Finite α] [DecidableEq β] : DecidableEq (α → β)
+| f₁, f₂ =>
+  if h : ∀ x, f₁ x = f₂ x then
+    isTrue <| funext h
+  else
+    isFalse fun | rfl => h fun _ => rfl
+
+instance (α β) [DecidableEq β] [Finite α] [Finite β] : Finite (α → β) :=
   let e₁ := Fin.equivFun (Finite.size β) (Finite.size α)
   let e₂ := Fun.equivND (Finite.toEquiv α) (Finite.toEquiv β)
   Finite.ofEquiv <| Equiv.comp e₁.inv e₂
 
-instance {α : Type _} (β : α → Type _) [Finite α] [(x : α) → Finite (β x)] : Finite (Sigma β) :=
-  let e₁ := Fin.equivSigma (fun i => Finite.size (β ((Finite.toEquiv α).rev i)))
-  let e₂ := Sigma.equiv (Finite.toEquiv α).inv (fun i => (Finite.toEquiv (β ((Finite.toEquiv α).inv.fwd i))).inv)
-  Finite.ofEquiv <| Equiv.comp e₁.inv e₂.inv
+instance {α} (β : α → Type _) [Finite α] [(x : α) → DecidableEq (β x)] : DecidableEq ((x : α) → β x)
+| f₁, f₂ =>
+  if h : ∀ x, f₁ x = f₂ x then
+    isTrue <| funext h
+  else
+    isFalse fun | rfl => h fun _ => rfl
 
 instance {α : Type _} (β : α → Type _) [Finite α] [(x : α) → Finite (β x)] : Finite ((x : α) → β x) :=
   let e₁ := Fin.equivPi (fun i => Finite.size (β ((Finite.toEquiv α).rev i)))
