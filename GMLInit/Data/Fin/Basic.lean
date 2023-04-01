@@ -266,6 +266,32 @@ instance (p : Fin n → Prop) [DecidablePred p] : Decidable (∀ i, p i) :=
     match exists_eq_false_of_all_eq_false hall with
     | ⟨i, hi⟩ => absurd h i; exact of_decide_eq_false hi
 
+theorem decide_forall_eq_all {n} (p : Fin n → Prop) [(i : Fin n) → Decidable (p i)] : decide (∀ i, p i) = Fin.all fun i => decide (p i) := by
+  match h : Fin.all fun i => decide (p i) with
+  | true =>
+    have h := forall_eq_true_of_all_eq_true h
+    apply decide_eq_true
+    intro i
+    apply of_decide_eq_true
+    exact h i
+  | false =>
+    match exists_eq_false_of_all_eq_false h with
+    | ⟨i, hi⟩ =>
+      have hi := of_decide_eq_false hi
+      apply decide_eq_false
+      intro h
+      apply hi
+      exact h i
+
+instance (p : Fin n → Bool) [(i : Fin n) → DecLift (p i)] : DecLift (Fin.all p) where
+  toProp := ∀ i, DecLift.toProp (p i)
+  instDecidable := inferInstance
+  decide_eq := by
+    rw [decide_forall_eq_all]
+    congr
+    funext
+    rw [DecLift.decide_eq]
+
 protected abbrev any {n} (p : Fin n → Bool) : Bool :=
   Fin.foldr (fun i v => p i || v) false
 
@@ -296,5 +322,30 @@ instance (p : Fin n → Prop) [DecidablePred p] : Decidable (∃ i, p i) :=
     absurd h
     apply of_decide_eq_false
     exact forall_eq_false_of_any_eq_false hany i
+
+theorem decide_exists_eq_any {n} (p : Fin n → Prop) [(i : Fin n) → Decidable (p i)] : decide (∃ i, p i) = Fin.any fun i => decide (p i) := by
+  match h : Fin.any fun i => decide (p i) with
+  | true =>
+    match exists_eq_true_of_any_eq_true h with
+    | ⟨i, hi⟩ =>
+      have hi := of_decide_eq_true hi
+      apply decide_eq_true
+      exists i
+  | false =>
+    have h := forall_eq_false_of_any_eq_false h
+    apply decide_eq_false
+    intro ⟨i, hi⟩
+    absurd hi
+    apply of_decide_eq_false
+    exact h i
+
+instance (p : Fin n → Bool) [(i : Fin n) → DecLift (p i)] : DecLift (Fin.any p) where
+  toProp := ∃ i, DecLift.toProp (p i)
+  instDecidable := inferInstance
+  decide_eq := by
+    rw [decide_exists_eq_any]
+    congr
+    funext
+    rw [DecLift.decide_eq]
 
 end Fin
