@@ -5,14 +5,14 @@ import GMLInit.Meta.Relation
 structure Equiv.{u,v} (α : Sort u) (β : Sort v) : Sort (max 1 (max u v)) where
   fwd : α → β
   rev : β → α
-  spec {x y} : fwd x = y ↔ rev y = x
+  fwd_eq_iff_rev_eq {{x y}} : fwd x = y ↔ rev y = x
 
 namespace Equiv
 variable {α β γ δ}
 
-@[scoped simp] lemma fwd_rev (e : Equiv α β) (x) : e.fwd (e.rev x) = x := by rw [Equiv.spec]
+@[scoped simp] lemma fwd_rev (e : Equiv α β) (x) : e.fwd (e.rev x) = x := by rw [Equiv.fwd_eq_iff_rev_eq]
 
-@[scoped simp] lemma rev_fwd (e : Equiv α β) (x) : e.rev (e.fwd x) = x := by rw [←Equiv.spec]
+@[scoped simp] lemma rev_fwd (e : Equiv α β) (x) : e.rev (e.fwd x) = x := by rw [←Equiv.fwd_eq_iff_rev_eq]
 
 @[scoped simp] lemma comp_fwd_rev (e : Equiv α β) : e.fwd ∘ e.rev = id := funext e.fwd_rev
 
@@ -37,7 +37,7 @@ protected theorem ext {e₁ e₂ : Equiv α β} : (∀ x, e₁.fwd x = e₂.fwd 
 protected def id : Equiv α α where
   fwd := id
   rev := id
-  spec := by intros; constr <;> intro | rfl => rfl
+  fwd_eq_iff_rev_eq := by intros; constr <;> intro | rfl => rfl
 
 @[scoped simp] lemma id_fwd (x : α) : Equiv.id.fwd x = x := rfl
 
@@ -46,7 +46,7 @@ protected def id : Equiv α α where
 protected def comp (f : Equiv β γ) (e : Equiv α β) : Equiv α γ where
   fwd := f.fwd ∘ e.fwd
   rev := e.rev ∘ f.rev
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     clean unfold Function.comp
     constr
@@ -60,7 +60,7 @@ protected def comp (f : Equiv β γ) (e : Equiv α β) : Equiv α γ where
 protected def inv (e : Equiv α β) : Equiv β α where
   fwd := e.rev
   rev := e.fwd
-  spec := e.spec.symm
+  fwd_eq_iff_rev_eq x y := (e.fwd_eq_iff_rev_eq (x:=y) (y:=x)).symm
 
 @[scoped simp] lemma inv_fwd (e : Equiv α β) (x) : (Equiv.inv e).fwd x = e.rev x := rfl
 

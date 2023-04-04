@@ -35,7 +35,7 @@ theorem unprod_eq_iff_eq_prod (i : Index (List.prod xs ys)) (j : Index xs × Ind
 def prodEquiv (xs ys : List α) : Equiv (Index xs × Index ys) (Index (List.prod xs ys)) where
   fwd := prod
   rev := unprod
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro | rfl => exact unprod_prod ..

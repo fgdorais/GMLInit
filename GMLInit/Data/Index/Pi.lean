@@ -52,7 +52,7 @@ theorem unpi_eq_iff_eq_pi (k : Index (xs.pi f)) (h : (i : Index xs) → Index (f
 def piEquiv (xs : List α) (f : (x : α) → List (β x)) : Equiv ((i : Index xs) → Index (f i.val)) (Index (xs.pi f)) where
   fwd := pi
   rev := unpi
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro | rfl => exact unpi_pi ..

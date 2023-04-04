@@ -43,7 +43,7 @@ theorem unjoin_eq_iff_eq_join (k : Index xss.join) (i : (i : Index xss) × (Inde
 def joinEquiv (xss : List (List α)) : Equiv ((i : Index xss) × Index i.val) (Index xss.join) where
   fwd := join
   rev := unjoin
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro | rfl => exact unjoin_join ..

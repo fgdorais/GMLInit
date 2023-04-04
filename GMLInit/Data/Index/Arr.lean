@@ -32,7 +32,7 @@ theorem unarr_eq_iff_eq_arr (k : Index (List.arr xs ys)) (h : Index xs → Index
 def arrEquiv (xs : List α) (ys : List β) : Equiv (Index xs → Index ys) (Index (List.arr xs ys)) where
   fwd := arr
   rev := unarr
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro | rfl => exact unarr_arr ..

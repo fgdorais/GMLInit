@@ -45,7 +45,7 @@ theorem unbind_eq_iff_eq_bind {xs} (i : Index (xs.bind f)) (j : (i : Index xs) �
 def bindEquiv (xs : List α) : Equiv ((i : Index xs) × Index (f i.val)) (Index (xs.bind f)) where
   fwd := bind f
   rev := unbind f
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro | rfl => exact unbind_bind ..

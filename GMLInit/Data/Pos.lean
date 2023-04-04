@@ -557,7 +557,7 @@ theorem ofInd_toInd (n : Pos) : Pos.ofInd n.toInd = n := by
 theorem asIndEquiv : Equiv Pos Pos.asInd where
   fwd := Pos.toInd
   rev := Pos.ofInd
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro | rfl => exact ofInd_toInd ..

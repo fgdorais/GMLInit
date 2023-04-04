@@ -5,12 +5,12 @@ namespace Fin
 def equivEmpty : Equiv (Fin 0) Empty where
   fwd := (nomatch .)
   rev := (nomatch .)
-  spec {k} := nomatch k
+  fwd_eq_iff_rev_eq {k} := nomatch k
 
 def equivUnit : Equiv (Fin 1) Unit where
   fwd _ := ()
   rev _ := ⟨0, Nat.zero_lt_one⟩
-  spec {k x} := match k, x with
+  fwd_eq_iff_rev_eq {k x} := match k, x with
   | ⟨0, _⟩, () => ⟨fun _ => rfl, fun _ => rfl⟩
 
 def equivBool : Equiv (Fin 2) Bool where
@@ -20,7 +20,7 @@ def equivBool : Equiv (Fin 2) Bool where
   rev
   | false => ⟨0, Nat.zero_lt_succ 1⟩
   | true => ⟨1, Nat.succ_lt_succ Nat.zero_lt_one⟩
-  spec {k x} := match k, x with
+  fwd_eq_iff_rev_eq {k x} := match k, x with
   | ⟨0, _⟩, false  => ⟨fun _ => rfl, fun _ => rfl⟩
   | ⟨0, _⟩, true  => ⟨Bool.noConfusion, fun h => Nat.noConfusion (Fin.val_eq_of_eq h)⟩
   | ⟨1, _⟩, false  => ⟨Bool.noConfusion, fun h => Nat.noConfusion (Fin.val_eq_of_eq h)⟩
@@ -35,7 +35,7 @@ def equivOrdering : Equiv (Fin 3) Ordering where
   | .eq => ⟨0, Nat.zero_lt_succ 2⟩
   | .lt => ⟨1, Nat.succ_lt_succ (Nat.zero_lt_succ 1)⟩
   | .gt => ⟨2, Nat.succ_lt_succ (Nat.succ_lt_succ Nat.zero_lt_one)⟩
-  spec {k x} := match k, x with
+  fwd_eq_iff_rev_eq {k x} := match k, x with
   | ⟨0, _⟩, .eq  => ⟨fun _ => rfl, fun _ => rfl⟩
   | ⟨0, _⟩, .lt  => ⟨Ordering.noConfusion, fun h => Nat.noConfusion (Fin.val_eq_of_eq h)⟩
   | ⟨0, _⟩, .gt  => ⟨Ordering.noConfusion, fun h => Nat.noConfusion (Fin.val_eq_of_eq h)⟩
@@ -59,7 +59,7 @@ def equivOption (n : Nat) : Equiv (Fin (n+1)) (Option (Fin n)) where
   rev
   | some i => encodeOptionSome i
   | none => encodeOptionNone
-  spec {k x} := match k, x with
+  fwd_eq_iff_rev_eq {k x} := match k, x with
   | ⟨k, hk⟩, some ⟨i, hi⟩ => by
     constr
     · intro h
@@ -136,7 +136,7 @@ def equivSum (m n : Nat) : Equiv (Fin (m + n)) (Sum (Fin m) (Fin n)) where
   rev
   | .inl x => encodeSumLeft x
   | .inr y => encodeSumRight y
-  spec {k x} := match k, x with
+  fwd_eq_iff_rev_eq {k x} := match k, x with
   | ⟨k, hk⟩, .inl ⟨i, hi⟩ => by
     constr
     · intro h
@@ -217,7 +217,7 @@ abbrev decodeProd (k : Fin (m * n)) := (decodeProdLeft k, decodeProdRight k)
 def equivProd (m n : Nat) : Equiv (Fin (m * n)) (Fin m × Fin n) where
   fwd := decodeProd
   rev := encodeProd
-  spec {k x} := match k, x with
+  fwd_eq_iff_rev_eq {k x} := match k, x with
   | ⟨k, hk⟩, (⟨i,hi⟩, ⟨j,hj⟩) => by
     constr
     · intro h
@@ -346,7 +346,7 @@ theorem specFun (k : Fin (n ^ m)) (x : Fin m → Fin n) :
 def equivFun (n m : Nat) : Equiv (Fin (n ^ m)) (Fin m → Fin n) where
   fwd := decodeFun
   rev := encodeFun
-  spec {k x} := specFun k x
+  fwd_eq_iff_rev_eq {k x} := specFun k x
 
 def sum : {n : Nat} → (Fin n → Nat) → Nat
 | 0, _ => 0
@@ -470,7 +470,7 @@ theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin 
 def equivSigma (f : Fin n → Nat) : Equiv (Fin (sum f)) ((i : Fin n) × Fin (f i)) where
   fwd := decodeSigma f
   rev := encodeSigma f
-  spec {k x} := specSigma f k x
+  fwd_eq_iff_rev_eq {k x} := specSigma f k x
 
 def prod : {n : Nat} → (Fin n → Nat) → Nat
 | 0, _ => 1
@@ -591,7 +591,7 @@ theorem specPi (f : Fin n → Nat) (k : Fin (prod f)) (x : (i : Fin n) → Fin (
 def equivPi (f : Fin n → Nat) : Equiv (Fin (prod f)) ((i : Fin n) → Fin (f i)) where
   fwd := decodePi f
   rev := encodePi f
-  spec {k x} := specPi f k x
+  fwd_eq_iff_rev_eq {k x} := specPi f k x
 
 def count (p : Fin n → Prop) [DecidablePred p] : Nat :=
   sum fun i => if p i then 1 else 0
@@ -743,7 +743,7 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
 def equivSubtype (p : Fin n → Prop) [DecidablePred p] : Equiv (Fin (count p)) { i // p i } where
   fwd := decodeSubtype p
   rev := encodeSubtype p
-  spec {k x} := specSubtype p k x
+  fwd_eq_iff_rev_eq {k x} := specSubtype p k x
 
 abbrev repr (s : Setoid (Fin n)) [DecidableRel s.r] (i : Fin n) : Prop := Fin.find? (s.r i) = some i
 
@@ -887,6 +887,6 @@ theorem specQuotient (s : Setoid (Fin n)) [DecidableRel s.r] (k : Fin (quot s)) 
 def equivQuotient (s : Setoid (Fin n)) [DecidableRel s.r] : Equiv (Fin (quot s)) (Quotient s) where
   fwd := decodeQuotient s
   rev := encodeQuotient s
-  spec {k i} := specQuotient s k i
+  fwd_eq_iff_rev_eq {k i} := specQuotient s k i
 
 end Fin

@@ -6,7 +6,7 @@ variable {α β : Type _}
 def equiv (e : Equiv α β) : Equiv (List α) (List β) where
   fwd := List.map e.fwd
   rev := List.map e.rev
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro h; rw [←h, map_map, e.comp_rev_fwd, map_id]

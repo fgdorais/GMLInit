@@ -36,7 +36,7 @@ theorem unoption_eq_iff_eq_option (k : Index (List.option xs)) (i : Option (Inde
 def optionEquiv (xs : List α) : Equiv (Option (Index xs)) (Index (List.option xs)) where
   fwd := option
   rev := unoption
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro | rfl => exact unoption_option ..

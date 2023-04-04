@@ -43,7 +43,7 @@ theorem iota_val (i : Index xs.indexIota) : iota (val i) = i := by
 def iotaEquiv (xs : List α) : Equiv (Index xs) (Index xs.indexIota) where
   fwd := iota
   rev := val
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro | rfl => exact val_iota ..

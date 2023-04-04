@@ -47,7 +47,7 @@ theorem unmap_eq_iff_eq_map {xs : List α} (i : Index (xs.map f)) (j : Index xs)
 def mapEquiv (xs : List α) : Equiv (Index xs) (Index (xs.map f)) where
   fwd := map f
   rev := unmap f
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro | rfl => exact unmap_map ..

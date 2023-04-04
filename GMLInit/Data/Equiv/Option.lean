@@ -6,10 +6,10 @@ def equiv {α β} (e : Equiv α β) : Equiv (Option α) (Option β) where
   fwd
   | some x => some (e.fwd x)
   | none => none
-  rev  
+  rev
   | some x => some (e.rev x)
   | none => none
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intro
     | some _, some _ =>
       constr

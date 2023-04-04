@@ -14,7 +14,7 @@ def decodeOption : Nat → Option Nat
 def equivOption : Equiv (Option Nat) Nat where
   fwd := encodeOption
   rev := decodeOption
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intro
     | none, y =>
       constr

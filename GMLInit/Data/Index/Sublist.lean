@@ -180,7 +180,7 @@ theorem val_unsublist_eq_val_val {xs : List α} (i : Index (xs.sublist p)) : (i.
 def sublistEquiv (xs : List α) : Equiv { i : Index xs // p i.val } (Index (xs.sublist p)) where
   fwd | ⟨i,hi⟩ => sublist p i hi
   rev i := ⟨unsublist p i, val_unsublist_eq_val_val p i ▸ i.val.property⟩
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros i j
     clean
     rw [sublist_eq_iff_eq_unsublist]

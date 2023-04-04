@@ -178,7 +178,7 @@ class Comparison {α} (r : α → α → Prop) : Prop where
 @[default_instance]
 instance {α} (r : α → α → Prop) [Comparison r] : HComparison r r := ⟨Comparison.compare⟩
 
-def Transitive.toComparison {α} (r : α → α → Prop) [ComplementedRel r] [Transitive r] : Comparison (λ x y => ¬ r y x) where
+def Transitive.toComparison {α} (r : α → α → Prop) [ComplementedRel r] [Transitive r] : Comparison fun x y => ¬ r y x where
   compare := by
     intro x y nxy z
     by_cases r z x using Complemented with
@@ -191,7 +191,7 @@ def Transitive.toComparison {α} (r : α → α → Prop) [ComplementedRel r] [T
       apply nxy
       exact Transitive.trans hzy hxz
 
-instance Comparison.toTransitive {α} (r : α → α → Prop) [Comparison r] : Transitive (λ x y => ¬ r y x) where
+instance Comparison.toTransitive {α} (r : α → α → Prop) [Comparison r] : Transitive fun x y => ¬ r y x where
   trans := by
     intros x y z nxy nyz hxz
     cases Comparison.compare hxz y with
@@ -211,7 +211,7 @@ class Connex {α} (r : α → α → Prop) : Prop where
 @[default_instance]
 instance {α} (r : α → α → Prop) [Connex r] : HConnex r (.≠.) := ⟨Connex.connex⟩
 
-def Connex.toAntisymmetric {α} (r : α → α → Prop) [StableEq α] [Connex r] : Antisymmetric (λ x y => ¬ r y x) where
+def Connex.toAntisymmetric {α} (r : α → α → Prop) [StableEq α] [Connex r] : Antisymmetric fun x y => ¬ r y x where
   antisymm := by
     intro x y nxy nyx
     by_contradiction

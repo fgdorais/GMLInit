@@ -14,7 +14,7 @@ def equiv {α₁ α₂} {s₁ : Setoid α₁} {s₂ : Setoid α₂} (e : Equiv �
     rw [H]
     rw [e.fwd_rev, e.fwd_rev]
     exact h
-  spec {x y} := by
+  fwd_eq_iff_rev_eq {x y} := by
     induction x, y using Quotient.inductionOn₂ with
     | _ x y =>
       constr

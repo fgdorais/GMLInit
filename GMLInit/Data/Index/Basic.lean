@@ -211,7 +211,7 @@ theorem toFin_ofFin {α} {xs : List α} (i : Fin xs.length) : (Index.ofFin i).to
 def equivFin {α} (xs : List α) : Equiv (Index xs) (Fin xs.length) where
   fwd := Index.toFin
   rev := Index.ofFin
-  spec {_ _} := by
+  fwd_eq_iff_rev_eq {_ _} := by
     constr
     · intro | rfl => exact ofFin_toFin ..
     · intro | rfl => exact toFin_ofFin ..

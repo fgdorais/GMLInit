@@ -99,7 +99,7 @@ theorem eval_cons_succ {α n} (a : α) (as : LList α n) (i : Fin n) : (a :: as)
 def equiv (α n) : Equiv (LList α n) (Fin n → α) where
   fwd := LList.eval
   rev := LList.mk
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros as f
     constr
     · intro h

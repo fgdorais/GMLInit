@@ -79,7 +79,7 @@ protected def eval : {αs : List (Sort _)} → HList αs → (i : Index αs) →
 def equiv (αs : List (Sort _)) : Equiv (HList αs) ((i : Index αs) → i.val) where
   fwd := HList.eval
   rev := HList.mk
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros as f
     constr
     · intro h

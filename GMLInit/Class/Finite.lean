@@ -35,7 +35,7 @@ theorem find_get (i : Fin (Finite.size α)) : Finite.find (Finite.get α i) = i 
 protected def toEquiv : Equiv α (Fin (Finite.size α)) where
   fwd := Finite.find
   rev := Finite.get α
-  spec {x i} := Finite.find_eq_iff_get_eq x i
+  fwd_eq_iff_rev_eq {x i} := Finite.find_eq_iff_get_eq x i
 
 protected def ofEquiv {α n} [DecidableEq α] (e : Equiv α (Fin n)) : Finite α where
   toArray := Array.ofFun e.rev
@@ -44,12 +44,12 @@ protected def ofEquiv {α n} [DecidableEq α] (e : Equiv α (Fin n)) : Finite α
     constr
     · intro h
       rw [Array.ofFun_get]
-      rw [←e.spec]
+      rw [←e.fwd_eq_iff_rev_eq]
       rw [←h]
       elim_casts
     · intro h
       rw [Array.ofFun_get] at h
-      rw [←e.spec] at h
+      rw [←e.fwd_eq_iff_rev_eq] at h
       clean
       rw [h]
       elim_casts

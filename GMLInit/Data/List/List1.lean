@@ -39,7 +39,7 @@ theorem sizeOf_toList (xs : List1 α ) : sizeOf xs = 1 + sizeOf xs.toList := rfl
 | .cons x [] => .pure x
 | .cons x (x' :: xs') => .cons x (toIndView (.cons x' xs'))
 
-theorem toList1_eq_iff_toIndView_eq {xs : List1.IndView α} {ys : List1 α} :
+theorem toList1_eq_iff_toIndView_eq {{xs : List1.IndView α}} {{ys : List1 α}} :
   xs.toList1 = ys ↔ ys.toIndView = xs := by
   match xs, ys with
   | .pure x, .cons y [] =>
@@ -80,7 +80,7 @@ theorem toList1_eq_iff_toIndView_eq {xs : List1.IndView α} {ys : List1 α} :
 def equivIndView (α : Type _) : Equiv (List1 α) (List1.IndView α) where
   fwd := List1.toIndView
   rev := IndView.toList1
-  spec := toList1_eq_iff_toIndView_eq.symm
+  fwd_eq_iff_rev_eq xs ys := (toList1_eq_iff_toIndView_eq (xs:=ys) (ys:=xs)).symm
 
 theorem IndView.sizeOf_toList1 (xs : List1.IndView α) : sizeOf xs.toList1 = 2 + sizeOf xs := by
   induction xs with

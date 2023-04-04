@@ -3,7 +3,7 @@ import GMLInit.Data.Index.Append
 import GMLInit.Data.Index.Map
 
 namespace Index
-variable {α} {β : α → Type _} {f : (x : α) → List (β x)} {xs : List α} 
+variable {α} {β : α → Type _} {f : (x : α) → List (β x)} {xs : List α}
 
 def sigma : {xs : List α} → (i : Index xs) × Index (f i.val) → Index (xs.sigma f)
 | x::_, ⟨head, j⟩ => append (.inl (j.map (Sigma.mk x)))
@@ -44,7 +44,7 @@ theorem unsigma_eq_iff_eq_sigma (k : Index (xs.sigma f)) (i : (i : Index xs) × 
 def sigmaEquiv (xs : List α) (f : (x : α) → List (β x)) : Equiv ((i : Index xs) × (Index (f i.val))) (Index (xs.sigma f)) where
   fwd := sigma
   rev := unsigma
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro | rfl => exact unsigma_sigma ..

@@ -52,7 +52,7 @@ protected inductive IndView : Nat → Type
 | _+1, ⟨0, _⟩ => IndView.zero
 | _+1, ⟨i+1, hi⟩ => IndView.succ (Fin.toIndView ⟨i, Nat.lt_of_succ_lt_succ hi⟩)
 
-theorem toIndView_eq_iff_toFin_eq {n : Nat} {i : Fin n} {j : Fin.IndView n} : i.toIndView = j ↔ j.toFin = i := by
+theorem toIndView_eq_iff_toFin_eq {n : Nat} {{i : Fin n}} {{j : Fin.IndView n}} : i.toIndView = j ↔ j.toFin = i := by
   match n, i, j with
   | n+1, ⟨0, _⟩, IndView.zero =>
     constr
@@ -72,13 +72,13 @@ theorem toIndView_eq_iff_toFin_eq {n : Nat} {i : Fin n} {j : Fin.IndView n} : i.
     · intro h
       rw [IndView.toFin, hsucc]
       congr
-      apply toIndView_eq_iff_toFin_eq.mp
+      rw [←toIndView_eq_iff_toFin_eq]
       exact IndView.succ.inj h
     · intro h
       rw [IndView.toFin, hsucc] at h
       rw [Fin.toIndView]
       congr
-      apply toIndView_eq_iff_toFin_eq.mpr
+      rw [toIndView_eq_iff_toFin_eq]
       exact succ_inj h
 
 theorem toIndView_toFin {n : Nat} (i : Fin.IndView n) : i.toFin.toIndView = i :=
@@ -90,7 +90,7 @@ theorem toFin_toIndView {n : Nat} (i : Fin n) : i.toIndView.toFin = i :=
 def equivIndView (n : Nat) : Equiv (Fin n) (Fin.IndView n) where
   fwd := Fin.toIndView
   rev := IndView.toFin
-  spec := toIndView_eq_iff_toFin_eq
+  fwd_eq_iff_rev_eq := toIndView_eq_iff_toFin_eq
 
 protected def recInd.{u} {motive : (n : Nat) → Fin n → Sort u}
   (zero : {n : Nat} → motive (n+1) Fin.zero)

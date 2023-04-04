@@ -169,7 +169,7 @@ def decodeProd (n : Nat) : Nat × Nat := (n.fst, n.snd)
 def prodEquiv : Equiv Nat (Nat × Nat) where
   fwd n := (n.fst, n.snd)
   rev p := pair p.fst p.snd
-  spec := by intro
+  fwd_eq_iff_rev_eq := by intro
     | n, (n₁,n₂) =>
       clean
       constr

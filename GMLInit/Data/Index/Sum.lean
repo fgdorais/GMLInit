@@ -40,7 +40,7 @@ theorem unsum_eq_iff_eq_sum (k : Index (List.sum xs ys)) (i : Sum (Index xs) (In
 def sumEquiv (xs : List α) (ys : List β) : Equiv (Sum (Index xs) (Index ys)) (Index (List.sum xs ys)) where
   fwd := sum
   rev := unsum
-  spec := by
+  fwd_eq_iff_rev_eq := by
     intros
     constr
     · intro | rfl => exact unsum_sum ..

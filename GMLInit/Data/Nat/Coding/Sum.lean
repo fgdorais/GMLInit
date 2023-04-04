@@ -130,7 +130,7 @@ def decodeSum (n : Nat) : Sum Nat Nat :=
 def equivSum : Equiv (Sum Nat Nat) Nat where
   fwd := encodeSum
   rev := decodeSum
-  spec := by intro
+  fwd_eq_iff_rev_eq := by intro
     | .inl m, n =>
       clean unfold encodeSum decodeSum
       split
