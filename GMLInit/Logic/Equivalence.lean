@@ -59,7 +59,6 @@ instance [PartialEquivalence r] : Equivalence (PartialEquivalence.toSubtype r) w
 
 class Apartness extends Symmetric r, Comparison r : Prop where
   protected irrefl (x) : ¬ r x x
-
 instance [self : Apartness r] : Irreflexive r := ⟨self.irrefl⟩
 
 protected def Apartness.infer [Irreflexive r] [Symmetric r] [Comparison r] : Apartness r where
@@ -95,14 +94,11 @@ class TightApartness {α} (r : α → α → Prop) extends Apartness r : Prop wh
   protected tight {x y} : ¬ r x y → x = y
 
 namespace TightApartness
-variable [TightApartness r] 
 
-theorem eq_iff_not_apart : x = y ↔ ¬ r x y := by
+theorem eq_iff_not_apart {α} {r : α → α → Prop} [TightApartness r] (x y : α) : x = y ↔ ¬ r x y := by
   constr
   · intro | rfl => irreflexivity
   · exact TightApartness.tight
-
-instance : StableEq α := λ _ _ => Iff.subst (TightApartness.eq_iff_not_apart r).symm inferInstance
 
 end TightApartness
 
