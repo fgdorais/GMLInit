@@ -120,17 +120,23 @@ protected theorem gt_of_sub_pos {x y : Nat} : x - y > 0 → x > y :=
 protected theorem sub_pos_of_gt {x y : Nat} : x > y → x - y > 0 :=
   (Nat.gt_iff_sub_pos x y).mp
 
-protected theorem sub_le_iff_le_add (x y z : Nat) : x - y ≤ z ↔ x ≤ y + z := by
-  induction x, y with
-  | left x => rw [Nat.sub_zero, Nat.zero_add]
-  | right y => rw [Nat.zero_sub]; constr <;> (intro; apply Nat.zero_le)
-  | diag x y H => rw [Nat.succ_sub_succ, Nat.succ_add', Nat.succ_le_succ_iff_le]; exact H
+-- protected theorem sub_le_iff_le_add'' (x y z : Nat) : x - y ≤ z ↔ x ≤ y + z := by
+--   induction x, y with
+--   | left x => rw [Nat.sub_zero, Nat.zero_add]
+--   | right y => rw [Nat.zero_sub]; constr <;> (intro; apply Nat.zero_le)
+--   | diag x y H => rw [Nat.succ_sub_succ, Nat.succ_add', Nat.succ_le_succ_iff_le]; exact H
 
-protected theorem sub_le_of_le_add' {x y z : Nat} : x ≤ y + z → x - y ≤ z :=
-  (Nat.sub_le_iff_le_add x y z).mpr
+protected theorem sub_le_of_le_add' {x y z : Nat} : x ≤ y + z → x - y ≤ z := by
+  intro h
+  rw [Nat.add_comm] at h
+  rw [Nat.sub_le_iff_le_add]
+  exact h
 
-protected theorem le_add_of_sub_le' {x y z : Nat} : x - y ≤ z → x ≤ y + z :=
-  (Nat.sub_le_iff_le_add x y z).mp
+protected theorem le_add_of_sub_le' {x y z : Nat} : x - y ≤ z → x ≤ y + z := by
+  intro h
+  rw [Nat.add_comm]
+  rw [←Nat.sub_le_iff_le_add]
+  exact h
 
 protected theorem le_sub_iff_add_le_of_ge (x y z : Nat) (h : y ≥ z) : x ≤ y - z ↔ x + z ≤ y := by
   induction y, z with
@@ -200,7 +206,7 @@ theorem lt_sub_of_add_lt' {x y z : Nat} : x + y < z → x < z - y :=
 
 protected theorem sub_le_right (x y : Nat) : x - y ≤ x := by
   rw [Nat.sub_le_iff_le_add]
-  exact Nat.le_add_left ..
+  exact Nat.le_add_right ..
 
 protected theorem sub_lt_of_pos_of_pos_right {x y : Nat} : x > 0 → y > 0 → x - y < x := by
   intro hx hy
@@ -211,8 +217,7 @@ protected theorem sub_lt_of_pos_of_pos_right {x y : Nat} : x > 0 → y > 0 → x
 -- assert theorem sub_le_sub_left {x y : Nat} (h : x ≤ y) (z : Nat) : x - z ≤ y - z
 
 protected theorem sub_le_sub_of_ge_right {x y : Nat} (h : x ≥ y) (z : Nat) : z - x ≤ z - y :=
-  Nat.sub_le_of_le_add' $
-  calc
+  Nat.sub_le_of_le_add' $ calc
   _ ≤ z + (y - z) := by apply Nat.le_add_right
   _ = y + (z - y) := by rw [Nat.add_sub_comm]
   _ ≤ x + (z - y) := by apply Nat.add_le_add_right h

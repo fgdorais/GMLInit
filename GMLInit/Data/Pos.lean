@@ -625,7 +625,7 @@ def toBin (n : Pos) : Pos.asBin :=
       rw [Nat.mul_succ, Nat.two_mul]
       apply Nat.add_lt_add_right
       apply Nat.lt_succ_of_le
-      rw [Nat.add_eq, Nat.add_assoc]
+      rw [Nat.add_assoc]
       apply Nat.le_add_right
     .bit1 (toBin (Pos.succ q))
 termination_by _ => n.toNat
