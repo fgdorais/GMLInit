@@ -13,8 +13,7 @@ protected theorem le_or_gt (x y : Nat) : x ≤ y ∨ x > y :=
 
 -- assert theorem lt_or_eq_of_le {x y : Nat} : x ≤ y → x < y ∨ x = y
 
-protected theorem le_iff_lt_or_eq (x y : Nat) : x ≤ y ↔ x < y ∨ x = y :=
-  ⟨Nat.lt_or_eq_of_le, λ h => Or.elim h Nat.le_of_lt Nat.le_of_eq⟩
+-- assert theorem le_iff_lt_or_eq (x y : Nat) : x ≤ y ↔ x < y ∨ x = y
 
 -- assert theorem le_of_lt {x y : Nat} : x < y → x ≤ y
 

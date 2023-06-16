@@ -35,8 +35,7 @@ protected theorem sub_assoc (x y z : Nat) : (x - y) - z = x - (y + z) := by
     _ = (x - (y + z)) - 1  := by rw [H]
     _ = x - (y + z + 1) := by rw [←Nat.sub_succ']
 
-protected theorem sub_right_comm (x y z : Nat) : (x - y) - z = (x - z) - y := by
-  rw [Nat.sub_assoc, Nat.add_comm, ←Nat.sub_assoc]
+-- assert theorem sub_right_comm (x y z : Nat) : (x - y) - z = (x - z) - y
 
 -- assert theorem add_sub_cancel_left (x y : Nat) : (x + y) - x = y
 
@@ -119,12 +118,6 @@ protected theorem gt_of_sub_pos {x y : Nat} : x - y > 0 → x > y :=
 
 protected theorem sub_pos_of_gt {x y : Nat} : x > y → x - y > 0 :=
   (Nat.gt_iff_sub_pos x y).mp
-
--- protected theorem sub_le_iff_le_add'' (x y z : Nat) : x - y ≤ z ↔ x ≤ y + z := by
---   induction x, y with
---   | left x => rw [Nat.sub_zero, Nat.zero_add]
---   | right y => rw [Nat.zero_sub]; constr <;> (intro; apply Nat.zero_le)
---   | diag x y H => rw [Nat.succ_sub_succ, Nat.succ_add', Nat.succ_le_succ_iff_le]; exact H
 
 protected theorem sub_le_of_le_add' {x y z : Nat} : x ≤ y + z → x - y ≤ z := by
   intro h

@@ -12,21 +12,9 @@ attribute [local eliminator] Nat.recDiagAux
 
 -- assert theorem pow_zero (x : Nat) : x ^ 0 = 1
 
-protected theorem pow_one (x : Nat) : x ^ 1 = x :=
-  calc
-  _ = x ^ 0 * x := by rw [Nat.pow_succ]
-  _ = 1 * x := by rw [Nat.pow_zero]
-  _ = x := by rw [Nat.one_mul]
+-- assert theorem pow_one (x : Nat) : x ^ 1 = x
 
-protected theorem one_pow (x : Nat) : 1 ^ x = 1 := by
-  induction x with
-  | zero => rw [Nat.pow_zero]
-  | succ x H =>
-    calc
-    _ = 1 ^ (x + 1) := rfl
-    _ = 1 ^ x * 1 := by rw [Nat.pow_succ]
-    _ = 1 * 1 := by rw [H]
-    _ = 1 := by rw [Nat.mul_one]
+-- assert theorem one_pow (x : Nat) : 1 ^ x = 1
 
 protected theorem zero_pow_succ (x : Nat) : 0 ^ (x + 1) = 0 :=
   calc
@@ -38,25 +26,18 @@ protected theorem zero_pow_of_nonzero {x : Nat} : x ≠ 0 → 0 ^ x = 0 := by
   | zero => intro; contradiction
   | succ x => intro; rw [Nat.zero_pow_succ]
 
-protected theorem zero_pow (x : Nat) : (h : x ≠ 0 := by nat_is_nonzero) → 0 ^ x = 0 := Nat.zero_pow_of_nonzero
+-- fixme theorem zero_pow (x : Nat) : (h : x ≠ 0 := by nat_is_nonzero) → 0 ^ x = 0 := Nat.zero_pow_of_nonzero
 
-protected theorem pow_add (x y z : Nat) : x ^ (y + z) = x ^ y * x ^ z := by
-  induction z with
-  | zero => rw [Nat.pow_zero, Nat.add_zero, Nat.mul_one]
-  | succ z H => rw [Nat.pow_succ, Nat.add_succ, Nat.pow_succ, H, Nat.mul_assoc]
+-- assert theorem pow_add (x y z : Nat) : x ^ (y + z) = x ^ y * x ^ z
 
-protected theorem mul_pow (x y z : Nat) : (x * y) ^ z = x ^ z * y ^ z := by
-  induction z with
-  | zero => rw [Nat.pow_zero, Nat.pow_zero, Nat.pow_zero, Nat.mul_one]
-  | succ z H => rw [Nat.pow_succ, Nat.pow_succ, Nat.pow_succ, H, Nat.mul_cross_comm]
+-- assert theorem mul_pow (x y z : Nat) : (x * y) ^ z = x ^ z * y ^ z
 
 protected theorem pow_assoc (x y z : Nat) : (x ^ y) ^ z = x ^ (y * z) := by
   induction z with
   | zero => rw [Nat.pow_zero, Nat.mul_zero, Nat.pow_zero]
   | succ z H => rw [Nat.pow_succ, Nat.mul_succ, Nat.pow_add, H]
 
-protected theorem pow_right_comm (x y z : Nat) : (x ^ y) ^ z = (x ^ z) ^ y := by
-  rw [Nat.pow_assoc, Nat.mul_comm, ←Nat.pow_assoc]
+-- assert theorem pow_right_comm (x y z : Nat) : (x ^ y) ^ z = (x ^ z) ^ y
 
 -- assert theorem pos_pow_of_pos {x : Nat} (y : Nat) : x > 0 → x ^ y > 0
 
