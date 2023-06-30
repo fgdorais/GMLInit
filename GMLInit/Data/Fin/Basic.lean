@@ -23,7 +23,7 @@ instance (i : Fin n) : Nat.IsPos i.modulus where
 
 protected def zero (is_pos : n > 0 := by nat_is_pos) : Fin n := ⟨0, is_pos⟩
 
-protected def last (is_pos : n > 0 := by nat_is_pos) : Fin n := ⟨n.pred, Nat.pred_lt_self n is_pos⟩
+protected def last' (is_pos : n > 0 := by nat_is_pos) : Fin n := ⟨n.pred, Nat.pred_lt_self n is_pos⟩
 
 protected def lift : Fin n → Fin (n+1)
 | ⟨i, hi⟩ => ⟨i, Nat.lt_succ_of_le (Nat.le_of_lt hi)⟩
@@ -31,7 +31,7 @@ protected def lift : Fin n → Fin (n+1)
 protected def next : Fin n → Option (Fin n)
 | ⟨i, _⟩ => if h : i+1 < n then some ⟨i+1, h⟩ else none
 
-protected def pred : Fin n → Option (Fin n)
+protected def pred? : Fin n → Option (Fin n)
 | ⟨i, h⟩ => if i ≠ 0 then some ⟨i-1, Nat.lt_of_le_of_lt (Nat.pred_le i) h⟩ else none
 
 theorem lift_inj : {i j : Fin n} → i.lift = j.lift → i = j
