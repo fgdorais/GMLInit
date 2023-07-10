@@ -9,7 +9,7 @@ variable {n : Nat}
 protected theorem eq : {i j : Fin n} → i.val = j.val → i = j
 | ⟨_,_⟩, ⟨_,_⟩, rfl => rfl
 
-protected theorem eta (i : Fin n) : i = ⟨i.val, i.isLt⟩ := Fin.eq rfl
+protected theorem eta' (i : Fin n) : i = ⟨i.val, i.isLt⟩ := Fin.eq rfl
 
 protected abbrev modulus (_ : Fin n) := n
 
@@ -37,7 +37,7 @@ protected def pred? : Fin n → Option (Fin n)
 theorem lift_inj : {i j : Fin n} → i.lift = j.lift → i = j
 | ⟨_, _⟩, ⟨_, _⟩, rfl => rfl
 
-theorem succ_inj : {i j : Fin n} → i.succ = j.succ → i = j
+theorem succ_inj' : {i j : Fin n} → i.succ = j.succ → i = j
 | ⟨_, _⟩, ⟨_, _⟩, rfl => rfl
 
 protected inductive IndView : Nat → Type
@@ -79,7 +79,7 @@ theorem toIndView_eq_iff_toFin_eq {n : Nat} {{i : Fin n}} {{j : Fin.IndView n}} 
       rw [Fin.toIndView]
       congr
       rw [toIndView_eq_iff_toFin_eq]
-      exact succ_inj h
+      exact succ_inj.mp h
 
 theorem toIndView_toFin {n : Nat} (i : Fin.IndView n) : i.toFin.toIndView = i :=
   toIndView_eq_iff_toFin_eq.mpr rfl

@@ -14,9 +14,9 @@ protected theorem heq {α β m n} : {xs : ListN α m} → {ys : ListN β n} → 
 
 def ofList (xs : List α) : ListN α xs.length := ⟨xs, rfl⟩
 
-@[matchPattern] def nil {α} : ListN α 0 := ⟨[], rfl⟩
+@[match_pattern] def nil {α} : ListN α 0 := ⟨[], rfl⟩
 
-@[matchPattern] def cons {α n} (x : α) : ListN α n → ListN α (n+1)
+@[match_pattern] def cons {α n} (x : α) : ListN α n → ListN α (n+1)
 | ⟨xs, hxs⟩ => ⟨x :: xs, congrArgs Nat.succ hxs⟩
 
 def append {α m n} : ListN α m → ListN α n → ListN α (n + m)
@@ -32,14 +32,11 @@ theorem append_nil {α n} (xs : ListN α n) : append xs nil ≅ xs := by
   apply ListN.heq
   · rfl
   · rw [Nat.zero_add]
-  · clean unfold ListN.append
+  · simp only [ListN.append]
     rw [List.append_nil]
-    reflexivity using (.≅.)
-
-theorem append_assoc {α l m n} (xs : ListN α l) (ys : ListN α m) (zs : ListN α n) : append (append xs ys) zs ≅ append xs (append ys zs) := by
-  _
 
 #exit
+
 @[scoped simp] theorem append_toList_left (xs : List1 α) (ys : List α) : (xs ++ ys).toList = xs.toList ++ ys :=
   match xs with | cons _ _ => rfl
 
