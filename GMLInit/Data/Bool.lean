@@ -3,8 +3,8 @@ import GMLInit.Data.Ord
 import GMLInit.Logic.Relation
 import GMLInit.Meta.Basic
 
-abbrev xor : Bool → Bool → Bool := bne
-infixl:30 " ^^ " => xor
+-- assert xor : Bool → Bool → Bool := bne
+-- assert infixl:30 " ^^ " => xor
 
 namespace Bool
 variable (x y z : Bool)
@@ -23,59 +23,59 @@ instance : LinearOrd Bool where
 instance : LE Bool := leOfOrd
 instance : LT Bool := ltOfOrd
 
--- assert eq_iff_iff : x = y ↔ (x ↔ y) := by bool_tt using simp x y
+-- assert eq_iff_iff : x = y ↔ (x ↔ y)
 
--- assert not_not : !(!x) = x := by bool_tt x
-theorem not_and : (!(x && y)) = (!x || !y) := by bool_tt x y
-theorem not_or : (!(x || y)) = (!x && !y) := by bool_tt x y
+-- assert not_not : !(!x) = x
+-- assert not_and : (!(x && y)) = (!x || !y)
+-- assert not_or : (!(x || y)) = (!x && !y)
 
-theorem and_false_left : (false && x) = false := by bool_tt x
-theorem and_false_right : (x && false) = false := by bool_tt x
-theorem and_true_left : (true && x) = x := by bool_tt x
-theorem and_true_right : (x && true) = x := by bool_tt x
-theorem and_not_self_left : (!x && x) = false := by bool_tt x
-theorem and_not_self_right : (x && !x) = false := by bool_tt x
-theorem and_idem : (x && x) = x := by bool_tt x
-theorem and_comm : (x && y) = (y && x) := by bool_tt x y
-theorem and_left_comm : (x && (y && z)) = (y && (x && z)) := by bool_tt x y z
-theorem and_right_comm : ((x && y) && z) = ((x && z) && y) := by bool_tt x y z
--- assert and_assoc : ((x && y) && z) = (x && (y && z)) := by bool_tt x y z
-theorem and_or_distrib_left : (x && (y || z)) = ((x && y) || (x && z)) := by bool_tt x y z
-theorem and_or_distrib_right : ((x || y) && z) = ((x && z) || (y && z)) := by bool_tt x y z
-theorem and_xor_distrib_left : (x && (y ^^ z)) = ((x && y) ^^ (x && z)) := by bool_tt x y z
-theorem and_xor_distrib_right : ((x ^^ y) && z) = ((x && z) ^^ (y && z)) := by bool_tt x y z
-theorem and_deMorgan : (!(x && y)) = (!x || !y) := by bool_tt x y
-theorem and_eq_true_iff : (x && y) = true ↔ x = true ∧ y = true := by bool_tt using simp x y
-theorem and_eq_false_iff : (x && y) = false ↔ x = false ∨ y = false := by bool_tt using simp x y
+-- assert and_false_left : (false && x) = false
+-- assert and_false_right : (x && false) = false
+-- assert and_true_left : (true && x) = x
+-- assert and_true_right : (x && true) = x
+-- assert and_not_self_left : (!x && x) = false
+-- assert and_not_self_right : (x && !x) = false
+theorem and_idem : (x && x) = x := and_self ..
+-- assert and_comm : (x && y) = (y && x)
+-- assert and_left_comm : (x && (y && z)) = (y && (x && z))
+-- assert and_right_comm : ((x && y) && z) = ((x && z) && y)
+-- assert and_assoc : ((x && y) && z) = (x && (y && z))
+-- assert and_or_distrib_left : (x && (y || z)) = ((x && y) || (x && z))
+-- assert and_or_distrib_right : ((x || y) && z) = ((x && z) || (y && z))
+-- assert and_xor_distrib_left : (x && (y ^^ z)) = ((x && y) ^^ (x && z))
+-- assert and_xor_distrib_right : ((x ^^ y) && z) = ((x && z) ^^ (y && z))
+-- assert and_deMorgan : (!(x && y)) = (!x || !y)
+-- assert and_eq_true_iff : (x && y) = true ↔ x = true ∧ y = true
+-- assert and_eq_false_iff : (x && y) = false ↔ x = false ∨ y = false
 
-theorem or_false_left : (false || x) = x := by bool_tt x
-theorem or_false_right : (x || false) = x := by bool_tt x
-theorem or_true_left : (true || x) = true := by bool_tt x
-theorem or_true_right : (x || true) = true := by bool_tt x
-theorem or_not_self_left : (!x || x) = true := by bool_tt x
-theorem or_not_self_right : (x || !x) = true := by bool_tt x
-theorem or_idem : (x || x) = x := by bool_tt x
-theorem or_comm : (x || y) = (y || x) := by bool_tt x y
-theorem or_left_comm : (x || (y || z)) = (y || (x || z)) := by bool_tt x y z
-theorem or_right_comm : ((x || y) || z) = ((x || z) || y) := by bool_tt x y z
--- assort or_assoc : ((x || y) || z) = (x || (y || z)) := by bool_tt x y z
-theorem or_and_distrib_left : (x || (y && z)) = ((x || y) && (x || z)) := by bool_tt x y z
-theorem or_and_distrib_right : ((x && y) || z) = ((x || z) && (y || z)) := by bool_tt x y z
-theorem or_deMorgan : (!(x || y)) = (!x && !y) := by bool_tt x y
-theorem or_eq_true_iff : (x || y) = true ↔ x = true ∨ y = true := by bool_tt using simp x y
-theorem or_eq_false_iff : (x || y) = false ↔ x = false ∧ y = false := by bool_tt using simp x y
+-- assert or_false_left : (false || x) = x
+-- assert or_false_right : (x || false) = x
+-- assert or_true_left : (true || x) = true
+-- assert or_true_right : (x || true) = true
+-- assert or_not_self_left : (!x || x) = true
+-- assert or_not_self_right : (x || !x) = true
+theorem or_idem : (x || x) = x := or_self ..
+-- assert or_comm : (x || y) = (y || x)
+-- assert or_left_comm : (x || (y || z)) = (y || (x || z))
+-- assert or_right_comm : ((x || y) || z) = ((x || z) || y)
+-- assert or_assoc : ((x || y) || z) = (x || (y || z))
+-- assert or_and_distrib_left : (x || (y && z)) = ((x || y) && (x || z))
+-- assert or_and_distrib_right : ((x && y) || z) = ((x || z) && (y || z))
+-- assert or_deMorgan : (!(x || y)) = (!x && !y)
+-- assert or_eq_true_iff : (x || y) = true ↔ x = true ∨ y = true
+-- assert or_eq_false_iff : (x || y) = false ↔ x = false ∧ y = false
 
-theorem xor_false_left : (false ^^ x) = x := by bool_tt x
-theorem xor_false_right : (x ^^ false) = x := by bool_tt x
-theorem xor_true_left : (true ^^ x) = !x := by bool_tt x
-theorem xor_true_right : (x ^^ true) = !x := by bool_tt x
-theorem xor_self : (x ^^ x) = false := by bool_tt x
-theorem xor_not_self_left : (!x ^^ x) = true := by bool_tt x
-theorem xor_not_self_right : (x ^^ !x) = true := by bool_tt x
-theorem xor_comm : (x ^^ y) = (y ^^ x) := by bool_tt x y
-theorem xor_left_comm : (x ^^ (y ^^ z)) = (y ^^ (x ^^ z)) := by bool_tt x y z
-theorem xor_right_comm : ((x ^^ y) ^^ z) = ((x ^^ z) ^^ y) := by bool_tt x y z
-theorem xor_assoc : ((x ^^ y) ^^ z) = (x ^^ (y ^^ z)) := by bool_tt x y z
+-- assert xor_false_left : (false ^^ x) = x
+-- assert xor_false_right : (x ^^ false) = x
+-- assert xor_true_left : (true ^^ x) = !x
+-- assert xor_true_right : (x ^^ true) = !x
+-- assert xor_self : (x ^^ x) = false
+-- assert xor_not_self_left : (!x ^^ x) = true
+-- assert xor_not_self_right : (x ^^ !x) = true
+-- assert xor_comm : (x ^^ y) = (y ^^ x)
+-- assert xor_left_comm : (x ^^ (y ^^ z)) = (y ^^ (x ^^ z))
+-- assert xor_right_comm : ((x ^^ y) ^^ z) = ((x ^^ z) ^^ y)
+-- assert xor_assoc : ((x ^^ y) ^^ z) = (x ^^ (y ^^ z))
 
 protected abbrev beq := x == y
 protected abbrev bne := x != y
@@ -91,23 +91,22 @@ theorem bgt_eq_decide_gt : Bool.bgt x y = decide (x > y) := by bool_tt x y
 theorem ble_eq_decide_le : Bool.ble x y = decide (x ≤ y) := by bool_tt x y
 theorem blt_eq_decide_lt : Bool.blt x y = decide (x < y) := by bool_tt x y
 
-protected theorem le_refl : x ≤ x := by bool_tt x
-protected theorem le_trans {x y z : Bool} : x ≤ y → y ≤ z → x ≤ z := by bool_tt using simp x y z
-protected theorem le_antisymm {x y : Bool} : x ≤ y → y ≤ x → x = y := by bool_tt using simp x y
-protected theorem lt_irrefl : ¬ x < x := by bool_tt using simp x
-protected theorem lt_asymm {x y : Bool} : x < y → ¬ y < x := by bool_tt using simp x y
-protected theorem lt_trans {x y z : Bool} : x < y → y < z → x < z := by bool_tt using simp x y z
-protected theorem lt_of_le_of_lt {x y z : Bool} : x ≤ y → y < z → x < z := by bool_tt using simp x y z
-protected theorem lt_of_lt_of_le {x y z : Bool} : x < y → y ≤ z → x < z := by bool_tt using simp x y z
-protected theorem le_of_lt {x y : Bool} : x < y → x ≤ y := by bool_tt using simp x y z
-protected theorem le_of_eq {x y : Bool} : x = y → x ≤ y := by bool_tt using simp x y z
-protected theorem ne_of_lt {x y : Bool} : x < y → x ≠ y := by bool_tt using simp x y z
-protected theorem lt_of_le_of_ne {x y : Bool} : x ≤ y → x ≠ y → x < y := by bool_tt using simp x y z
-protected theorem le_of_lt_or_eq {x y : Bool} : x < y ∨ x = y → x ≤ y := by bool_tt using simp x y z
-protected theorem le_true : x ≤ true := by bool_tt x
-protected theorem false_le : false ≤ x := by bool_tt x
-protected theorem eq_true_of_true_le {x : Bool} : true ≤ x → x = true := by bool_tt using simp x
-protected theorem eq_false_of_le_false {x : Bool} : x ≤ false → x = false := by bool_tt using simp x
+-- assert le_refl : x ≤ x
+-- assert le_trans {x y z : Bool} : x ≤ y → y ≤ z → x ≤ z
+-- assert le_antisymm {x y : Bool} : x ≤ y → y ≤ x → x = y
+-- assert lt_irrefl : ¬ x < x
+-- assert lt_asymm {x y : Bool} : x < y → ¬ y < x
+-- assert lt_trans {x y z : Bool} : x < y → y < z → x < z
+-- assert lt_of_le_of_lt {x y z : Bool} : x ≤ y → y < z → x < z
+-- assert lt_of_lt_of_le {x y z : Bool} : x < y → y ≤ z → x < z
+-- assert le_of_lt {x y : Bool} : x < y → x ≤ y
+-- assert le_of_eq {x y : Bool} : x = y → x ≤ y
+-- assert ne_of_lt {x y : Bool} : x < y → x ≠ y
+-- assert lt_of_le_of_ne {x y : Bool} : x ≤ y → x ≠ y → x < y
+-- assert le_of_lt_or_eq {x y : Bool} : x < y ∨ x = y → x ≤ y
+-- assert le_true : x ≤ true
+-- assert false_le : false ≤ x
+-- assert eq_true_of_true_le {x : Bool} : true ≤ x → x = true-- assert eq_false_of_le_false {x : Bool} : x ≤ false → x = false
 
 instance : Relation.Reflexive (α:=Bool) (.≤.) := ⟨Bool.le_refl⟩
 instance : Relation.Irreflexive (α:=Bool) (.<.) := ⟨Bool.lt_irrefl⟩
@@ -118,59 +117,33 @@ instance : Relation.Transitive (α:=Bool) (.<.) := ⟨Bool.lt_trans⟩
 instance : Relation.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.<.) (.≤.) (.<.) := ⟨Bool.lt_of_lt_of_le⟩
 instance : Relation.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.≤.) (.<.) (.<.) := ⟨Bool.lt_of_le_of_lt⟩
 
-theorem not_inj {x y : Bool} : (!x) = (!y) → x = y := by
-  bool_tt using simp x y
-
-theorem and_or_inj_right {m x y : Bool}: (x && m) = (y && m) → (x || m) = (y || m) → x = y := by
-  bool_tt using simp m x y
-
-theorem and_or_inj_left {m x y : Bool} : (m && x) = (m && y) → (m || x) = (m || y) → x = y := by
-  bool_tt using simp m x y
+-- assert not_inj {x y : Bool} : (!x) = (!y) → x = y
+-- assert and_or_inj_right {m x y : Bool}: (x && m) = (y && m) → (x || m) = (y || m) → x = y
+-- assert and_or_inj_left {m x y : Bool} : (m && x) = (m && y) → (m || x) = (m || y) → x = y
 
 section
 variable (xs ys : List Bool)
 
-abbrev all : Bool := xs.all id
+-- assert all : Bool := xs.all id
 
-theorem all_nil : all [] = true := rfl
-theorem all_one : all [x] = x := Bool.and_true x
-theorem all_cons  : all (x :: xs) = (x && all xs) := rfl
+-- assert all_nil : all [] = true
+-- assert all_one : all [x] = x
+-- assert all_cons  : all (x :: xs) = (x && all xs)
 
-theorem all_append : all (xs ++ ys) = (all xs && all ys) := by
-  induction xs with
-  | nil => rw [List.nil_append, all_nil, true_and]
-  | cons x xs ih => rw [List.cons_append, all_cons, all_cons, and_assoc, ih]
+-- assert all_append : all (xs ++ ys) = (all xs && all ys)
 
-theorem all_join (xss : List (List Bool)) : all (xss.map all) = all xss.join := by
-  induction xss with
-  | nil => rfl
-  | cons xs xss ih => rw [List.map, List.join, all_cons, all_append, ih]
+-- assert all_join (xss : List (List Bool)) : all (xss.map all) = all xss.join
 
-abbrev any : Bool := xs.any id
+-- assert any : Bool := xs.any id
 
-theorem any_nil : any [] = false := rfl
-theorem any_one : any [x] = x := Bool.or_false x
-theorem any_cons : any (x :: xs) = (x || any xs) := rfl
+-- assert any_nil : any [] = false
+-- assert any_one : any [x] = x
+-- assert any_cons : any (x :: xs) = (x || any xs)
 
-theorem any_append : any (xs ++ ys) = (any xs || any ys) := by
-  induction xs with
-  | nil => rw [List.nil_append, any_nil, false_or]
-  | cons x xs ih => rw [List.cons_append, any_cons, any_cons, or_assoc, ih]
-
-theorem any_join (xss : List (List Bool)) : any (xss.map any) = any xss.join := by
-  induction xss with
-  | nil => rfl
-  | cons xs xss ih => rw [List.map, List.join, any_cons, any_append, ih]
-
-theorem all_deMorgan : (!all xs) = any (xs.map (!.)) := by
-  induction xs with
-  | nil => rfl
-  | cons x xs ih => rw [List.map, all_cons, any_cons, and_deMorgan, ih]
-
-theorem any_deMorgan : (!any xs) = all (xs.map (!.)) := by
-  induction xs with
-  | nil => rfl
-  | cons x xs ih => rw [List.map, any_cons, all_cons, or_deMorgan, ih]
+-- assert any_append : any (xs ++ ys) = (any xs || any ys)
+-- assert any_join (xss : List (List Bool)) : any (xss.map any) = any xss.join
+-- assert all_deMorgan : (!all xs) = any (xs.map (!.))
+-- assert any_deMorgan : (!any xs) = all (xs.map (!.))
 
 end
 

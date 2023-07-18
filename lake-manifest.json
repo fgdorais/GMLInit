@@ -2,8 +2,8 @@
  "packagesDir": "lake-packages",
  "packages":
  [{"git":
-   {"url": "https://github.com/leanprover/std4",
+   {"url": "https://github.com/fgdorais/std4",
     "subDir?": null,
-    "rev": "e66ec40ef4ba9d4fa8b9e7a30867a817467058e8",
+    "rev": "bd9c8e94621c2b855693e4ced2b21a9f8c513d46",
     "name": "Std",
-    "inputRev?": "main"}}]}
+    "inputRev?": "reustep"}}]}

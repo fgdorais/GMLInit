@@ -43,9 +43,9 @@ protected theorem pow_assoc (x y z : Nat) : (x ^ y) ^ z = x ^ (y * z) := by
 
 protected theorem le_pow_right_of_pos {x y : Nat} : y > 0 → x ≤ x ^ y := by
   cases x, y with
-  | left x => intro; contradiction
-  | right y => intro; apply Nat.zero_le
-  | diag x y =>
+  | zero_right x => intro; contradiction
+  | zero_left y => intro; apply Nat.zero_le
+  | succ_succ x y =>
     intro
     transitivity (1 * (x + 1)) using Eq, LE.le
     · rw [Nat.one_mul]
@@ -81,14 +81,14 @@ protected theorem pow_lt_pow_of_pos_right {x y : Nat} (h : x < y) {z : Nat} : z 
 
 protected theorem pow_lt_pow_of_gt_one_left {x y : Nat} (h : x < y) {z : Nat} : z > 1 → z ^ x < z ^ y := by
   induction x, y with
-  | left x => intro; contradiction
-  | right y =>
+  | zero_right x => intro; contradiction
+  | zero_left y =>
     intro hz
     transitivity z using LT.lt, LE.le
     · rw [Nat.pow_zero]
       exact hz
     · exact Nat.le_pow_right _ _
-  | diag x y H =>
+  | succ_succ x y H =>
     intro hz
     rw [Nat.pow_succ, Nat.pow_succ]
     apply Nat.mul_lt_mul_of_pos_right

@@ -367,7 +367,7 @@ theorem size_append (as bs : Array α) : (as ++ bs).size = as.size + bs.size :=
   size_append_aux 0 bs.size (Nat.zero_le _) (Nat.le_refl _)
 
 theorem get_append_left {as bs : Array α} (i : Nat) (hi : i < as.size) :
-  have : i < (as ++ bs).size := size_append as bs ▸ Nat.lt_add_right _ _ _ hi
+  have : i < (as ++ bs).size := size_append as bs ▸ Nat.lt_add_right _ hi
   (as ++ bs)[i] = as[i] :=
   get_append_aux_lo 0 bs.size i (Nat.zero_le _) (Nat.le_refl _) hi _
 
