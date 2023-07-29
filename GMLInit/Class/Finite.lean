@@ -38,17 +38,17 @@ protected def toEquiv : Equiv α (Fin (Finite.size α)) where
   fwd_eq_iff_rev_eq {x i} := Finite.find_eq_iff_get_eq x i
 
 protected def ofEquiv {α n} [DecidableEq α] (e : Equiv α (Fin n)) : Finite α where
-  toArray := Array.ofFun e.rev
-  find x := (Array.ofFun_size e.rev).symm ▸ e.fwd x
+  toArray := Array.ofFn e.rev
+  find x := (Array.size_ofFn e.rev).symm ▸ e.fwd x
   find_eq_iff_get_eq x i := by
     constr
     · intro h
-      rw [Array.ofFun_get]
+      rw [Array.get_ofFn]
       rw [←e.fwd_eq_iff_rev_eq]
       rw [←h]
       elim_casts
     · intro h
-      rw [Array.ofFun_get] at h
+      rw [Array.get_ofFn] at h
       rw [←e.fwd_eq_iff_rev_eq] at h
       clean
       rw [h]

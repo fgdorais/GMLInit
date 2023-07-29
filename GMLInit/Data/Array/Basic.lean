@@ -4,8 +4,8 @@ import GMLInit.Data.List.Basic
 
 namespace Array
 
-protected theorem eq : {as bs : Array α} → as.data = bs.data → as = bs
-| ⟨_⟩, ⟨_⟩, rfl => rfl
+@[deprecated Array.ext']
+protected alias eq := Array.ext'
 
 @[simp] theorem data_nil {α} : #[].data = ([] : List α) := rfl
 
@@ -387,19 +387,19 @@ theorem data_append {as bs : Array α} : (as ++ bs).data = as.data ++ bs.data :=
   rw [List.extract_all]; rfl
 
 theorem nil_append (as : Array α) : #[] ++ as = as := by
-  apply Array.eq
+  apply Array.ext'
   repeat rw [data_append]
   rw [data_nil]
   exact List.nil_append ..
 
 theorem append_nil (as : Array α) : as ++ #[] = as := by
-  apply Array.eq
+  apply Array.ext'
   repeat rw [data_append]
   rw [data_nil]
   exact List.append_nil ..
 
 theorem append_assoc (as bs cs : Array α) : (as ++ bs) ++ cs = as ++ (bs ++ cs) := by
-  apply Array.eq
+  apply Array.ext'
   repeat rw [data_append]
   exact List.append_assoc ..
 
@@ -456,32 +456,15 @@ def join_step (as : Array (Array α)) (start stop : Nat) (hstart : start < stop)
 
 end join
 
-section ofFun
-variable {α n} (f : Fin n → α)
+@[deprecated Array.ofFn]
+protected def ofFun (f : Fin n → α) : Array α := ofFn f
 
-unsafe def ofFunUnsafe : Array α := Id.run do
-  let mut res := #[]
-  for i in [:n] do
-    res := res.push (f ⟨i, lcProof⟩)
-  return res
-
-@[implemented_by ofFunUnsafe]
-protected def ofFun : Array α where
-  data := List.ofFun f
-
-theorem ofFun_size : (Array.ofFun f).size = n := by
-  unfold Array.ofFun
-  rw [Array.size_mk]
-  rw [List.ofFun_length]
-
-theorem ofFun_getElem (i : Fin (Array.ofFun f).size) : (Array.ofFun f)[i] = f (Array.ofFun_size f ▸ i) := by
-  unfold Array.ofFun
-  rw [Array.getElem_fin_eq_data_get]
-  rw [List.ofFun_get]
-
-theorem ofFun_get (i : Fin (Array.ofFun f).size) : (Array.ofFun f).get i = f (Array.ofFun_size f ▸ i) :=
-  ofFun_getElem f i
-
-end ofFun
+theorem get_ofFn (f : Fin n → α) (i : Fin (ofFn f).size) : (ofFn f).get i = f (size_ofFn f ▸ i) := by
+  rw [get_eq_getElem, getElem_ofFn]
+  congr 1
+  ext
+  simp only
+  apply Fin.val_eq_val_of_heq (size_ofFn ..)
+  elim_casts; rfl
 
 end Array
