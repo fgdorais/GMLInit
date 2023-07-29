@@ -13,7 +13,7 @@ variable {p} {h}
 theorem not_prop_of_lt_bfind {x} : (x < bfind p h) → ¬ p x := by
   intro hlt h
   clean unfold bfind at hlt
-  apply Nat.not_ge_of_lt hlt
+  apply Nat.not_le.2 hlt
   apply toNat_le_of_isLE
   apply first.isLE_of
   exact h
