@@ -218,7 +218,7 @@ theorem mk_mul_mk (m₁ n₁ m₂ n₂) : (m₁ ⊖ n₁) * (m₂ ⊖ n₂) = (m
   | zero_zero => simp only [Nat.zero_mul, Nat.mul_zero, Nat.add_zero, Nat.zero_add, zero_mk_zero, Int.mul_zero]
   | zero_succ n₂ => simp only [Nat.zero_mul, Nat.mul_zero, Nat.add_zero, Nat.zero_add, zero_mk_succ, mk_mul_negSucc]
   | succ_zero m₂ => simp only [Nat.zero_mul, Nat.mul_zero, Nat.add_zero, Nat.zero_add, succ_mk_zero, mk_mul_ofNat, Nat.mul_comm]
-  | succ_succ m₂ n₂ ih => simp only [Nat.mul_succ, Nat.succ_mul]; rw [succ_mk_succ, Nat.add_cross_comm _ m₁ _ n₁, Nat.add_cross_comm _ m₁ _ n₁, add_mk_add_right]; exact ih
+  | succ_succ m₂ n₂ ih => simp only [Nat.mul_succ, Nat.succ_mul]; rw [succ_mk_succ, Nat.add_add_add_comm _ m₁ _ n₁, Nat.add_add_add_comm _ m₁ _ n₁, add_mk_add_right]; exact ih
 
 -- assert theorem mul_assoc (i j k : Int) : (i * j) * k = i * (j * k)
 
@@ -302,7 +302,7 @@ protected theorem le_or_gt (i j : Int) : i ≤ j ∨ j < i := by
     | mk mj nj =>
       rw [mk_le_mk, mk_lt_mk]
       rw [Nat.add_comm mi, Nat.add_comm mj]
-      exact Nat.le_or_gt ..
+      exact (Nat.lt_or_ge ..).symm
 
 protected theorem lt_or_ge (i j : Int) : i < j ∨ j ≤ i := by
   cases Int.le_or_gt j i with
