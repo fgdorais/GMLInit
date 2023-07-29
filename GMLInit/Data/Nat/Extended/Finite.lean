@@ -100,10 +100,10 @@ theorem isLE_iff_toNat_le (e : ENat) (isFinite : Finite e) (x : Nat) : e.isLE x 
     | zero => exact Nat.zero_le _
     | succ x =>
       apply Nat.succ_le_of_lt
-      apply Nat.lt_of_not_ge
+      apply Nat.not_le.1
       intro (h : _ ≤ x)
       rw [←isLE_iff_toNat_le, ofNat_isLE_iff_le] at h
-      apply Nat.not_gt_of_le h
+      apply Nat.not_lt.2 h
       exact Nat.lt_succ_self x
 
 @[simp] theorem ofNat_toNat (e : ENat) (h : Finite e) : ENat.ofNat (toNat e h) = e := by

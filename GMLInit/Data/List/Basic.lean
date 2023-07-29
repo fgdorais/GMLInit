@@ -43,9 +43,7 @@ instance (x : α) (xs : List α) : Nat.IsPos (List.length (x :: xs)) := ⟨Nat.z
 
 lemma map_pure {α β} (f : α → β) (a : α) : [a].map f = [f a] := rfl
 
-lemma map_comp {α β γ} (f : α → β) (g : β → γ) (as : List α) : as.map (g ∘ f) = (as.map f).map g := by
-  symmetry
-  exact map_map ..
+lemma map_comp {α β γ} (f : α → β) (g : β → γ) (as : List α) : as.map (g ∘ f) = (as.map f).map g := (map_map ..).symm
 
 @[simp] lemma pure_bind {α β} (f : α → List β) (a : α) : [a].bind f = f a := by rw [cons_bind, nil_bind, append_nil]
 
@@ -76,7 +74,7 @@ lemma any_eq_false_iff_all_false {α} (p : α → Bool) (xs : List α) : xs.any 
 
 /- take -/
 
-theorem take_nil {α} (n : Nat) : take n [] = ([] : List α) := by cases n <;> rfl
+-- assert take_nil {α} (n : Nat) : take n [] = ([] : List α)
 
 theorem take_cons {α} (a : α) (as : List α) (n : Nat) : take (n+1) (a :: as) = a :: take n as := rfl
 

@@ -8,8 +8,8 @@ namespace Nat
 
 -- assert theorem lt_or_ge (x y : Nat) : x < y ∨ x ≥ y
 
-protected theorem le_or_gt (x y : Nat) : x ≤ y ∨ x > y :=
-  Or.elim (Nat.lt_or_ge y x) Or.inr Or.inl
+@[deprecated Nat.lt_or_ge]
+protected theorem le_or_gt (x y : Nat) : x ≤ y ∨ x > y := (Nat.lt_or_ge y x).symm
 
 -- assert theorem lt_or_eq_of_le {x y : Nat} : x ≤ y → x < y ∨ x = y
 
@@ -25,8 +25,7 @@ protected theorem le_or_gt (x y : Nat) : x ≤ y ∨ x > y :=
 
 -- assert theorem le_total (x y : Nat) : x ≤ y ∨ x ≥ y := Nat.leTotal x y
 
-protected theorem lt_connex {x y : Nat} : x ≠ y → x < y ∨ x > y :=
-  λ hne => Or.elim (Nat.lt_or_ge x y) Or.inl λ h => Or.inr (Nat.lt_of_le_of_ne h hne.symm)
+-- assert theorem lt_connex {x y : Nat} : x ≠ y → x < y ∨ x > y
 
 protected theorem lt_compare {x y : Nat} : x < y → ∀ z, x < z ∨ z < y :=
   λ hlt z => Or.elim (Nat.lt_or_ge x z) Or.inl (λ hge => Or.inr (Nat.lt_of_le_of_lt hge hlt))
@@ -35,32 +34,33 @@ protected theorem lt_compare {x y : Nat} : x < y → ∀ z, x < z ∨ z < y :=
 
 -- assert theorem gt_of_not_le {x y : Nat} : ¬ x ≤ y → x > y
 
-protected theorem le_of_not_gt {x y : Nat} : ¬ x > y → x ≤ y := Or.mtp (Nat.le_or_gt x y)
+-- assert theorem le_of_not_gt {x y : Nat} : ¬ x > y → x ≤ y
 
-protected theorem lt_of_not_ge {x y : Nat} : ¬ x ≥ y → x < y := Or.mtp (Nat.lt_or_ge x y)
+-- assert theorem lt_of_not_ge {x y : Nat} : ¬ x ≥ y → x < y
 
+@[deprecated Nat.not_le_of_gt]
 protected theorem not_ge_of_lt {x y : Nat} : x < y → ¬ x ≥ y := Nat.not_le_of_gt
 
-protected theorem not_gt_of_le {x y : Nat} : x ≤ y → ¬ x > y := λ hle hgt => Nat.not_ge_of_lt hgt hle
+@[deprecated Nat.not_lt_of_ge]
+protected theorem not_gt_of_le {x y : Nat} : x ≤ y → ¬ x > y := Nat.not_lt_of_ge
 
 -- assert theorem not_le_of_gt {x y : Nat} : x > y → ¬ x ≤ y
 
-protected theorem not_lt_of_ge {x y : Nat} : x ≥ y → ¬ x < y := λ hge hlt => Nat.not_gt_of_le hlt (Nat.succ_le_succ hge)
+-- assert theorem not_lt_of_ge {x y : Nat} : x ≥ y → ¬ x < y
 
-protected theorem not_le_iff_gt (x y : Nat) : ¬ x ≤ y ↔ x > y :=
-  ⟨Nat.gt_of_not_le, Nat.not_ge_of_lt⟩
+@[deprecated Nat.not_le]
+protected theorem not_le_iff_gt (x y : Nat) : ¬ x ≤ y ↔ x > y := Nat.not_le
 
-protected theorem lt_iff_not_ge (x y : Nat) : x < y ↔ ¬ x ≥ y :=
-  ⟨Nat.not_ge_of_lt, Nat.gt_of_not_le⟩
+@[deprecated Nat.not_le]
+protected theorem lt_iff_not_ge (x y : Nat) : x < y ↔ ¬ x ≥ y := Nat.not_le.symm
 
-protected theorem not_lt_iff_ge (x y : Nat) : ¬ x < y ↔ x ≥ y :=
-  ⟨Nat.ge_of_not_lt, Nat.not_gt_of_le⟩
+@[deprecated Nat.not_lt]
+protected theorem not_lt_iff_ge (x y : Nat) : ¬ x < y ↔ x ≥ y := Nat.not_lt
 
-protected theorem le_iff_not_gt (x y : Nat) : x ≤ y ↔ ¬ x > y :=
-  ⟨Nat.not_gt_of_le, Nat.ge_of_not_lt⟩
+@[deprecated Nat.not_lt]
+protected theorem le_iff_not_gt (x y : Nat) : x ≤ y ↔ ¬ x > y := Nat.not_lt.symm
 
-protected theorem ne_iff_lt_or_gt (x y : Nat) : x ≠ y ↔ x < y ∨ x > y :=
-  ⟨Nat.lt_connex, λ h => Or.elim h Nat.ne_of_lt λ h => (Nat.ne_of_lt h).symm⟩
+-- assert theorem ne_iff_lt_or_gt (x y : Nat) : x ≠ y ↔ x < y ∨ x > y
 
 -- assert theorem zero_le (x : Nat) : 0 ≤ x
 

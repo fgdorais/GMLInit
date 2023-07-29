@@ -4,6 +4,6 @@
  [{"git":
    {"url": "https://github.com/fgdorais/std4",
     "subDir?": null,
-    "rev": "bd9c8e94621c2b855693e4ced2b21a9f8c513d46",
+    "rev": "af08dd922d22b1ced27f888d0c593f451a60638c",
     "name": "Std",
-    "inputRev?": "reustep"}}]}
+    "inputRev?": "gml"}}]}

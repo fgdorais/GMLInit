@@ -55,7 +55,7 @@ protected theorem succ_lt_succ_iff_lt (x y : Nat) : x + 1 < y + 1 ↔ x < y :=
 theorem pred_le_iff_le_succ' (x y : Nat) : x - 1 ≤ y ↔ x ≤ y + 1 := Nat.pred_le_iff_le_succ ..
 
 protected theorem succ_lt_iff_lt_pred (x y : Nat) : x + 1 < y ↔ x < y - 1 := by
-  rw [Nat.lt_iff_not_ge, Nat.lt_iff_not_ge]
+  rw [←Nat.not_le, ←Nat.not_le]
   apply Iff.mt
   exact Nat.pred_le_iff_le_succ' y x
 

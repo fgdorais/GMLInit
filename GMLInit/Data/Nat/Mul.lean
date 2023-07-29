@@ -77,12 +77,6 @@ protected theorem sub_mul (x y z : Nat) : (x - y) * z = x * z - y * z := by
     _ = (x * z + z) - (y * z + z) := by rw [Nat.add_sub_add]
     _ = (x + 1) * z - (y + 1) * z := by rw [Nat.succ_mul, Nat.succ_mul]
 
-protected theorem le_mul_of_pos_left' (x : Nat) {y : Nat} (h : y > 0) : x ≤ y * x :=
-  Nat.le_mul_of_pos_right _ h
-
-protected theorem le_mul_of_pos_right' (x : Nat) {y : Nat} (h : y > 0) : x ≤ x * y :=
-  Nat.le_mul_of_pos_left _ h
-
 protected theorem lt_mul_of_gt_one_of_pos_left {x y : Nat} (h : x > 0 := by nat_is_pos) : y > 1 → x < y * x := by
   intro hy
   cases y with
@@ -119,16 +113,7 @@ protected theorem mul_lt_mul_left {x y z : Nat} : x < y → (h : z > 0 := by nat
 
 protected theorem mul_lt_mul_right {x y z : Nat} : x < y → (h : z > 0 := by nat_is_pos) → x * z < y * z := Nat.mul_lt_mul_of_pos_right
 
-protected theorem mul_lt_mul_of_lt_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ < y₂ → x₁ * y₁ < x₂ * y₂ := by
-  intro hx hy
-  transitivity (x₂ * y₁) using LE.le, LT.lt
-  · apply Nat.mul_le_mul_right
-    exact Nat.le_of_lt hx
-  · apply Nat.mul_lt_mul_of_pos_left
-    · exact hy
-    · transitivity x₁ using LE.le, LT.lt
-      · apply Nat.zero_le
-      · exact hx
+-- assert theorem mul_lt_mul_of_lt_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ < y₂ → x₁ * y₁ < x₂ * y₂
 
 protected theorem mul_lt_mul_of_le_of_lt' {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → (h : x₂ > 0 := by nat_is_pos) → x₁ * y₁ < x₂ * y₂ := by
   intro hx hy h
