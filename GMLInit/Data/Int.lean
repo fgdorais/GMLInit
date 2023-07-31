@@ -106,7 +106,7 @@ theorem nonNeg_mk (m n) : NonNeg (m ⊖ n) ↔ n ≤ m := by
     · intro; apply NonNeg.mk
   | succ_succ m n ih =>
     rw [succ_mk_succ]
-    rw [Nat.succ_le_succ_iff_le]
+    rw [Nat.succ_le_succ_iff]
     exact ih
 
 theorem mk_le_mk (m₁ n₁ m₂ n₂) : (m₁ ⊖ n₁) ≤ (m₂ ⊖ n₂) ↔ n₂ + m₁ ≤ m₂ + n₁ := by
