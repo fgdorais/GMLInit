@@ -82,11 +82,11 @@ protected instance seq (f : Set (α → β)) [hf : IsSubfinite f] (s : Set α) [
     exact IsSubfinite.union (ht:=H) ..
 
 protected instance seqLeft (s : Set α) [hs : IsSubfinite s] (t : Set β) [ht : IsSubfinite t] : IsSubfinite (Set.seqLeft s t) := by
-  clean unfold Set.seqLeft
+  unfold Set.seqLeft
   infer_instance
 
 protected instance seqRight (s : Set α) [hs : IsSubfinite s] (t : Set β) [ht : IsSubfinite t] : IsSubfinite (Set.seqRight s t) := by
-  clean unfold Set.seqRight
+  unfold Set.seqRight
   infer_instance
 
 end Set.IsSubfinite

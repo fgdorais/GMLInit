@@ -27,8 +27,7 @@ protected theorem sub_assoc (x y z : Nat) : (x - y) - z = x - (y + z) := Nat.sub
 
 -- assert theorem add_sub_cancel_left (x y : Nat) : (x + y) - x = y
 
--- moved to Std nat-sub
-protected theorem add_sub_cancel_right (x y : Nat) : (x + y) - y = x := Nat.add_sub_cancel ..
+-- assert theorem add_sub_cancel_right (x y : Nat) : (x + y) - y = x
 
 protected theorem add_sub_comm (x y : Nat) : x + (y - x) = y + (x - y) := by
   rw [Nat.add_comm x, Nat.add_comm y, Nat.sub_add_eq_max, Nat.sub_add_eq_max, Nat.max_comm]
@@ -80,7 +79,7 @@ protected theorem sub_lt_iff_lt_add_of_pos (x y z : Nat) (hz : z > 0) : x - y < 
     · intro
       exact hz
   | succ_succ x y H =>
-    rw [Nat.succ_sub_succ, Nat.succ_add, Nat.succ_eq, Nat.succ_lt_succ_iff_lt]
+    rw [Nat.succ_sub_succ, Nat.succ_add, Nat.succ_eq, Nat.succ_lt_succ_iff]
     apply H
 
 
@@ -106,7 +105,7 @@ protected theorem lt_sub_iff_add_lt (x y z : Nat) : x < y - z ↔ x + z < y := b
   induction y, z with
   | zero_right y => rw [Nat.sub_zero, Nat.add_zero]
   | zero_left z => rw [Nat.zero_sub]; constr <;> (intro; contradiction)
-  | succ_succ y z H => rw [Nat.succ_sub_succ, Nat.add_succ, Nat.succ_eq, Nat.succ_lt_succ_iff_lt]; exact H
+  | succ_succ y z H => rw [Nat.succ_sub_succ, Nat.add_succ, Nat.succ_eq, Nat.succ_lt_succ_iff]; exact H
 
 theorem add_lt_of_lt_sub' {x y z : Nat} : x < y - z → x + z < y :=
   (Nat.lt_sub_iff_add_lt _ _ _).mp
@@ -128,13 +127,13 @@ protected theorem sub_lt_of_pos_of_pos_right {x y : Nat} : x > 0 → y > 0 → x
 
 @[deprecated Nat.sub_le_sub_left]
 protected theorem sub_le_sub_of_ge_right {x y : Nat} (h : x ≥ y) (z : Nat) : z - x ≤ z - y :=
-  Nat.sub_le_sub_left z h
+  Nat.sub_le_sub_left h _
 
 protected theorem sub_le_sub_of_le_of_ge {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ ≥ y₂ → x₁ - y₁ ≤ x₂ - y₂ := by
   intro hx hy
   transitivity (x₂ - y₁)
   · exact Nat.sub_le_sub_right hx ..
-  · exact Nat.sub_le_sub_left _ hy
+  · exact Nat.sub_le_sub_left hy ..
 
 protected theorem sub_lt_sub_of_lt_left {x y z : Nat} : x < y → z < y → x - z < y - z := by
   intro hx hz

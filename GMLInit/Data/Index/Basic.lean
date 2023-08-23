@@ -90,8 +90,7 @@ theorem find_some {α} {xs : List α} {p : Index xs → Bool} (i : Index xs) : I
   | nil => cases i
   | cons x xs ih =>
     intro h
-    clean unfold Index.find? at h
-    clean at h
+    unfold Index.find? at h
     split at h
     next hh => injection h with h; rw [←h, hh]
     next ht => injection h with h; rw [←h, ih _ ht]
@@ -102,8 +101,7 @@ theorem find_none {α} {xs : List α} {p : Index xs → Bool} (i : Index xs) : I
   | nil => cases i
   | cons x xs ih =>
     intro h
-    clean unfold Index.find? at h
-    clean at h
+    unfold Index.find? at h
     split at h
     next => contradiction
     next => contradiction
@@ -122,7 +120,7 @@ def search {α} {xs : List α} {p : Index xs → Prop} [DecidablePred p] (h : �
     contradiction
 
 theorem search_prop {α} {xs : List α} {p : Index xs → Prop} [DecidablePred p] (h : ∃ i, p i) : p (search h) := by
-  clean unfold search
+  unfold search
   split
   next h =>
     apply of_decide_eq_true

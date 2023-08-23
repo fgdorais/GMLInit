@@ -5,61 +5,51 @@ class Infinity (α) where
   infinity : α
 notation "∞" => Infinity.infinity
 
-structure ENat where
-  isLE : Nat → Bool
-  step (x : Nat) : isLE x → isLE (x + 1)
+@[ext] structure ENat where
+  leNat : Nat → Bool
+  mono_step : leNat x = true → leNat (x + 1) = true
 
 namespace ENat
 
-protected theorem eq : {e₁ e₂ : ENat} → e₁.isLE = e₂.isLE → e₁ = e₂
-| ⟨_,_⟩, ⟨_,_⟩, rfl => rfl
-
-protected theorem ext {e₁ e₂ : ENat} : (∀ x, e₁.isLE x = e₂.isLE x) → e₁ = e₂
-| h => ENat.eq $ funext h
-
-theorem mono (e : ENat) {x y : Nat} : x ≤ y → e.isLE x → e.isLE y := by
-  intro h hx
-  match Nat.le.dest h with
-  | ⟨z,hz⟩ =>
-    cases hz
-    induction z with
-    | zero => exact hx
-    | succ z H =>
-      apply e.step
-      apply H
-      exact Nat.le_add_right x z
-
-protected def zero : ENat where
-  isLE _ := true
-  step _ := id
-instance : OfNat ENat (nat_lit 0) := ⟨ENat.zero⟩
-
-@[simp] theorem isLE_zero (n) : ENat.isLE 0 n = true := rfl
-
 protected def infinity : ENat where
-  isLE _ := false
-  step _ := Bool.noConfusion
+  leNat _ := false
+  mono_step := Bool.noConfusion
+
 instance : Infinity ENat := ⟨ENat.infinity⟩
 
-@[simp] theorem isLE_infinity (n) : ENat.isLE ∞ n = false := rfl
-
 protected def ofNat (n : Nat) : ENat where
-  isLE := Nat.ble n
-  step x := by
-    intro h
+  leNat := Nat.ble n
+  mono_step h := by
     rw [Nat.ble_eq] at h ⊢
-    transitivity x
-    · exact h
-    · exact Nat.le_add_right ..
+    apply Nat.le_trans h
+    exact Nat.le_add_right ..
 
 instance : Coe Nat ENat := ⟨ENat.ofNat⟩
 
-@[simp] theorem ofNat_isLE_iff_le (n m : Nat) : ENat.isLE n m ↔ n ≤ m := by
-  clean unfold ENat.ofNat
-  rw [Nat.ble_eq]
+instance : OfNat ENat n := ⟨n⟩
 
-theorem ofNat_isLE_self (n : Nat) : ENat.isLE n n := by
-  rw [ofNat_isLE_iff_le]
-  reflexivity
+theorem mono_add {x : ENat} : x.leNat n = true → x.leNat (n + m) = true := by
+  intro h; induction m with
+  | zero => exact h
+  | succ _ h => exact mono_step _ h
+
+theorem mono {x : ENat} : n ≤ m → x.leNat n = true → x.leNat m = true := by
+  intro h hx
+  match Nat.le.dest h with
+  | ⟨_, h⟩ => cases h; exact mono_add hx
+
+theorem mono' {e : ENat} {x y : Nat} : x ≤ y → e.leNat y = false → e.leNat x = false := by
+  intro h hy; rw [Bool.eq_false_iff] at hy ⊢; exact mt (mono h) hy
+
+theorem leNat_coe_eq_true_iff_le {n : Nat} : ENat.leNat n m = true ↔ n ≤ m := by
+  rw [ENat.ofNat, Nat.ble_eq]
+
+theorem leNat_coe_eq_false_iff_gt {n : Nat} : ENat.leNat n m = false ↔ m < n := by
+  rw [Bool.eq_false_iff, ←Nat.not_le, ←leNat_coe_eq_true_iff_le]
+
+theorem leNat_zero_eq_true (n) : ENat.leNat 0 n = true := by
+  simp only [OfNat.ofNat, leNat_coe_eq_true_iff_le, Nat.zero_le]
+
+theorem leNat_infinity_eq_false (n) : ENat.leNat ∞ n = false := rfl
 
 end ENat

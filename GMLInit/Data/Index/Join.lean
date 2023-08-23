@@ -19,8 +19,8 @@ theorem unjoin_join (i : (i : Index xss) × (Index i.val)) : unjoin (join i) = i
   | nil => cases i; contradiction
   | cons xs xss ih =>
     match i with
-    | ⟨head, j⟩ => clean unfold join unjoin; rw [unappend_append]
-    | ⟨tail i, j⟩ => clean unfold join unjoin; rw [unappend_append]; clean; rw [ih]
+    | ⟨head, j⟩ => unfold join unjoin; rw [unappend_append]
+    | ⟨tail i, j⟩ => unfold join unjoin; rw [unappend_append]; clean; rw [ih]
 
 theorem join_unjoin (k : Index xss.join) : join (unjoin k) = k := by
   induction xss with

@@ -51,11 +51,11 @@ protected instance seq (f : Set (α → β)) [hf : IsFinite f] (s : Set α) [hs 
     exact IsFinite.union (ht:=H) ..
 
 protected instance seqLeft (s : Set α) [hs : IsFinite s] (t : Set β) [ht : IsFinite t] : IsFinite (Set.seqLeft s t) := by
-  clean unfold Set.seqLeft
+  unfold Set.seqLeft
   infer_instance
 
 protected instance seqRight (s : Set α) [hs : IsFinite s] (t : Set β) [ht : IsFinite t] : IsFinite (Set.seqRight s t) := by
-  clean unfold Set.seqRight
+  unfold Set.seqRight
   infer_instance
 
 end Set.IsFinite

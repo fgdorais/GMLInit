@@ -31,7 +31,7 @@ private abbrev isEvenImpl (n : Nat) : Bool := (n % 2) == 0
   | zero => rfl
   | one => rfl
   | step n ih =>
-    clean unfold Nat.isEven Nat.add
+    unfold Nat.isEven Nat.add
     rw [isEvenImpl, Nat.add_mod_right, ih]
 
 theorem isEven_or_isOdd (n : Nat) : n.isEven ∨ n.isOdd := by
@@ -55,7 +55,7 @@ abbrev halfImpl (n : Nat) : Nat := n / 2
   | zero => rfl
   | one => rfl
   | step n ih =>
-    clean unfold Nat.half Nat.add
+    unfold Nat.half Nat.add
     rw [halfImpl, Nat.add_div_right, ih]
     nat_is_pos
 
@@ -67,7 +67,7 @@ theorem isEven_inl (n : Nat) : isEven n.inl := by
   induction n with
   | zero => rfl
   | succ n ih =>
-    clean unfold Nat.inl at ih ⊢
+    unfold Nat.inl at ih ⊢
     rw [Nat.mul_succ]
     exact ih
 
@@ -75,7 +75,7 @@ theorem isOdd_inr (n : Nat) : isOdd n.inr := by
   induction n with
   | zero => rfl
   | succ n ih =>
-    clean unfold Nat.inr at ih ⊢
+    unfold Nat.inr at ih ⊢
     rw [Nat.mul_succ]
     exact ih
 
@@ -83,14 +83,14 @@ theorem half_inl_eq (n : Nat) : half n.inl = n := by
   induction n with
   | zero => rfl
   | succ n ih =>
-    clean unfold Nat.inl at ih ⊢
+    unfold Nat.inl at ih ⊢
     rw [Nat.mul_succ, Nat.half, ih]
 
 theorem half_inr_eq (n : Nat) : half n.inr = n := by
   induction n with
   | zero => rfl
   | succ n ih =>
-    clean unfold Nat.inr at ih ⊢
+    unfold Nat.inr at ih ⊢
     rw [Nat.mul_succ, Nat.half, ih]
 
 theorem inl_half_eq_of_isEven {n : Nat} : isEven n → (half n).inl = n := by
@@ -100,7 +100,7 @@ theorem inl_half_eq_of_isEven {n : Nat} : isEven n → (half n).inl = n := by
   | step n ih =>
     intro h
     unfold Nat.inl at ih ⊢
-    clean unfold Nat.half Nat.add
+    unfold Nat.half Nat.add
     rw [Nat.mul_succ, ih h]
 
 theorem inr_half_eq_of_isOdd {n : Nat} : isOdd n → (half n).inr = n := by
@@ -110,7 +110,7 @@ theorem inr_half_eq_of_isOdd {n : Nat} : isOdd n → (half n).inr = n := by
   | step n ih =>
     intro h
     unfold Nat.inr at ih ⊢
-    clean unfold Nat.half Nat.add
+    unfold Nat.half Nat.add
     rw [Nat.mul_succ, Nat.add_succ, Nat.add_succ, ih h]
 
 theorem inl_half_eq_or_inr_half_eq (n : Nat) : (half n).inl = n ∨ (half n).inr = n := by
@@ -132,7 +132,7 @@ def equivSum : Equiv (Sum Nat Nat) Nat where
   rev := decodeSum
   fwd_eq_iff_rev_eq := by intro
     | .inl m, n =>
-      clean unfold encodeSum decodeSum
+      unfold encodeSum decodeSum
       split
       next h =>
         cases h
@@ -156,7 +156,7 @@ def equivSum : Equiv (Sum Nat Nat) Nat where
             rfl
       next h => contradiction
     | .inr m, n =>
-      clean unfold encodeSum decodeSum
+      unfold encodeSum decodeSum
       split
       next h => contradiction
       next h =>

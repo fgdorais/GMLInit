@@ -63,7 +63,7 @@ theorem bne_of_ne [LawfulBEq α] {x y : α} : x ≠ y → x != y := by
 theorem ne_iff_bne [LawfulBEq α] {x y : α} : (x != y) ↔ x ≠ y := ⟨ne_of_bne, bne_of_ne⟩
 
 theorem comp [PartialEquivBEq α] {x y : α} : (x != y) = true → ∀ z, (x != z) = true ∨ (z != y) = true := by
-  clean unfold bne
+  unfold bne
   intro hxy z
   match hxz : x == z, hyz : z == y with
   | true, true => rw [BEq.subst_right hyz] at hxz; rw [hxz] at hxy; contradiction

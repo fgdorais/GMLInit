@@ -1,9 +1,11 @@
-{"version": 4,
+{"version": 5,
  "packagesDir": "lake-packages",
  "packages":
  [{"git":
    {"url": "https://github.com/fgdorais/std4",
     "subDir?": null,
-    "rev": "af08dd922d22b1ced27f888d0c593f451a60638c",
+    "rev": "453364ebc67fff4d0e035aa895ae67a7d10ce74f",
+    "opts": {},
     "name": "Std",
-    "inputRev?": "gml"}}]}
+    "inputRev?": "nat-all",
+    "inherited": false}}]}

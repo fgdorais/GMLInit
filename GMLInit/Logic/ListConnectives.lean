@@ -35,13 +35,13 @@ protected def projIdx : {as : List Prop} → All as → (i : Index as) → i.val
 
 syntax "All.intro" termList : term
 macro_rules
-| `(All.intro [|$t]) => `($t)
-| `(All.intro [$h, $hs,* |$t]) => `(All.cons $h (All.intro [$hs,* |$t]))
+| `(All.intro [|$t:term]) => `($t)
+| `(All.intro [$h:term, $hs,* |$t]) => `(All.cons $h (All.intro [$hs,* |$t]))
 | `(All.intro [$hs,*]) => `(All.intro [$hs,*|All.nil])
 
 syntax "All.pr." noWs num (term <|> hole <|> syntheticHole) : term
 macro_rules
-| `(All.pr.$n $h) => 
+| `(All.pr.$n $h:term) =>
   match Lean.Syntax.isNatLit? n with
   | some 0 => `(All.head $h)
   | some (n+1) =>
@@ -88,7 +88,7 @@ macro_rules
 
 syntax "Any.in." noWs num (term <|> hole <|> syntheticHole) : term
 macro_rules
-| `(Any.in.$n $h) => match Lean.Syntax.isNatLit? n with
+| `(Any.in.$n $h:term) => match Lean.Syntax.isNatLit? n with
   | some 0 => `(Any.head $h)
   | some (n+1) => let n := Lean.Syntax.mkNumLit (toString n)
     `(Any.tail (Any.in.$n $h))

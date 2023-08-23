@@ -86,12 +86,12 @@ def equiv (αs : List (Sort _)) : Equiv (HList αs) ((i : Index αs) → i.val) 
       cases h
       induction as with
       | nil => rfl
-      | cons a as H => clean unfold HList.mk HList.eval; rw [H]
+      | cons a as H => unfold HList.mk HList.eval; rw [H]
     · intro h
       cases h
       funext i
       induction i with
       | head => rfl
-      | tail i H => clean unfold HList.mk HList.eval; rw [H]
+      | tail i H => unfold HList.mk HList.eval; rw [H]
 
 end HList

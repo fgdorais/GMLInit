@@ -12,10 +12,10 @@ variable {p} {h}
 
 theorem not_prop_of_lt_bfind {x} : (x < bfind p h) → ¬ p x := by
   intro hlt h
-  clean unfold bfind at hlt
+  unfold bfind at hlt
   apply Nat.not_le.2 hlt
-  apply toNat_le_of_isLE
-  apply first.isLE_of
+  apply toNat_le_of_leNat
+  apply first.leNat_of
   exact h
 
 theorem bfind_le_of_prop {x} : p x → bfind p h ≤ x := by
@@ -28,10 +28,10 @@ theorem bfind_le_of_prop {x} : p x → bfind p h ≤ x := by
 variable (p) (h)
 
 theorem bfind_prop : p (bfind p h) := by
-  have : (first p).isLE (bfind p h) := by
-    clean unfold bfind
-    rw [isLE_toNat]
-  match first.exists_le_of_isLE _ this with
+  have : (first p).leNat (bfind p h) := by
+    unfold bfind
+    rw [leNat_toNat]
+  match first.exists_le_of_leNat _ this with
   | ⟨x, hle, hx⟩ =>
     have heq : x = bfind p h := by
       antisymmetry using (.≤.:Nat→Nat→Prop)

@@ -57,7 +57,7 @@ section
 variable {p}
 
 theorem unsublist_pos_head {x : α} {xs : List α} (h : p x) : ((List.sublist_pos h) ▸ (head : Index (⟨x,h⟩ :: xs.sublist p)) : Index ((x :: xs).sublist p)).unsublist p = head := by
-  clean unfold unsublist
+  unfold unsublist
   rw [dif_pos h]
   split
   next => rfl
@@ -156,7 +156,7 @@ theorem val_unsublist_eq_val_val {xs : List α} (i : Index (xs.sublist p)) : (i.
   | cons x xs ih =>
     by_cases p x with
     | isTrue hx =>
-      clean unfold unsublist
+      unfold unsublist
       rw [dif_pos hx]
       split
       next h =>
@@ -170,7 +170,7 @@ theorem val_unsublist_eq_val_val {xs : List α} (i : Index (xs.sublist p)) : (i.
         rw [val_tail, val_tail]
         apply ih
     | isFalse hx =>
-      clean unfold unsublist
+      unfold unsublist
       rw [dif_neg hx]
       rw [val_tail]
       rw [ih]

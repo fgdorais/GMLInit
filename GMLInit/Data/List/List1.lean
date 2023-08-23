@@ -43,22 +43,22 @@ theorem toList1_eq_iff_toIndView_eq {{xs : List1.IndView α}} {{ys : List1 α}} 
   xs.toList1 = ys ↔ ys.toIndView = xs := by
   match xs, ys with
   | .pure x, .cons y [] =>
-    clean unfold IndView.toList1 toIndView
+    unfold IndView.toList1 toIndView
     constr
     · intro | rfl => rfl
     · intro | rfl => rfl
   | .pure x, .cons y (_ :: _) =>
-    clean unfold IndView.toList1 toIndView
+    unfold IndView.toList1 toIndView
     constr
     · intro h; injection h with h; injection h with hh ht; contradiction
     · intro; contradiction
   | .cons x xs, .cons y [] =>
-    clean unfold IndView.toList1 toIndView
+    unfold IndView.toList1 toIndView
     constr
     · intro h; injection h with h; injection h with hh ht; absurd ht; exact List1.ne_nil xs.toList1
     · intro; contradiction
   | .cons x xs, .cons y (_ :: _) =>
-    clean unfold IndView.toList1 toIndView
+    unfold IndView.toList1 toIndView
     rw [←cons_toList]
     constr
     · intro h; injection h with h; injection h with hh ht

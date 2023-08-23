@@ -8,4 +8,4 @@ package GMLInit {
 @[default_target]
 lean_lib GMLInit {}
 
-require Std from git "https://github.com/fgdorais/std4" @ "gml"
+require Std from git "https://github.com/fgdorais/std4" @ "nat-all"

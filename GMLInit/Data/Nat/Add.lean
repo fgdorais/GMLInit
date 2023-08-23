@@ -66,19 +66,9 @@ theorem pos_add_right (x y : Nat) (h : y > 0 := by nat_is_pos) : x + y > 0 :=
 
 -- assert theorem add_lt_add_right {x y : Nat} (h : x ≤ y) (z : Nat) : x + z ≤ y + z
 
--- moved to Std nat-add
-protected theorem add_lt_add_of_le_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → x₁ + y₁ < x₂ + y₂ := by
-  intro h₁ h₂
-  transitivity (x₁ + y₂) using LT.lt, LE.le
-  · apply Nat.add_lt_add_left h₂
-  · apply Nat.add_le_add_right h₁
+-- assert theorem add_lt_add_of_le_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → x₁ + y₁ < x₂ + y₂
 
--- moved to Std nat-add
-protected theorem add_lt_add_of_lt_of_le {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ ≤ y₂ → x₁ + y₁ < x₂ + y₂ := by
-  intro h₁ h₂
-  transitivity (x₁ + y₂) using LE.le, LT.lt
-  · apply Nat.add_le_add_left h₂
-  · apply Nat.add_lt_add_right h₁
+-- assert theorem add_lt_add_of_lt_of_le {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ ≤ y₂ → x₁ + y₁ < x₂ + y₂y
 
 @[deprecated Nat.le_of_add_le_add_left]
 protected theorem le_of_add_le_add_left' (x : Nat) {y z : Nat} : x + y ≤ x + z → y ≤ z := Nat.le_of_add_le_add_left

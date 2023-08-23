@@ -43,7 +43,7 @@ protected theorem nil_append {α m} (bs : LList α m) : LList.append [] bs = bs 
 
 protected theorem cons_append {α n m} (a : α) (as : LList α n) (bs : LList α m) : LList.append (a :: as) bs = a :: (LList.append as bs) := by
   apply eq_of_heq
-  clean unfold LList.append LList.cons
+  unfold LList.append LList.cons
   elim_casts
   rw [HList.cons_append]
   apply HList.cons_hcongr

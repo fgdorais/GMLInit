@@ -291,7 +291,6 @@ theorem specFun (k : Fin (n ^ m)) (x : Fin m → Fin n) :
         contradiction
       constr
       · intro h
-        clean at h
         unfold encodeFun
         apply Fin.eq
         clean
@@ -622,7 +621,7 @@ def decodeSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (count 
       match k with
       | 0 => ⟨⟨0, Nat.zero_lt_succ n⟩, h0⟩
       | k + 1 =>
-        match decodeSubtype (fun i => p (succ i)) ⟨k, Nat.lt_of_succ_lt_succ' (this ▸ hk)⟩ with
+        match decodeSubtype (fun i => p (succ i)) ⟨k, Nat.lt_of_add_lt_add_right (this ▸ hk)⟩ with
         | ⟨⟨i, hi⟩, hp⟩ => ⟨⟨i+1, Nat.succ_lt_succ hi⟩, hp⟩
     else
       have : count p = count (fun i => p (succ i)) := by
@@ -706,7 +705,7 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
             contradiction
           | ⟨k,hk⟩, ⟨⟨i+1, hi⟩, hp⟩ =>
             cases heq
-            have : decodeSubtype (fun i => p (succ i)) ⟨k', Nat.lt_of_succ_lt_succ' (this ▸ hk')⟩ = ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, hp⟩ := by
+            have : decodeSubtype (fun i => p (succ i)) ⟨k', Nat.lt_of_add_lt_add_right (this ▸ hk')⟩ = ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, hp⟩ := by
               rw [ih]
               simp only [encodeSubtype, dif_pos h0] at h
               let h := val_eq_of_eq h
