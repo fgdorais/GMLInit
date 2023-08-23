@@ -94,6 +94,12 @@ theorem take_take (as : List α) (m n) : take m (take n as) = take (min m n) as 
     cases as with simp [Nat.min_add_add_right]
     | cons _ _ => exact ih ..
 
+theorem take_drop (as : List α) (m n) : take m (drop n as) = drop n (take (m + n) as) := by
+  induction n using Nat.recAux generalizing as with try trivial
+  | succ n ih =>
+    cases as with simp
+    | cons a as => exact ih ..
+
 /- drop -/
 
 theorem drop_cons {α} (a : α) (as : List α) (n : Nat) : drop (n+1) (a :: as) = drop n as := rfl
@@ -110,10 +116,16 @@ theorem drop_all {α} (as : List α) : as.drop as.length = [] := by
     rw [ih]
 
 theorem drop_drop (as : List α) (m n) : drop m (drop n as) = drop (m + n) as := by
-  induction n using Nat.recAux generalizing as with try simp
+  induction n using Nat.recAux generalizing as with try trivial
   | succ _ ih =>
-    cases as with try simp
+    cases as with simp
     | cons _ _ => exact ih ..
+
+theorem drop_take (as : List α) (m n) : drop m (take n as) = take (n - m) (drop m as) := by
+  induction m, n using Nat.recDiagAux generalizing as with simp
+  | succ_succ m n ih =>
+    cases as with simp
+    | cons a as => exact ih ..
 
 theorem drop_get {α} (as : List α) (n : Nat) (hn : n < as.length) : drop n as = as[n] :: drop (n+1) as := by
   induction as generalizing n with
