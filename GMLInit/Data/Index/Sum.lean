@@ -28,21 +28,21 @@ theorem sum_unsum (k : Index (List.sum xs ys)) : sum (unsum k) = k := by
   | inr j => rw [unappend_eq_iff_eq_append] at h; rw [h, unsum, unappend_append, sum]; clean; rw [map_unmap]
 
 theorem sum_eq_iff_eq_unsum (i : Sum (Index xs) (Index ys)) (k : Index (List.sum xs ys)) : sum i = k ↔ i = unsum k := by
-  constr
+  constructor
   · intro h; rw [←h, unsum_sum]
   · intro h; rw [h, sum_unsum]
 
 theorem unsum_eq_iff_eq_sum (k : Index (List.sum xs ys)) (i : Sum (Index xs) (Index ys)) : unsum k = i ↔ k = sum i := by
-  constr
+  constructor
   · intro h; rw [←h, sum_unsum]
   · intro h; rw [h, unsum_sum]
 
-def sumEquiv (xs : List α) (ys : List β) : Equiv (Sum (Index xs) (Index ys)) (Index (List.sum xs ys)) where
+def sumEquiv (xs : List α) (ys : List β) : Logic.Equiv (Sum (Index xs) (Index ys)) (Index (List.sum xs ys)) where
   fwd := sum
   rev := unsum
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact unsum_sum ..
     · intro | rfl => exact sum_unsum ..
 

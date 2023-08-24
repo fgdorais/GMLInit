@@ -1,4 +1,3 @@
-import GMLInit.Logic.Basic
 import GMLInit.Meta.Prelude
 
 namespace HEq

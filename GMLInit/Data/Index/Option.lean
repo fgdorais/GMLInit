@@ -24,21 +24,21 @@ theorem option_unoption : (k : Index (List.option xs)) → option (unoption k) =
 | tail k => congrArg tail (map_unmap some k)
 
 theorem option_eq_iff_eq_unoption (i : Option (Index xs)) (k : Index (List.option xs)) : option i = k ↔ i = unoption k := by
-  constr
+  constructor
   · intro h; rw [←h, unoption_option]
   · intro h; rw [h, option_unoption]
 
 theorem unoption_eq_iff_eq_option (k : Index (List.option xs)) (i : Option (Index xs)) : unoption k = i ↔ k = option i := by
-  constr
+  constructor
   · intro h; rw [←h, option_unoption]
   · intro h; rw [h, unoption_option]
 
-def optionEquiv (xs : List α) : Equiv (Option (Index xs)) (Index (List.option xs)) where
+def optionEquiv (xs : List α) : Logic.Equiv (Option (Index xs)) (Index (List.option xs)) where
   fwd := option
   rev := unoption
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact unoption_option ..
     · intro | rfl => exact option_unoption ..
 

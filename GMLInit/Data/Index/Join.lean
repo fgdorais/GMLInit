@@ -31,21 +31,21 @@ theorem join_unjoin (k : Index xss.join) : join (unjoin k) = k := by
     | .inr k => rw [unappend_eq_iff_eq_append] at h; rw [h, unjoin, unappend_append, join, ih]
 
 theorem join_eq_iff_eq_unjoin (i : (i : Index xss) × (Index i.val)) (k : Index xss.join) : join i = k ↔ i = unjoin k := by
-  constr
+  constructor
   · intro h; rw [←h, unjoin_join]
   · intro h; rw [h, join_unjoin]
 
 theorem unjoin_eq_iff_eq_join (k : Index xss.join) (i : (i : Index xss) × (Index i.val)) : unjoin k = i ↔ k = join i := by
-  constr
+  constructor
   · intro h; rw [←h, join_unjoin]
   · intro h; rw [h, unjoin_join]
 
-def joinEquiv (xss : List (List α)) : Equiv ((i : Index xss) × Index i.val) (Index xss.join) where
+def joinEquiv (xss : List (List α)) : Logic.Equiv ((i : Index xss) × Index i.val) (Index xss.join) where
   fwd := join
   rev := unjoin
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact unjoin_join ..
     · intro | rfl => exact join_unjoin ..
 

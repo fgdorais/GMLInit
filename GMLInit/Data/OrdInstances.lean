@@ -2,10 +2,8 @@ import GMLInit.Data.Basic
 import GMLInit.Data.Ord
 import GMLInit.Data.Nat
 import GMLInit.Data.Int
-import GMLInit.Logic.Ordering
-import GMLInit.Logic.Relation
 
-open Relation
+open Logic
 open Ordering (lt eq gt)
 
 def compareOfLE {α} [LE α] [DecidableRel (α:=α) (.≤.)] (x y : α) : Ordering :=

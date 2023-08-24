@@ -52,21 +52,21 @@ theorem append_unappend (k : Index (xs ++ ys)) : append (unappend k) = k := by
       next h => rw [append, ←h, ih]
 
 theorem append_eq_iff_eq_unappend (i : Sum (Index xs) (Index ys)) (j : Index (xs ++ ys)) : append i = j ↔ i = unappend j := by
-  constr
+  constructor
   · intro h; rw [←h, unappend_append]
   · intro h; rw [h, append_unappend]
 
 theorem unappend_eq_iff_eq_append (i : Index (xs ++ ys)) (j : Sum (Index xs) (Index ys)) : unappend i = j ↔ i = append j := by
-  constr
+  constructor
   · intro h; rw [←h, append_unappend]
   · intro h; rw [h, unappend_append]
 
-def appendEquiv (xs ys : List α) : Equiv (Sum (Index xs) (Index ys)) (Index (xs ++ ys)) where
+def appendEquiv (xs ys : List α) : Logic.Equiv (Sum (Index xs) (Index ys)) (Index (xs ++ ys)) where
   fwd := append
   rev := unappend
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact unappend_append ..
     · intro | rfl => exact append_unappend ..
 

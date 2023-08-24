@@ -1,9 +1,7 @@
 import GMLInit.Data.Basic
 import GMLInit.Data.HVal
 import GMLInit.Data.List.Basic
-import GMLInit.Logic.ListConnectives
 import GMLInit.Meta.Basic
-import GMLInit.Meta.Relation
 
 inductive HList.{u} : List (Sort u) → Type u
 | nil : HList []
@@ -76,12 +74,12 @@ protected def eval : {αs : List (Sort _)} → HList αs → (i : Index αs) →
 | _::_, a::_, .head => a
 | _::_, _::as, .tail i => HList.eval as i
 
-def equiv (αs : List (Sort _)) : Equiv (HList αs) ((i : Index αs) → i.val) where
+def equiv (αs : List (Sort _)) : Logic.Equiv (HList αs) ((i : Index αs) → i.val) where
   fwd := HList.eval
   rev := HList.mk
   fwd_eq_iff_rev_eq := by
     intros as f
-    constr
+    constructor
     · intro h
       cases h
       induction as with

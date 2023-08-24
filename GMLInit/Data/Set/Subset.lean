@@ -1,5 +1,4 @@
 import GMLInit.Data.Set.Basic
-import GMLInit.Logic.Relation
 
 namespace Set
 open Set.Notation
@@ -10,23 +9,23 @@ def Subset (s t : Set α) : Prop := ∀ x, x ∈ s → x ∈ t
 theorem subset_refl (s : Set α) : s ⊆ s := by
   intro x hs
   exact hs
-instance (α) : Relation.Reflexive (α:=Set α) (.⊆.) := ⟨subset_refl⟩
+instance (α) : Logic.Reflexive (α:=Set α) (.⊆.) := ⟨subset_refl⟩
 
 theorem subset_trans : s ⊆ t → t ⊆ u → s ⊆ u := by
   intro hst htu x hs
   apply htu
   apply hst
   exact hs
-instance (α) : Relation.Transitive (α:=Set α) (.⊆.) := ⟨subset_trans⟩
+instance (α) : Logic.Transitive (α:=Set α) (.⊆.) := ⟨subset_trans⟩
 
 theorem subset_antisymm : s ⊆ t → t ⊆ s → s = t := by
   intro hst hts
   apply Set.ext
   intro x
-  constr
+  constructor
   · exact hst x
   · exact hts x
-instance (α) : Relation.Antisymmetric (α:=Set α) (.⊆.) := ⟨subset_antisymm⟩
+instance (α) : Logic.Antisymmetric (α:=Set α) (.⊆.) := ⟨subset_antisymm⟩
 
 theorem empty_subset (s : Set α) : Set.empty ⊆ s := by
   intro x h
@@ -109,25 +108,25 @@ theorem inter_subset_right (s t : Set α) : s ∩ t ⊆ t := by
 
 theorem subset_inter_of_subset_of_subset : u ⊆ s → u ⊆ t → u ⊆ s ∩ t := by
   intro hus hut x hxu
-  constr
+  constructor
   · exact hus x hxu
   · exact hut x hxu
 
 theorem inter_subset_inter_left : s ⊆ t → (∀ u, u ∩ s ⊆ u ∩ t) := by
   intro hst u x ⟨hu, hs⟩
-  constr
+  constructor
   · exact hu
   · exact hst x hs
 
 theorem inter_subset_inter_right : s ⊆ t → (∀ u, s ∩ u ⊆ t ∩ u) := by
   intro hst u x ⟨hs, hu⟩
-  constr
+  constructor
   · exact hst x hs
   · exact hu
 
 theorem inter_subset_inter {s₁ s₂ t₁ t₂ : Set α} : s₁ ⊆ s₂ → t₁ ⊆ t₂ → s₁ ∩ t₁ ⊆ s₂ ∩ t₂ := by
   intro hs ht x ⟨hs₁,ht₁⟩
-  constr
+  constructor
   · exact hs x hs₁
   · exact ht x ht₁
 
@@ -135,14 +134,14 @@ theorem map_subset_map (f : α → β) : s ⊆ t → f <$> s ⊆ f <$> t := by
   intro hst y ⟨x,hx,h⟩
   cases h
   exists x
-  constr
+  constructor
   · exact hst x hx
   · rfl
 
 theorem bind_subset_bind (f : α → Set β) : s ⊆ t → s >>= f ⊆ t >>= f := by
   intro hst y ⟨x,hx,h⟩
   exists x
-  constr
+  constructor
   · exact hst x hx
   · exact h
 

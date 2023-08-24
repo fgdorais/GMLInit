@@ -9,3 +9,5 @@ package GMLInit {
 lean_lib GMLInit {}
 
 require Std from git "https://github.com/fgdorais/std4" @ "nat-all"
+
+require Logic from git "https://github.com/fgdorais/logic4" @ "main"

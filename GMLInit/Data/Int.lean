@@ -91,17 +91,17 @@ theorem nonNeg_mk (m n) : NonNeg (m ⊖ n) ↔ n ≤ m := by
   induction m, n with
   | zero_zero =>
     rw [zero_mk_zero]
-    constr
+    constructor
     · intro; reflexivity
     · intro; apply NonNeg.mk
   | zero_succ n =>
     rw [zero_mk_succ]
-    constr
+    constructor
     · intro; contradiction
     · intro; contradiction
   | succ_zero m =>
     rw [succ_mk_zero]
-    constr
+    constructor
     · intro; apply Nat.zero_le
     · intro; apply NonNeg.mk
   | succ_succ m n ih =>
@@ -281,7 +281,7 @@ protected theorem lt_iff_succ_le (i j : Int) : i < j ↔ i + 1 ≤ j := Iff.rfl
 
 protected theorem le_iff_lt_succ (i j : Int) : i ≤ j ↔ i < j + 1 := by
   rw [Int.lt_iff_succ_le]
-  constr
+  constructor
   · apply Int.add_le_add_right (c:=1)
   · apply Int.le_of_add_le_add_right
 
@@ -339,15 +339,15 @@ protected theorem lt_compare {i j : Int} : i < j → ∀ (k : Int), i < k ∨ k 
   | inl hle => right; exact Int.lt_of_le_of_lt hle hij
   | inr hgt => left; exact hgt
 
-instance : Relation.Reflexive (α:=Int) (.≤.) := ⟨Int.le_refl⟩
-instance : Relation.Transitive (α:=Int) (.≤.) := ⟨Int.le_trans⟩
-instance : Relation.Antisymmetric (α:=Int) (.≤.) := ⟨Int.le_antisymm⟩
-instance : Relation.Total (α:=Int) (.≤.) := ⟨Int.le_total⟩
-instance : Relation.Irreflexive (α:=Int) (.<.) := ⟨Int.lt_irrefl⟩
-instance : Relation.Transitive (α:=Int) (.<.) := ⟨Int.lt_trans⟩
-instance : Relation.Comparison (α:=Int) (.<.) := ⟨Int.lt_compare⟩
-instance : Relation.Connex (α:=Int) (.<.) := ⟨Int.lt_connex⟩
-instance : Relation.HTransitive (α:=Int) (.≤.) (.<.) (.<.) := ⟨Int.lt_of_le_of_lt⟩
-instance : Relation.HTransitive (α:=Int) (.<.) (.≤.) (.<.) := ⟨Int.lt_of_lt_of_le⟩
+instance : Logic.Reflexive (α:=Int) (.≤.) := ⟨Int.le_refl⟩
+instance : Logic.Transitive (α:=Int) (.≤.) := ⟨Int.le_trans⟩
+instance : Logic.Antisymmetric (α:=Int) (.≤.) := ⟨Int.le_antisymm⟩
+instance : Logic.Total (α:=Int) (.≤.) := ⟨Int.le_total⟩
+instance : Logic.Irreflexive (α:=Int) (.<.) := ⟨Int.lt_irrefl⟩
+instance : Logic.Transitive (α:=Int) (.<.) := ⟨Int.lt_trans⟩
+instance : Logic.Comparison (α:=Int) (.<.) := ⟨Int.lt_compare⟩
+instance : Logic.Connex (α:=Int) (.<.) := ⟨Int.lt_connex⟩
+instance : Logic.HTransitive (α:=Int) (.≤.) (.<.) (.<.) := ⟨Int.lt_of_le_of_lt⟩
+instance : Logic.HTransitive (α:=Int) (.<.) (.≤.) (.<.) := ⟨Int.lt_of_lt_of_le⟩
 
 end Int

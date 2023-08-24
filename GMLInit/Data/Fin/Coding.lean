@@ -1,6 +1,7 @@
 import GMLInit.Data.Fin.Basic
 
 namespace Fin
+open Logic
 
 def equivEmpty : Equiv (Fin 0) Empty where
   fwd := (nomatch .)
@@ -61,7 +62,7 @@ def equivOption (n : Nat) : Equiv (Fin (n+1)) (Option (Fin n)) where
   | none => encodeOptionNone
   fwd_eq_iff_rev_eq {k x} := match k, x with
   | ⟨k, hk⟩, some ⟨i, hi⟩ => by
-    constr
+    constructor
     · intro h
       unfold decodeOption at h
       unfold encodeOptionSome
@@ -83,7 +84,7 @@ def equivOption (n : Nat) : Equiv (Fin (n+1)) (Option (Fin n)) where
       next =>
         contradiction
   | ⟨k, hk⟩, none => by
-    constr
+    constructor
     · intro h
       unfold decodeOption at h
       unfold encodeOptionNone
@@ -138,7 +139,7 @@ def equivSum (m n : Nat) : Equiv (Fin (m + n)) (Sum (Fin m) (Fin n)) where
   | .inr y => encodeSumRight y
   fwd_eq_iff_rev_eq {k x} := match k, x with
   | ⟨k, hk⟩, .inl ⟨i, hi⟩ => by
-    constr
+    constructor
     · intro h
       unfold decodeSum at h
       unfold encodeSumLeft
@@ -160,7 +161,7 @@ def equivSum (m n : Nat) : Equiv (Fin (m + n)) (Sum (Fin m) (Fin n)) where
       next =>
         contradiction
   | ⟨k, hk⟩, .inr ⟨j, hj⟩ => by
-    constr
+    constructor
     · intro h
       unfold decodeSum at h
       unfold encodeSumRight
@@ -219,7 +220,7 @@ def equivProd (m n : Nat) : Equiv (Fin (m * n)) (Fin m × Fin n) where
   rev := encodeProd
   fwd_eq_iff_rev_eq {k x} := match k, x with
   | ⟨k, hk⟩, (⟨i,hi⟩, ⟨j,hj⟩) => by
-    constr
+    constructor
     · intro h
       unfold decodeProd decodeProdLeft decodeProdRight at h
       unfold encodeProd
@@ -239,7 +240,7 @@ def equivProd (m n : Nat) : Equiv (Fin (m * n)) (Fin m × Fin n) where
         intro hz
         rw [hz, Nat.mul_zero] at hk
         contradiction
-      constr
+      constructor
       · rw [Nat.add_comm]
         rw [Nat.add_mul_div_left _ _ hn]
         rw [Nat.div_eq_of_lt hj]
@@ -277,7 +278,7 @@ theorem specFun (k : Fin (n ^ m)) (x : Fin m → Fin n) :
   | zero =>
     match k with
     | ⟨0, _⟩ =>
-      constr
+      constructor
       · intro | rfl => rfl
       · intro; funext ⟨_,_⟩; contradiction
   | succ m ih =>
@@ -289,7 +290,7 @@ theorem specFun (k : Fin (n ^ m)) (x : Fin m → Fin n) :
         intro h
         rw [h] at hk
         contradiction
-      constr
+      constructor
       · intro h
         unfold encodeFun
         apply Fin.eq
@@ -382,7 +383,7 @@ theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin 
   | succ n ih =>
     match k, x with
     | ⟨k, hk⟩, ⟨⟨0, _⟩, ⟨_,_⟩⟩ =>
-      constr
+      constructor
       · intro h
         unfold decodeSigma at h
         congr
@@ -396,7 +397,7 @@ theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin 
         next => rfl
         next => contradiction
     | ⟨k, hk⟩, ⟨⟨i+1, hi⟩, ⟨j, hj⟩⟩ =>
-      constr
+      constructor
       · intro h
         simp only [decodeSigma] at h
         split at h
@@ -506,7 +507,7 @@ theorem specPi (f : Fin n → Nat) (k : Fin (prod f)) (x : (i : Fin n) → Fin (
   decodePi f k = x ↔ encodePi f x = k := by
     induction n with
     | zero =>
-      constr
+      constructor
       · intro
         match k with
         | ⟨0, _⟩ => rfl
@@ -514,7 +515,7 @@ theorem specPi (f : Fin n → Nat) (k : Fin (prod f)) (x : (i : Fin n) → Fin (
         funext ⟨_,_⟩
         contradiction
     | succ n ih =>
-      constr
+      constructor
       · intro h
         match k with
         | ⟨k, hk⟩ =>
@@ -637,7 +638,7 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
     cases k
     contradiction
   | succ n ih =>
-    constr
+    constructor
     · intro h
       simp only [decodeSubtype] at h
       split at h
@@ -758,7 +759,7 @@ private def getRepr (s : Setoid (Fin n)) [DecidableRel s.r] (i : Fin n) : Fin (q
         congr
         funext k
         rw [decide_eq_decide]
-        constr
+        constructor
         · intro hjk
           transitivity j
           · exact hij
@@ -789,7 +790,7 @@ private theorem getRepr_eq_getRepr_of_equiv (s : Setoid (Fin n)) [DecidableRel s
       congr
       funext k
       rw [decide_eq_decide]
-      constr
+      constructor
       · intro hik
         transitivity i
         · symmetry
@@ -823,7 +824,7 @@ private theorem subtype_eq_of_val_equiv_val (s : Setoid (Fin n)) [DecidableRel s
     congr
     funext k
     rw [decide_eq_decide]
-    constr
+    constructor
     · intro hik
       transitivity i
       · symmetry
@@ -845,7 +846,7 @@ theorem specQuotient (s : Setoid (Fin n)) [DecidableRel s.r] (k : Fin (quot s)) 
   induction i using Quotient.inductionOn with
   | _ i =>
   unfold decodeQuotient encodeQuotient
-  constr
+  constructor
   · intro h
     have h := Quotient.exact h
     transitivity (getRepr s i)

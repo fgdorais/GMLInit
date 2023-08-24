@@ -1,8 +1,8 @@
-import GMLInit.Data.Equiv
 import GMLInit.Data.Nat.Basic
 import GMLInit.Data.Nat.Order
 
 namespace Nat
+open Logic
 
 def tri : Nat → Nat
 | 0 => 0
@@ -172,7 +172,7 @@ def prodEquiv : Equiv Nat (Nat × Nat) where
   fwd_eq_iff_rev_eq := by intro
     | n, (n₁,n₂) =>
       clean
-      constr
+      constructor
       · intro h
         cases h
         rw [pair_fst_snd]

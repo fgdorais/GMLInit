@@ -44,23 +44,23 @@ theorem toList1_eq_iff_toIndView_eq {{xs : List1.IndView α}} {{ys : List1 α}} 
   match xs, ys with
   | .pure x, .cons y [] =>
     unfold IndView.toList1 toIndView
-    constr
+    constructor
     · intro | rfl => rfl
     · intro | rfl => rfl
   | .pure x, .cons y (_ :: _) =>
     unfold IndView.toList1 toIndView
-    constr
+    constructor
     · intro h; injection h with h; injection h with hh ht; contradiction
     · intro; contradiction
   | .cons x xs, .cons y [] =>
     unfold IndView.toList1 toIndView
-    constr
+    constructor
     · intro h; injection h with h; injection h with hh ht; absurd ht; exact List1.ne_nil xs.toList1
     · intro; contradiction
   | .cons x xs, .cons y (_ :: _) =>
     unfold IndView.toList1 toIndView
     rw [←cons_toList]
-    constr
+    constructor
     · intro h; injection h with h; injection h with hh ht
       cases hh
       have ht := List1.eq ht
@@ -77,7 +77,7 @@ theorem toList1_eq_iff_toIndView_eq {{xs : List1.IndView α}} {{ys : List1 α}} 
 @[simp] theorem toList1_toIndView (xs : List1 α) : xs.toIndView.toList1 = xs :=
   toList1_eq_iff_toIndView_eq.mpr rfl
 
-def equivIndView (α : Type _) : Equiv (List1 α) (List1.IndView α) where
+def equivIndView (α : Type _) : Logic.Equiv (List1 α) (List1.IndView α) where
   fwd := List1.toIndView
   rev := IndView.toList1
   fwd_eq_iff_rev_eq xs ys := (toList1_eq_iff_toIndView_eq (xs:=ys) (ys:=xs)).symm

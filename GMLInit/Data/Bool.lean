@@ -1,10 +1,6 @@
 import GMLInit.Data.Basic
 import GMLInit.Data.Ord
-import GMLInit.Logic.Relation
 import GMLInit.Meta.Basic
-
--- assert xor : Bool → Bool → Bool := bne
--- assert infixl:30 " ^^ " => xor
 
 namespace Bool
 variable (x y z : Bool)
@@ -108,14 +104,14 @@ theorem blt_eq_decide_lt : Bool.blt x y = decide (x < y) := by bool_tt x y
 -- assert false_le : false ≤ x
 -- assert eq_true_of_true_le {x : Bool} : true ≤ x → x = true-- assert eq_false_of_le_false {x : Bool} : x ≤ false → x = false
 
-instance : Relation.Reflexive (α:=Bool) (.≤.) := ⟨Bool.le_refl⟩
-instance : Relation.Irreflexive (α:=Bool) (.<.) := ⟨Bool.lt_irrefl⟩
-instance : Relation.Antisymmetric (α:=Bool) (.≤.) := ⟨Bool.le_antisymm⟩
-instance : Relation.Asymmetric (α:=Bool) (.<.) := ⟨Bool.lt_asymm⟩
-instance : Relation.Transitive (α:=Bool) (.≤.) := ⟨Bool.le_trans⟩
-instance : Relation.Transitive (α:=Bool) (.<.) := ⟨Bool.lt_trans⟩
-instance : Relation.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.<.) (.≤.) (.<.) := ⟨Bool.lt_of_lt_of_le⟩
-instance : Relation.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.≤.) (.<.) (.<.) := ⟨Bool.lt_of_le_of_lt⟩
+instance : Logic.Reflexive (α:=Bool) (.≤.) := ⟨Bool.le_refl⟩
+instance : Logic.Irreflexive (α:=Bool) (.<.) := ⟨Bool.lt_irrefl⟩
+instance : Logic.Antisymmetric (α:=Bool) (.≤.) := ⟨Bool.le_antisymm⟩
+instance : Logic.Asymmetric (α:=Bool) (.<.) := ⟨Bool.lt_asymm⟩
+instance : Logic.Transitive (α:=Bool) (.≤.) := ⟨Bool.le_trans⟩
+instance : Logic.Transitive (α:=Bool) (.<.) := ⟨Bool.lt_trans⟩
+instance : Logic.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.<.) (.≤.) (.<.) := ⟨Bool.lt_of_lt_of_le⟩
+instance : Logic.HTransitive (α:=Bool) (β:=Bool) (γ:=Bool) (.≤.) (.<.) (.<.) := ⟨Bool.lt_of_le_of_lt⟩
 
 -- assert not_inj {x y : Bool} : (!x) = (!y) → x = y
 -- assert and_or_inj_right {m x y : Bool}: (x && m) = (y && m) → (x || m) = (y || m) → x = y

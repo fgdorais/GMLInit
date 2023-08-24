@@ -1,4 +1,4 @@
-import GMLInit.Logic.Basic
+import GMLInit.Prelude
 
 namespace Function
 

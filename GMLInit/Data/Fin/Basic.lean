@@ -55,20 +55,20 @@ protected inductive IndView : Nat → Type
 theorem toIndView_eq_iff_toFin_eq {n : Nat} {{i : Fin n}} {{j : Fin.IndView n}} : i.toIndView = j ↔ j.toFin = i := by
   match n, i, j with
   | n+1, ⟨0, _⟩, IndView.zero =>
-    constr
+    constructor
     · intro; reflexivity
     · intro; reflexivity
   | n+1, ⟨0, _⟩, IndView.succ j =>
-    constr
+    constructor
     · intro; contradiction
     · intro h; cases h
   | n+1, ⟨i+1, hi⟩, IndView.zero =>
-    constr
+    constructor
     · intro; contradiction
     · intro h; cases h
   | n+1, ⟨i+1, hi⟩, IndView.succ j =>
     have hsucc : ⟨i+1, hi⟩ = Fin.succ ⟨i, Nat.lt_of_succ_lt_succ hi⟩ := rfl
-    constr
+    constructor
     · intro h
       rw [IndView.toFin, hsucc]
       congr
@@ -87,7 +87,7 @@ theorem toIndView_toFin {n : Nat} (i : Fin.IndView n) : i.toFin.toIndView = i :=
 theorem toFin_toIndView {n : Nat} (i : Fin n) : i.toIndView.toFin = i :=
   toIndView_eq_iff_toFin_eq.mp rfl
 
-def equivIndView (n : Nat) : Equiv (Fin n) (Fin.IndView n) where
+def equivIndView (n : Nat) : Logic.Equiv (Fin n) (Fin.IndView n) where
   fwd := Fin.toIndView
   rev := IndView.toFin
   fwd_eq_iff_rev_eq := toIndView_eq_iff_toFin_eq

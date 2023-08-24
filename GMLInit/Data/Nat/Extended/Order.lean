@@ -158,18 +158,18 @@ theorem eq_ofNat_of_le_ofNat {x : ENat} {n : Nat} : x ≤ n → ∃ m ≤ n, x =
       · apply le_antisymm h
         exact coe_lt_iff_coe_succ_le.1 hn
 
-instance : Relation.Reflexive (α:=ENat) (.≤.) := ⟨ENat.le_refl⟩
+instance : Logic.Reflexive (α:=ENat) (.≤.) := ⟨ENat.le_refl⟩
 
-instance : Relation.Irreflexive (α:=ENat) (.<.) := ⟨ENat.lt_irrefl⟩
+instance : Logic.Irreflexive (α:=ENat) (.<.) := ⟨ENat.lt_irrefl⟩
 
-instance : Relation.Transitive (α:=ENat) (.≤.) := ⟨ENat.le_trans⟩
+instance : Logic.Transitive (α:=ENat) (.≤.) := ⟨ENat.le_trans⟩
 
-instance : Relation.Transitive (α:=ENat) (.<.) := ⟨ENat.lt_trans⟩
+instance : Logic.Transitive (α:=ENat) (.<.) := ⟨ENat.lt_trans⟩
 
-instance : Relation.HTransitive (α:=ENat) (β:=ENat) (γ:=ENat) (.≤.) (.<.) (.<.) := ⟨ENat.lt_of_le_of_lt⟩
+instance : Logic.HTransitive (α:=ENat) (β:=ENat) (γ:=ENat) (.≤.) (.<.) (.<.) := ⟨ENat.lt_of_le_of_lt⟩
 
-instance : Relation.HTransitive (α:=ENat) (β:=ENat) (γ:=ENat) (.<.) (.≤.) (.<.) := ⟨ENat.lt_of_lt_of_le⟩
+instance : Logic.HTransitive (α:=ENat) (β:=ENat) (γ:=ENat) (.<.) (.≤.) (.<.) := ⟨ENat.lt_of_lt_of_le⟩
 
-instance : Relation.Antisymmetric (α:=ENat) (.≤.) := ⟨ENat.le_antisymm⟩
+instance : Logic.Antisymmetric (α:=ENat) (.≤.) := ⟨ENat.le_antisymm⟩
 
 end ENat

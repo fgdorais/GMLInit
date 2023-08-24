@@ -20,21 +20,21 @@ theorem arr_unarr (k : Index (List.arr xs ys)) : arr (unarr k) = k := by
   rw [arr, unarr, pi_unpi]
 
 theorem arr_eq_iff_eq_unarr (h : Index xs → Index ys) (k : Index (List.arr xs ys)) : arr h = k ↔ h = unarr k := by
-  constr
+  constructor
   · intro h; rw [←h, unarr_arr]
   · intro h; rw [h, arr_unarr]
 
 theorem unarr_eq_iff_eq_arr (k : Index (List.arr xs ys)) (h : Index xs → Index ys) : unarr k = h ↔ k = arr h := by
-  constr
+  constructor
   · intro h; rw [←h, arr_unarr]
   · intro h; rw [h, unarr_arr]
 
-def arrEquiv (xs : List α) (ys : List β) : Equiv (Index xs → Index ys) (Index (List.arr xs ys)) where
+def arrEquiv (xs : List α) (ys : List β) : Logic.Equiv (Index xs → Index ys) (Index (List.arr xs ys)) where
   fwd := arr
   rev := unarr
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact unarr_arr ..
     · intro | rfl => exact arr_unarr ..
 

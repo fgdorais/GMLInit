@@ -2,10 +2,10 @@ import GMLInit.Data.Basic
 import GMLInit.Data.Bool
 import GMLInit.Data.Fin.Basic
 import GMLInit.Data.Nat
-import GMLInit.Logic.ListConnectives
 import GMLInit.Meta.Basic
 
 namespace List
+open Logic
 
 instance {α} : (xs : List α) → Decidable (xs = [])
 | [] => isTrue rfl
@@ -28,7 +28,7 @@ protected theorem ext' {α} : (as₁ as₂ : List α) → All (List.ext'Aux as�
 | _::as₁, _::as₂, All.cons h hs => h ▸ List.ext' as₁ as₂ hs ▸ rfl
 
 protected theorem ext'Iff {α} (as₁ as₂ : List α) : All (List.ext'Aux as₁ as₂) ↔ as₁ = as₂ := by
-  constr
+  constructor
   exact List.ext' as₁ as₂
   intro h
   cases h
@@ -54,23 +54,23 @@ lemma bind_assoc {α β γ} (f : α → List β) (g : β → List γ) (as : List
 
 lemma all_eq_true_iff_all_true {α} (p : α → Bool) (xs : List α) : xs.all p = true ↔ All (xs.map λ x => p x = true) := by
   induction xs generalizing p with
-  | nil => rw [all_nil, map_nil]; simp
-  | cons x xs H => rw [all_cons, map_cons, All.cons_eq, ←H, Bool.and_eq_true_iff]
+  | nil => rw [map_nil, all_nil_eq]; simp
+  | cons x xs H => rw [all_cons, map_cons, all_cons_eq, ←H, Bool.and_eq_true_iff]
 
 lemma all_eq_false_iff_any_false {α} (p : α → Bool) (xs : List α) : xs.all p = false ↔ Any (xs.map λ x => p x = false) := by
   induction xs generalizing p with
-  | nil => rw [all_nil, map_nil]; simp
-  | cons x xs H => rw [all_cons, map_cons, Any.cons_eq, ←H, Bool.and_eq_false_iff]
+  | nil => rw [map_nil, any_nil_eq]; simp
+  | cons x xs H => rw [all_cons, map_cons, any_cons_eq, ←H, Bool.and_eq_false_iff]
 
 lemma any_eq_true_iff_any_true {α} (p : α → Bool) (xs : List α) : xs.any p = true ↔ Any (xs.map λ x => p x = true) := by
   induction xs generalizing p with
-  | nil => rw [any_nil, map_nil, Any.nil_eq]; simp
-  | cons x xs H => rw [any_cons, map_cons, Any.cons_eq, ←H, Bool.or_eq_true_iff]
+  | nil => rw [any_nil, map_nil, any_nil_eq]; simp
+  | cons x xs H => rw [any_cons, map_cons, any_cons_eq, ←H, Bool.or_eq_true_iff]
 
 lemma any_eq_false_iff_all_false {α} (p : α → Bool) (xs : List α) : xs.any p = false ↔ All (xs.map λ x => p x = false) := by
   induction xs generalizing p with
-  | nil => rw [any_nil, map_nil, All.nil_eq]; simp
-  | cons x xs H => rw [any_cons, map_cons, All.cons_eq, ←H, Bool.or_eq_false_iff]
+  | nil => rw [any_nil, map_nil, all_nil_eq]; simp
+  | cons x xs H => rw [any_cons, map_cons, all_cons_eq, ←H, Bool.or_eq_false_iff]
 
 /- take -/
 

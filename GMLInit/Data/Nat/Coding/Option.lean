@@ -1,7 +1,7 @@
-import GMLInit.Data.Equiv
 import GMLInit.Data.Nat.Basic
 
 namespace Nat
+open Logic
 
 def encodeOption : Option Nat → Nat
 | some n => n + 1
@@ -17,7 +17,7 @@ def equivOption : Equiv (Option Nat) Nat where
   fwd_eq_iff_rev_eq := by
     intro
     | none, y =>
-      constr
+      constructor
       · intro | rfl => rfl
       · intro h
         rw [decodeOption] at h
@@ -25,7 +25,7 @@ def equivOption : Equiv (Option Nat) Nat where
         next => rfl
         next => contradiction
     | some x, y =>
-      constr
+      constructor
       · intro | rfl => rfl
       · intro h
         rw [decodeOption] at h

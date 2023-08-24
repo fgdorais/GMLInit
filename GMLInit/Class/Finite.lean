@@ -32,16 +32,16 @@ theorem get_find (x : α) : Finite.get α (Finite.find x) = x := by
 theorem find_get (i : Fin (Finite.size α)) : Finite.find (Finite.get α i) = i := by
   rw [find_eq_iff_get_eq]
 
-protected def toEquiv : Equiv α (Fin (Finite.size α)) where
+protected def toEquiv : Logic.Equiv α (Fin (Finite.size α)) where
   fwd := Finite.find
   rev := Finite.get α
   fwd_eq_iff_rev_eq {x i} := Finite.find_eq_iff_get_eq x i
 
-protected def ofEquiv {α n} [DecidableEq α] (e : Equiv α (Fin n)) : Finite α where
+protected def ofEquiv {α n} [DecidableEq α] (e : Logic.Equiv α (Fin n)) : Finite α where
   toArray := Array.ofFn e.rev
   find x := (Array.size_ofFn e.rev).symm ▸ e.fwd x
   find_eq_iff_get_eq x i := by
-    constr
+    constructor
     · intro h
       rw [Array.get_ofFn]
       rw [←e.fwd_eq_iff_rev_eq]
@@ -152,27 +152,27 @@ instance : Finite Bool := Finite.ofEquiv Fin.equivBool.inv
 
 instance : Finite Ordering := Finite.ofEquiv Fin.equivOrdering.inv
 
-instance (n) : Finite (Fin n) := Finite.ofEquiv Equiv.id
+instance (n) : Finite (Fin n) := Finite.ofEquiv Logic.Equiv.id
 
 instance (α) [Finite α] : Finite (Option α) :=
   let e₁ := Fin.equivOption (Finite.size α)
   let e₂ := Option.equiv (Finite.toEquiv α)
-  Finite.ofEquiv <| Equiv.comp e₁.inv e₂
+  Finite.ofEquiv <| Logic.Equiv.comp e₁.inv e₂
 
 instance (α β) [DecidableEq β] [Finite α] [Finite β] : Finite (α ⊕ β) :=
   let e₁ := Fin.equivSum (Finite.size α) (Finite.size β)
   let e₂ := Sum.equiv (Finite.toEquiv α) (Finite.toEquiv β)
-  Finite.ofEquiv <| Equiv.comp e₁.inv e₂
+  Finite.ofEquiv <| Logic.Equiv.comp e₁.inv e₂
 
 instance (α β) [DecidableEq β] [Finite α] [Finite β] : Finite (α × β) :=
   let e₁ := Fin.equivProd (Finite.size α) (Finite.size β)
   let e₂ := Prod.equiv (Finite.toEquiv α) (Finite.toEquiv β)
-  Finite.ofEquiv <| Equiv.comp e₁.inv e₂
+  Finite.ofEquiv <| Logic.Equiv.comp e₁.inv e₂
 
 instance {α : Type _} (β : α → Type _) [Finite α] [(x : α) → Finite (β x)] : Finite ((x : α) × (β x)) :=
   let e₁ := Fin.equivSigma (fun i => Finite.size (β ((Finite.toEquiv α).rev i)))
   let e₂ := Sigma.equiv (Finite.toEquiv α).inv (fun i => (Finite.toEquiv (β ((Finite.toEquiv α).inv.fwd i))).inv)
-  Finite.ofEquiv <| Equiv.comp e₁.inv e₂.inv
+  Finite.ofEquiv <| Logic.Equiv.comp e₁.inv e₂.inv
 
 instance (α β) [Finite α] [DecidableEq β] : DecidableEq (α → β)
 | f₁, f₂ =>
@@ -184,7 +184,7 @@ instance (α β) [Finite α] [DecidableEq β] : DecidableEq (α → β)
 instance (α β) [DecidableEq β] [Finite α] [Finite β] : Finite (α → β) :=
   let e₁ := Fin.equivFun (Finite.size β) (Finite.size α)
   let e₂ := Fun.equivND (Finite.toEquiv α) (Finite.toEquiv β)
-  Finite.ofEquiv <| Equiv.comp e₁.inv e₂
+  Finite.ofEquiv <| Logic.Equiv.comp e₁.inv e₂
 
 instance {α} (β : α → Type _) [Finite α] [(x : α) → DecidableEq (β x)] : DecidableEq ((x : α) → β x)
 | f₁, f₂ =>
@@ -196,12 +196,12 @@ instance {α} (β : α → Type _) [Finite α] [(x : α) → DecidableEq (β x)]
 instance {α : Type _} (β : α → Type _) [Finite α] [(x : α) → Finite (β x)] : Finite ((x : α) → β x) :=
   let e₁ := Fin.equivPi (fun i => Finite.size (β ((Finite.toEquiv α).rev i)))
   let e₂ := Fun.equiv (Finite.toEquiv α).inv (fun i => (Finite.toEquiv (β ((Finite.toEquiv α).inv.fwd i))).inv)
-  Finite.ofEquiv <| Equiv.comp e₁.inv e₂.inv
+  Finite.ofEquiv <| Logic.Equiv.comp e₁.inv e₂.inv
 
 instance (p : α → Prop) [DecidablePred p] [Finite α] : Finite (Subtype p) :=
   let e₁ := Fin.equivSubtype fun i => p ((Finite.toEquiv α).rev i)
-  let e₂ := Subtype.equiv (Finite.toEquiv α) (by intro; simp [Equiv.rev_fwd])
-  Finite.ofEquiv <| Equiv.comp e₁.inv e₂
+  let e₂ := Subtype.equiv (Finite.toEquiv α) (by intro; simp [Logic.Equiv.rev_fwd])
+  Finite.ofEquiv <| Logic.Equiv.comp e₁.inv e₂
 
 instance (s : Setoid α) [DecidableRel s.r] [Finite α] : Finite (Quotient s) :=
   let s' : Setoid (Fin (Finite.size α)) := {
@@ -211,16 +211,16 @@ instance (s : Setoid α) [DecidableRel s.r] [Finite α] : Finite (Quotient s) :=
   let e₁ := Fin.equivQuotient s'
   let e₂ := Quotient.equiv (s₁:=s) (s₂:=s') (Finite.toEquiv α) $ by
     intro x y
-    constr
+    constructor
     · intro h
       show (Finite.toEquiv α).rev ((Finite.toEquiv α).fwd x) ≈ (Finite.toEquiv α).rev ((Finite.toEquiv α).fwd y)
-      rw [Equiv.rev_fwd, Equiv.rev_fwd]
+      rw [Logic.Equiv.rev_fwd, Logic.Equiv.rev_fwd]
       exact h
     · intro h
       have h : (Finite.toEquiv α).rev ((Finite.toEquiv α).fwd x) ≈ (Finite.toEquiv α).rev ((Finite.toEquiv α).fwd y) := h
-      rw [Equiv.rev_fwd, Equiv.rev_fwd] at h
+      rw [Logic.Equiv.rev_fwd, Logic.Equiv.rev_fwd] at h
       exact h
-  Finite.ofEquiv <| Equiv.comp e₁.inv e₂
+  Finite.ofEquiv <| Logic.Equiv.comp e₁.inv e₂
 
 end Finite
 

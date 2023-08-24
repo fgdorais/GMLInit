@@ -8,4 +8,12 @@
     "opts": {},
     "name": "Std",
     "inputRev?": "nat-all",
+    "inherited": false}},
+  {"git":
+   {"url": "https://github.com/fgdorais/logic4",
+    "subDir?": null,
+    "rev": "372e7b08809cc5ea9af3f468f4622eb0980add5b",
+    "opts": {},
+    "name": "Logic",
+    "inputRev?": "main",
     "inherited": false}}]}

@@ -1,6 +1,5 @@
 import GMLInit.Data.Basic
 import GMLInit.Meta.Basic
-import GMLInit.Meta.Relation
 
 structure Set.{u} (α : Sort u) where
   protected Mem : α → Prop
@@ -69,7 +68,7 @@ protected def seqRight (s : Set α) (t : Set β) : Set β := Set.seq (s.map λ _
 protected theorem id_map (s : Set α) : s.map id = s := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨_, hx, rfl⟩
     exact hx
   · intro hx
@@ -78,7 +77,7 @@ protected theorem id_map (s : Set α) : s.map id = s := by
 protected theorem comp_map (f : α → β) (g : β → γ) (s : Set α) : s.map (g ∘ f) = (s.map f).map g := by
   apply Set.ext
   intro z
-  constr
+  constructor
   · intro ⟨x, hx, hxz⟩
     refine ⟨f x, ⟨x, hx, rfl⟩, hxz⟩
   · intro ⟨y, ⟨x, hx, hxy⟩, hyz⟩
@@ -88,7 +87,7 @@ protected theorem comp_map (f : α → β) (g : β → γ) (s : Set α) : s.map 
 protected theorem map_pure (f : α → β) (a : α) : (Set.pure a).map f = Set.pure (f a) := by
   apply Set.ext
   intro y
-  constr
+  constructor
   · intro ⟨_, rfl, h⟩
     rw [←h]
     rfl
@@ -98,7 +97,7 @@ protected theorem map_pure (f : α → β) (a : α) : (Set.pure a).map f = Set.p
 protected theorem map_pureIf (f : α → β) (a : α) (p : Prop) : (Set.pureIf a p).map f = Set.pureIf (f a) p := by
   apply Set.ext
   intro y
-  constr
+  constructor
   · intro ⟨_, ⟨rfl, hp⟩, h⟩
     refine ⟨h.symm, hp⟩
   · intro ⟨h, hp⟩
@@ -107,7 +106,7 @@ protected theorem map_pureIf (f : α → β) (a : α) (p : Prop) : (Set.pureIf a
 protected theorem pure_bind (a : α) (f : α → Set β) : (Set.pure a).bind f = f a := by
   apply Set.ext
   intro y
-  constr
+  constructor
   · intro ⟨_, rfl, h⟩
     exact h
   · intro h
@@ -116,7 +115,7 @@ protected theorem pure_bind (a : α) (f : α → Set β) : (Set.pure a).bind f =
 protected theorem pureIf_bind (a : α) (p : Prop) (f : α → Set β) : (Set.pureIf a p).bind f = f a ∩ Set.const p := by
   apply Set.ext
   intro y
-  constr
+  constructor
   · intro ⟨_, ⟨rfl, hp⟩, h⟩
     refine ⟨h, hp⟩
   · intro ⟨h, hp⟩
@@ -125,7 +124,7 @@ protected theorem pureIf_bind (a : α) (p : Prop) (f : α → Set β) : (Set.pur
 protected theorem bind_assoc (s : Set α) (f : α → Set β) (g : β → Set γ) : (s.bind f).bind g = s.bind λ x => (f x).bind g := by
   apply Set.ext
   intro z
-  constr
+  constructor
   · intro ⟨y, ⟨x, hx, hy⟩, hz⟩
     refine ⟨x, hx, ⟨y, hy, hz⟩⟩
   · intro ⟨x, hx, ⟨y, hy, hz⟩⟩
@@ -134,7 +133,7 @@ protected theorem bind_assoc (s : Set α) (f : α → Set β) (g : β → Set γ
 protected theorem bind_comm (f : α → β → Set γ) (s : Set α) (t : Set β) : (s.bind λ x => t.bind (f x .)) = t.bind λ y => s.bind (f . y) := by
   apply Set.ext
   intro z
-  constr
+  constructor
   · intro ⟨x, hx, ⟨y, hy, hz⟩⟩
     refine ⟨y, hy, ⟨x, hx, hz⟩⟩
   · intro ⟨y, hy, ⟨x, hx, hz⟩⟩
@@ -143,7 +142,7 @@ protected theorem bind_comm (f : α → β → Set γ) (s : Set α) (t : Set β)
 protected theorem bind_pure_comp (f : α → β) (s : Set α) : s.bind (λ x => Set.pure (f x)) = s.map f := by
   apply Set.ext
   intro y
-  constr
+  constructor
   · intro ⟨x, hx, (h : y = f x)⟩
     refine ⟨x, hx, h.symm⟩
   · intro ⟨x, hx, h⟩
@@ -156,7 +155,7 @@ protected theorem bind_map (f : Set (α → β)) (s : Set α) : f.bind s.map = S
 protected theorem pure_seq (f : α → β) (s : Set α) : Set.seq (Set.pure f) s = s.map f := by
   apply Set.ext
   intro y
-  constr
+  constructor
   · intro ⟨_, rfl, h⟩
     exact h
   · intro ⟨x, hx, h⟩
@@ -165,17 +164,17 @@ protected theorem pure_seq (f : α → β) (s : Set α) : Set.seq (Set.pure f) s
 protected theorem seq_assoc (s : Set α) (f : Set (α → β)) (g : Set (β → γ)) : g.seq (f.seq s) = ((g.map (.∘.)).seq f).seq s := by
   apply Set.ext
   intro z
-  constr
+  constructor
   · intro ⟨g',hg',⟨y,⟨f',hf',⟨x,hx,hy⟩⟩,hz⟩⟩
     cases hz
     exists (g' ∘ f')
-    constr
+    constructor
     · exists (g' ∘ .)
-      constr
+      constructor
       · exists g'
       · exists f'
     · exists x
-      constr
+      constructor
       · exact hx
       · cases hy
         rfl
@@ -184,12 +183,12 @@ protected theorem seq_assoc (s : Set α) (f : Set (α → β)) (g : Set (β → 
     cases hgo
     cases hz
     exists g'
-    constr
+    constructor
     · exact hg'
     · exists f' x
-      constr
+      constructor
       · exists f'
-        constr
+        constructor
         · exact hf'
         · exists x
       · rfl
@@ -219,7 +218,7 @@ instance : LawfulMonad Set where
 theorem union_empty (s : Set α) : s ∪ Set.empty = s := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro
     | Or.inl _ => assumption
     | Or.inr _ => contradiction
@@ -230,7 +229,7 @@ theorem union_empty (s : Set α) : s ∪ Set.empty = s := by
 theorem empty_union (s : Set α) : Set.empty ∪ s = s := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro
     | Or.inl _ => contradiction
     | Or.inr _ => assumption
@@ -241,7 +240,7 @@ theorem empty_union (s : Set α) : Set.empty ∪ s = s := by
 theorem inter_empty (s : Set α) : s ∩ Set.empty = Set.empty := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨_, _⟩
     assumption
   · intro _
@@ -250,7 +249,7 @@ theorem inter_empty (s : Set α) : s ∩ Set.empty = Set.empty := by
 theorem empty_inter (s : Set α) : Set.empty ∩ s = Set.empty := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨_, _⟩
     assumption
   · intro _
@@ -259,7 +258,7 @@ theorem empty_inter (s : Set α) : Set.empty ∩ s = Set.empty := by
 theorem empty_map (f : α → β) : Set.empty.map f = Set.empty := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨_,_,_⟩
     contradiction
   · intro _
@@ -268,7 +267,7 @@ theorem empty_map (f : α → β) : Set.empty.map f = Set.empty := by
 theorem empty_bind (f : α → Set β) : Set.empty.bind f = Set.empty := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨_,_,_⟩
     contradiction
   · intro _
@@ -277,7 +276,7 @@ theorem empty_bind (f : α → Set β) : Set.empty.bind f = Set.empty := by
 theorem empty_seq (f : Set (α → β)) : Set.seq f Set.empty = Set.empty := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨_, _, (hx : x ∈ Set.empty.map _)⟩
     rw [empty_map] at hx
     contradiction
@@ -287,7 +286,7 @@ theorem empty_seq (f : Set (α → β)) : Set.seq f Set.empty = Set.empty := by
 theorem pure_inter (a : α) (s : Set α) : Set.pure a ∩ s = Set.pureIf a (a ∈ s) := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨rfl, hs⟩
     refine ⟨rfl, hs⟩
   · intro ⟨rfl, hs⟩
@@ -296,7 +295,7 @@ theorem pure_inter (a : α) (s : Set α) : Set.pure a ∩ s = Set.pureIf a (a �
 theorem inter_pure (a : α) (s : Set α) : s ∩ Set.pure a = Set.pureIf a (a ∈ s) := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨hs, rfl⟩
     refine ⟨rfl, hs⟩
   · intro ⟨rfl, hs⟩
@@ -305,7 +304,7 @@ theorem inter_pure (a : α) (s : Set α) : s ∩ Set.pure a = Set.pureIf a (a �
 theorem pureIf_inter (a : α) (p : Prop) (s : Set α) : Set.pureIf a p ∩ s = Set.pureIf a (p ∧ a ∈ s) := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨⟨rfl, hp⟩, hs⟩
     refine ⟨rfl, ⟨hp, hs⟩⟩
   · intro ⟨rfl, ⟨hp, hs⟩⟩
@@ -314,7 +313,7 @@ theorem pureIf_inter (a : α) (p : Prop) (s : Set α) : Set.pureIf a p ∩ s = S
 theorem inter_pureIf (a : α) (p : Prop) (s : Set α) : s ∩ Set.pureIf a p = Set.pureIf a (p ∧ a ∈ s) := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨hs, rfl, hp⟩
     refine ⟨rfl, hp, hs⟩
   · intro ⟨rfl, hp, hs⟩
@@ -323,7 +322,7 @@ theorem inter_pureIf (a : α) (p : Prop) (s : Set α) : s ∩ Set.pureIf a p = S
 theorem union_idem (s : Set α) : s ∪ s = s := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · open Or in intro
     | inl hs => exact hs
     | inr hs => exact hs
@@ -334,7 +333,7 @@ theorem union_idem (s : Set α) : s ∪ s = s := by
 theorem union_comm (s t : Set α) : s ∪ t = t ∪ s := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · open Or in intro
     | inl hs => right; exact hs
     | inr ht => left; exact ht
@@ -345,7 +344,7 @@ theorem union_comm (s t : Set α) : s ∪ t = t ∪ s := by
 theorem union_assoc (s t u : Set α) : (s ∪ t) ∪ u = s ∪ (t ∪ u) := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · open Or in intro
     | inl (inl hs) => exact inl hs
     | inl (inr ht) => exact inr (inl ht)
@@ -358,7 +357,7 @@ theorem union_assoc (s t u : Set α) : (s ∪ t) ∪ u = s ∪ (t ∪ u) := by
 theorem union_map (f : α → β) (s t : Set α) : (s ∪ t).map f = s.map f ∪ t.map f := by
   apply Set.ext
   intro y
-  constr
+  constructor
   · open Or in intro
     | ⟨x, inl hs, h⟩ => left; refine ⟨x, hs, h⟩
     | ⟨x, inr ht, h⟩ => right; refine ⟨x, ht, h⟩
@@ -369,7 +368,7 @@ theorem union_map (f : α → β) (s t : Set α) : (s ∪ t).map f = s.map f ∪
 theorem union_bind (f : α → Set β) (s t : Set α) : (s ∪ t).bind f = s.bind f ∪ t.bind f := by
   apply Set.ext
   intro y
-  constr
+  constructor
   · open Or in intro
     | ⟨x, inl hs, h⟩ => left; refine ⟨x, hs, h⟩
     | ⟨x, inr ht, h⟩ => right; refine ⟨x, ht, h⟩
@@ -380,7 +379,7 @@ theorem union_bind (f : α → Set β) (s t : Set α) : (s ∪ t).bind f = s.bin
 theorem inter_idem (s : Set α) : s ∩ s = s := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨hs, _⟩
     exact hs
   · intro hs
@@ -389,7 +388,7 @@ theorem inter_idem (s : Set α) : s ∩ s = s := by
 theorem inter_comm (s t : Set α) : s ∩ t = t ∩ s := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨hs, ht⟩
     exact ⟨ht, hs⟩
   · intro ⟨ht, hs⟩
@@ -398,7 +397,7 @@ theorem inter_comm (s t : Set α) : s ∩ t = t ∩ s := by
 theorem inter_assoc (s t u : Set α) : (s ∩ t) ∩ u = s ∩ (t ∩ u) := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro ⟨⟨hs, ht⟩, hu⟩
     exact ⟨hs, ⟨ht, hu⟩⟩
   · intro ⟨hs, ⟨ht, hu⟩⟩
@@ -407,47 +406,47 @@ theorem inter_assoc (s t u : Set α) : (s ∩ t) ∩ u = s ∩ (t ∩ u) := by
 theorem union_distrib_left (s t u : Set α) : s ∪ (t ∩ u) = (s ∪ t) ∩ (s ∪ u) := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · open Or in intro
-    | inl hs => constr; left; exact hs; left; exact hs
-    | inr ⟨ht,hu⟩ => constr; right; exact ht; right; exact hu
+    | inl hs => constructor; left; exact hs; left; exact hs
+    | inr ⟨ht,hu⟩ => constructor; right; exact ht; right; exact hu
   · open Or in intro
     | ⟨inl hs, _⟩ => left; exact hs
     | ⟨_, inl hs⟩ => left; exact hs
-    | ⟨inr ht, inr hu⟩ => right; constr; exact ht; exact hu
+    | ⟨inr ht, inr hu⟩ => right; constructor; exact ht; exact hu
 
 theorem union_distrib_right (s t u : Set α) : (s ∩ t) ∪ u  = (s ∪ u) ∩ (t ∪ u) := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · open Or in intro
-    | inl ⟨hs,ht⟩ => constr; left; exact hs; left; exact ht
-    | inr hu => constr; right; exact hu; right; exact hu
+    | inl ⟨hs,ht⟩ => constructor; left; exact hs; left; exact ht
+    | inr hu => constructor; right; exact hu; right; exact hu
   · open Or in intro
     | ⟨inr hu, _⟩ => right; exact hu
     | ⟨_, inr hu⟩ => right; exact hu
-    | ⟨inl hs, inl ht⟩ => left; constr; exact hs; exact ht
+    | ⟨inl hs, inl ht⟩ => left; constructor; exact hs; exact ht
 
 theorem inter_distrib_left (s t u : Set α) : s ∩ (t ∪ u) = (s ∩ t) ∪ (s ∩ u) := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · open Or in intro
-    | ⟨hs, inl ht⟩ => left; constr; exact hs; exact ht
-    | ⟨hs, inr hu⟩ => right; constr; exact hs; exact hu
+    | ⟨hs, inl ht⟩ => left; constructor; exact hs; exact ht
+    | ⟨hs, inr hu⟩ => right; constructor; exact hs; exact hu
   · open Or in intro
-    | inl ⟨hs, ht⟩ => constr; exact hs; left; exact ht
-    | inr ⟨hs, hu⟩ => constr; exact hs; right; exact hu
+    | inl ⟨hs, ht⟩ => constructor; exact hs; left; exact ht
+    | inr ⟨hs, hu⟩ => constructor; exact hs; right; exact hu
 
 theorem inter_distrib_right (s t u : Set α) : (s ∪ t) ∩ u = (s ∩ u) ∪ (t ∩ u) := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · open Or in intro
-    | ⟨inl hs, hu⟩ => left; constr; exact hs; exact hu
-    | ⟨inr ht, hu⟩ => right; constr; exact ht; exact hu
+    | ⟨inl hs, hu⟩ => left; constructor; exact hs; exact hu
+    | ⟨inr ht, hu⟩ => right; constructor; exact ht; exact hu
   · open Or in intro
-    | inl ⟨hs, hu⟩ => constr; left; exact hs; exact hu
-    | inr ⟨ht, hu⟩ => constr; right; exact ht; exact hu
+    | inl ⟨hs, hu⟩ => constructor; left; exact hs; exact hu
+    | inr ⟨ht, hu⟩ => constructor; right; exact ht; exact hu
 
 end Set

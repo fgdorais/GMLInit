@@ -1,4 +1,4 @@
-import GMLInit.Data.Equiv
+import GMLInit.Data.Basic
 
 class Find (α : Sort _) where
   find? : (α → Bool) → Option α
@@ -6,9 +6,10 @@ class Find (α : Sort _) where
   find?_eq_none : find? p = none → p x = false
 
 namespace Find
+open Logic
 
 theorem find_is_some_iff_exists_true {α} [Find α] (p : α → Bool) : (find? p).isSome ↔ ∃ x, p x = true := by
-  constr
+  constructor
   · match hp : find? p with
     | some x =>
       intro
@@ -27,7 +28,7 @@ theorem find_is_some_iff_exists_true {α} [Find α] (p : α → Bool) : (find? p
         contradiction
 
 theorem find_is_none_iff_forall_false {α} [Find α] (p : α → Bool) : (find? p).isNone ↔ ∀ x, p x = false := by
-  constr
+  constructor
   · match hp : find? p with
     | some x =>
       intro _

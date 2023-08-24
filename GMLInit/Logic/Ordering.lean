@@ -1,8 +1,7 @@
-import GMLInit.Logic.Basic
-import GMLInit.Logic.Relation
-import GMLInit.Logic.Equivalence
+import GMLInit.Prelude
 
 namespace Relation
+open Logic
 variable {α} (r : α → α → Prop)
 
 abbrev coRel (x y) := ¬ r y x
@@ -81,18 +80,18 @@ theorem co_irrefl (x) : ¬coRel r x x := by
 
 theorem co_compare [WeaklyComplementedRel r] {x y} : coRel r x y → ∀ z, coRel r x z ∨ coRel r z y := by
   intro cxy z
-  rw [←And.deMorgan]
+  rw [←Logic.nand_iff_not_or_not]
   intro ⟨hzx, hyz⟩
   absurd cxy
   exact Transitive.trans hyz hzx
-  
+
 theorem as_irrefl (x) : ¬asymRel r x x := by
   intro ⟨_, cxx⟩
   exact co_irrefl x cxx
 
 theorem as_trans {x y z} : asymRel r x y → asymRel r y z → asymRel r x z := by
   intro ⟨hxy, cxy⟩ ⟨hyz, _⟩
-  constr
+  constructor
   · exact Transitive.trans hxy hyz
   · intro hzx
     absurd cxy
@@ -109,7 +108,7 @@ variable {r} [self : PartialOrder r]
 
 theorem co_connex [WeaklyComplementedRel r] {x y} : x ≠ y → coRel r x y ∨ coRel r y x := by
   intro hne
-  rw [←And.deMorgan]
+  rw [←nand_iff_not_or_not]
   intro ⟨hyx, hxy⟩
   absurd hne
   exact Antisymmetric.antisymm hxy hyx
@@ -120,15 +119,15 @@ namespace TotalPreorder
 variable {r} [self : TotalPreorder r]
 
 theorem coRel_iff_asymRel (x y) : coRel r x y ↔ asymRel r x y := by
-  constr
+  constructor
   · intro cxy
-    constr
+    constructor
     · cases Total.total (r:=r) x y with
       | inl hxy => exact hxy
       | inr hyx => absurd cxy; exact hyx
     · exact cxy
   · exact And.right
-  
+
 theorem co_trans {x y z} : coRel r x y → coRel r y z → coRel r x z := by
   repeat rw [coRel_iff_asymRel]
   exact Preorder.as_trans
@@ -157,9 +156,9 @@ namespace TotalOrder
 variable {r} [self : TotalOrder r]
 
 theorem coRel_iff_rel_and_ne (x y) : coRel r x y ↔ r x y ∧ x ≠ y := by
-  constr
+  constructor
   · intro cxy
-    constr
+    constructor
     · cases Total.total (r:=r) x y with
       | inl hxy => exact hxy
       | inr hyx => absurd cxy; exact hyx
@@ -194,7 +193,7 @@ theorem rc_antisymm {x y} : reflRel r x y → reflRel r y x → x = y := by
   match hxy, hyx with
   | Or.inr rfl, _ => rfl
   | _, Or.inr rfl => rfl
-  | Or.inl hxy, Or.inl hyx => 
+  | Or.inl hxy, Or.inl hyx =>
     absurd hxy
     exact Asymmetric.asymm hyx
 
@@ -215,7 +214,7 @@ theorem co_trans {x y z} : coRel r x y → coRel r y z → coRel r x z := by
   | inr ryx => exact cxy ryx
 
 theorem co_total [ComplementedRel r] (x y) : coRel r x y ∨ coRel r y x := by
-  match inferComplemented (r x y) with
+  by_cases r x y using Complemented with
   | .isTrue hxy => left; exact Asymmetric.asymm hxy
   | .isFalse nxy => right; exact nxy
 
@@ -242,9 +241,9 @@ theorem co_antisymm [StableEq α] {x y} : coRel r x y → coRel r y x → x = y 
     | inr hyx => absurd hyx; exact cxy
 
 theorem coRel_iff_reflRel [StableEq α] [ComplementedRel r] (x y) : coRel r x y ↔ reflRel r x y := by
-  constr
+  constructor
   · intro cxy
-    match inferComplemented (r x y) with
+    by_cases r x y using Complemented with
     | .isTrue hxy => left; exact hxy
     | .isFalse cyx =>
       right
@@ -258,9 +257,9 @@ theorem coRel_iff_reflRel [StableEq α] [ComplementedRel r] (x y) : coRel r x y 
     | .inl hxy => exact Asymmetric.asymm hxy
 
 theorem rc_total [ComplementedEq α] (x y) : reflRel r x y ∨ reflRel r y x := by
-  match inferComplemented (x = y) with
+  by_cases x = y using Complemented with
   | .isTrue rfl => left; right; rfl
-  | .isFalse hne => 
+  | .isFalse hne =>
     cases Connex.connex (r:=r) hne with
     | inl hxy => left; left; exact hxy
     | inr hyx => right; left; exact hyx

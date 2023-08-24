@@ -35,21 +35,21 @@ theorem map_unmap {xs : List α} (i : Index (xs.map f)) : (i.unmap f).map f = i 
     | tail i => exact congrArg tail (ih i)
 
 theorem map_eq_iff_eq_unmap {xs : List α} (i : Index xs) (j : Index (xs.map f)) : i.map f = j ↔ i = j.unmap f := by
-  constr
+  constructor
   · intro h; rw [←h, unmap_map]
   · intro h; rw [h, map_unmap]
 
 theorem unmap_eq_iff_eq_map {xs : List α} (i : Index (xs.map f)) (j : Index xs) : i.unmap f = j ↔ i = j.map f := by
-  constr
+  constructor
   · intro h; rw [←h, map_unmap]
   · intro h; rw [h, unmap_map]
 
-def mapEquiv (xs : List α) : Equiv (Index xs) (Index (xs.map f)) where
+def mapEquiv (xs : List α) : Logic.Equiv (Index xs) (Index (xs.map f)) where
   fwd := map f
   rev := unmap f
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact unmap_map ..
     · intro | rfl => exact map_unmap ..
 

@@ -40,12 +40,12 @@ theorem iota_val (i : Index xs.indexIota) : iota (val i) = i := by
     | head => rfl
     | tail i => rw [←map_unmap Index.tail i, val_tail, val_unmap Index.tail, iota, ih, map_unmap]
 
-def iotaEquiv (xs : List α) : Equiv (Index xs) (Index xs.indexIota) where
+def iotaEquiv (xs : List α) : Logic.Equiv (Index xs) (Index xs.indexIota) where
   fwd := iota
   rev := val
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact val_iota ..
     · intro | rfl => exact iota_val ..
 

@@ -32,21 +32,21 @@ theorem sigma_unsigma (k : Index (xs.sigma f)) : sigma (unsigma k) = k := by
     | .inr k => rw [unappend_eq_iff_eq_append] at h; cases h; rw [unsigma, unappend_append, sigma, ih]
 
 theorem sigma_eq_iff_eq_unsigma (i : (i : Index xs) × Index (f i.val)) (k : Index (xs.sigma f)) : sigma i = k ↔ i = unsigma k := by
-  constr
+  constructor
   · intro h; cases h; rw [unsigma_sigma]
   · intro h; cases h; rw [sigma_unsigma]
 
 theorem unsigma_eq_iff_eq_sigma (k : Index (xs.sigma f)) (i : (i : Index xs) × Index (f i.val)) : unsigma k = i ↔ k = sigma i := by
-  constr
+  constructor
   · intro h; cases h; rw [sigma_unsigma]
   · intro h; cases h; rw [unsigma_sigma]
 
-def sigmaEquiv (xs : List α) (f : (x : α) → List (β x)) : Equiv ((i : Index xs) × (Index (f i.val))) (Index (xs.sigma f)) where
+def sigmaEquiv (xs : List α) (f : (x : α) → List (β x)) : Logic.Equiv ((i : Index xs) × (Index (f i.val))) (Index (xs.sigma f)) where
   fwd := sigma
   rev := unsigma
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact unsigma_sigma ..
     · intro | rfl => exact sigma_unsigma ..
 

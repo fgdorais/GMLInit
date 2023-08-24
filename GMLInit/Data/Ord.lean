@@ -1,5 +1,4 @@
 import GMLInit.Data.Basic
-import GMLInit.Logic.Relation
 import GMLInit.Meta.Decidable
 
 open Ordering (lt eq gt)
@@ -135,7 +134,7 @@ theorem gt_connex [LinearOrd α] {x y : α} : x ≠ y → compare x y = gt ∨ c
   | .inl h => .inr (gt_of_lt_opp h)
 
 section LELT
-open Relation
+open Logic
 
 local instance instLE : LE α := ⟨fun x y => compare x y ≠ gt⟩
 local instance instLT : LT α := ⟨fun x y => compare x y = lt⟩

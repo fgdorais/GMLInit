@@ -71,7 +71,7 @@ protected theorem sub_lt_iff_lt_add_of_pos (x y z : Nat) (hz : z > 0) : x - y < 
     rw [Nat.sub_zero, Nat.zero_add]
   | zero_left y =>
     rw [Nat.zero_sub]
-    constr
+    constructor
     · intro
       transitivity z using LT.lt, LE.le
       · exact hz
@@ -104,7 +104,7 @@ protected theorem lt_add_of_sub_lt {x y z : Nat} : x - y < z → x < y + z := by
 protected theorem lt_sub_iff_add_lt (x y z : Nat) : x < y - z ↔ x + z < y := by
   induction y, z with
   | zero_right y => rw [Nat.sub_zero, Nat.add_zero]
-  | zero_left z => rw [Nat.zero_sub]; constr <;> (intro; contradiction)
+  | zero_left z => rw [Nat.zero_sub]; constructor <;> (intro; contradiction)
   | succ_succ y z H => rw [Nat.succ_sub_succ, Nat.add_succ, Nat.succ_eq, Nat.succ_lt_succ_iff]; exact H
 
 theorem add_lt_of_lt_sub' {x y z : Nat} : x < y - z → x + z < y :=

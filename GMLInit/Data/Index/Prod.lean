@@ -23,21 +23,21 @@ theorem prod_unprod (k : Index (List.prod xs ys)) : prod (unprod k) = k := by
   rw [map_unmap, bind_unbind]
 
 theorem prod_eq_iff_eq_unprod (i : Index xs × Index ys) (k : Index (List.prod xs ys)) : prod i = k ↔ i = unprod k := by
-  constr
+  constructor
   · intro h; rw [←h, unprod_prod]
   · intro h; rw [h, prod_unprod]
 
 theorem unprod_eq_iff_eq_prod (i : Index (List.prod xs ys)) (j : Index xs × Index ys) : unprod i = j ↔ i = prod j := by
-  constr
+  constructor
   · intro h; rw [←h, prod_unprod]
   · intro h; rw [h, unprod_prod]
 
-def prodEquiv (xs ys : List α) : Equiv (Index xs × Index ys) (Index (List.prod xs ys)) where
+def prodEquiv (xs ys : List α) : Logic.Equiv (Index xs × Index ys) (Index (List.prod xs ys)) where
   fwd := prod
   rev := unprod
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact unprod_prod ..
     · intro | rfl => exact prod_unprod ..
 

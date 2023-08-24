@@ -40,21 +40,21 @@ theorem pi_unpi (k : Index (xs.pi f)) : pi (unpi k) = k := by
       rw [unbind_bind, ih, map_unmap]
 
 theorem pi_eq_iff_eq_unpi (h : (i : Index xs) → Index (f i.val)) (k : Index (xs.pi f)) : pi h = k ↔ h = unpi k := by
-  constr
+  constructor
   · intro h; rw [←h, unpi_pi]
   · intro h; rw [h, pi_unpi]
 
 theorem unpi_eq_iff_eq_pi (k : Index (xs.pi f)) (h : (i : Index xs) → Index (f i.val)) : unpi k = h ↔ k = pi h := by
-  constr
+  constructor
   · intro h; rw [←h, pi_unpi]
   · intro h; rw [h, unpi_pi]
 
-def piEquiv (xs : List α) (f : (x : α) → List (β x)) : Equiv ((i : Index xs) → Index (f i.val)) (Index (xs.pi f)) where
+def piEquiv (xs : List α) (f : (x : α) → List (β x)) : Logic.Equiv ((i : Index xs) → Index (f i.val)) (Index (xs.pi f)) where
   fwd := pi
   rev := unpi
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact unpi_pi ..
     · intro | rfl => exact pi_unpi ..
 

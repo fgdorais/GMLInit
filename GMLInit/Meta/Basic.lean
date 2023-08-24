@@ -1,6 +1,5 @@
 import GMLInit.Meta.Prelude
 import GMLInit.Logic.Cast
-import GMLInit.Logic.Congr
 import GMLInit.Logic.HEq
 import Lean
 
@@ -44,26 +43,26 @@ set_option hygiene false in macro_rules
 | `(tactic| elim_casts $[$loc]?) =>
   `(tactic| first | rw [←heq_iff_eq] $[$loc]?; simp only [elim_casts] $[$loc]?; rw [heq_iff_eq] $[$loc]? | simp only [elim_casts] $[$loc]?)
 
-macro "exfalso" : tactic => `(tactic| apply False.elim)
+-- macro "exfalso" : tactic => `(tactic| apply False.elim)
 
-macro "absurd " h:term : tactic => `(tactic| first | apply absurd _ $h | apply absurd $h)
+-- macro "absurd " h:term : tactic => `(tactic| first | apply absurd _ $h | apply absurd $h)
 
-def Tactic.constr (mvarId : MVarId) : MetaM (List MVarId) := do
-  mvarId.withContext do
-    mvarId.checkNotAssigned `constr
-    let target ← mvarId.getType'
-    matchConstStruct target.getAppFn
-      (fun _ => throwTacticEx `constr mvarId "target is not an inductive datatype with one constructor")
-      fun _ us cval => do
-        let ctor := mkAppN (Lean.mkConst cval.name us) target.getAppArgs[:cval.numParams]
-        let ctorType ← inferType ctor
-        let (mvars, _, _) ← forallMetaTelescopeReducing ctorType (some cval.numFields)
-        mvarId.apply <| mkAppN ctor mvars
+-- def Tactic.constructor (mvarId : MVarId) : MetaM (List MVarId) := do
+--   mvarId.withContext do
+--     mvarId.checkNotAssigned `constructor
+--     let target ← mvarId.getType'
+--     matchConstStruct target.getAppFn
+--       (fun _ => throwTacticEx `constructor mvarId "target is not an inductive datatype with one constructor")
+--       fun _ us cval => do
+--         let ctor := mkAppN (Lean.mkConst cval.name us) target.getAppArgs[:cval.numParams]
+--         let ctorType ← inferType ctor
+--         let (mvars, _, _) ← forallMetaTelescopeReducing ctorType (some cval.numFields)
+--         mvarId.apply <| mkAppN ctor mvars
 
-elab "constr" : tactic => Tactic.withMainContext do
-  let gs ← Tactic.constr (← Tactic.getMainGoal)
-  Term.synthesizeSyntheticMVarsNoPostponing
-  Tactic.replaceMainGoal gs
+-- elab "constructor" : tactic => Tactic.withMainContext do
+--   let gs ← Tactic.constructor (← Tactic.getMainGoal)
+--   Term.synthesizeSyntheticMVarsNoPostponing
+--   Tactic.replaceMainGoal gs
 
 def Tactic.left (mvarId : MVarId) : MetaM (List MVarId) := do
   mvarId.withContext do

@@ -1,4 +1,3 @@
-import GMLInit.Meta.Stable
 import GMLInit.Data.Nat.Basic
 import GMLInit.Data.Nat.IsPos
 import GMLInit.Data.Nat.Order
@@ -77,7 +76,7 @@ protected theorem succ_le_or_eq_zero_iff_le_pred (x y : Nat) : x + 1 ≤ y ∨ x
   | zero_left x => simp
   | zero_right y => simp
   | succ_succ x y =>
-    constr
+    constructor
     · intro
       | Or.inl h => exact Nat.le_of_succ_le_succ h
       | Or.inr h => absurd h; apply Nat.succ_ne_zero
@@ -93,7 +92,7 @@ protected theorem pred_lt_or_eq_zero_iff_lt_succ (x y : Nat) : x - 1 < y ∨ x =
     · simp [Nat.not_lt_zero]; intro h; rw [h]; exact Nat.zero_lt_one
     · simp [Nat.not_lt_zero]; intro h; exact Nat.eq_zero_of_le_zero (Nat.le_of_succ_le_succ h)
   | succ_succ x y =>
-    constr
+    constructor
     · intro
       | Or.inl h => exact Nat.succ_lt_succ h
       | Or.inr h => absurd h; apply Nat.succ_ne_zero

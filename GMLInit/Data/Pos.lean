@@ -129,7 +129,7 @@ theorem toNat_pow (x : Pos) (y : Nat) : (x ^ y).toNat = x.toNat ^ y := rfl
 
 theorem toNat_eq (x y : Pos) : x = y ↔ x.toNat = y.toNat := ⟨congrArg Pos.toNat, Pos.eq⟩
 
-theorem toNat_ne (x y : Pos) : x ≠ y ↔ x.toNat ≠ y.toNat := Iff.mt (toNat_eq x y).symm
+theorem toNat_ne (x y : Pos) : x ≠ y ↔ x.toNat ≠ y.toNat := not_congr (toNat_eq x y)
 
 theorem toNat_le (x y : Pos) : x ≤ y ↔ x.toNat ≤ y.toNat := Iff.rfl
 
@@ -279,31 +279,31 @@ protected theorem pow_assoc (x : Pos) (y z : Nat) : (x ^ y) ^ z = x ^ (y * z) :=
 
 protected theorem le_refl (x : Pos) : x ≤ x := by
   by_toNat; exact Nat.le_refl ..
-instance : Relation.Reflexive (α:=Pos) (.≤.) := ⟨Pos.le_refl⟩
+instance : Logic.Reflexive (α:=Pos) (.≤.) := ⟨Pos.le_refl⟩
 
 protected theorem le_trans {x y z : Pos} : x ≤ y → y ≤ z → x ≤ z := by
   by_toNat; exact Nat.le_trans
-instance : Relation.Transitive (α:=Pos) (.≤.) := ⟨Pos.le_trans⟩
+instance : Logic.Transitive (α:=Pos) (.≤.) := ⟨Pos.le_trans⟩
 
 protected theorem le_antisymm {x y : Pos} : x ≤ y → y ≤ x → x = y := by
   by_toNat; exact Nat.le_antisymm
-instance : Relation.Antisymmetric (α:=Pos) (.≤.) := ⟨Pos.le_antisymm⟩
+instance : Logic.Antisymmetric (α:=Pos) (.≤.) := ⟨Pos.le_antisymm⟩
 
 protected theorem lt_irrefl (x : Pos) : ¬(x < x) := by
   by_toNat; exact Nat.lt_irrefl _
-instance : Relation.Irreflexive (α:=Pos) (.<.) := ⟨Pos.lt_irrefl⟩
+instance : Logic.Irreflexive (α:=Pos) (.<.) := ⟨Pos.lt_irrefl⟩
 
 protected theorem lt_trans {x y z : Pos} : x < y → y < z → x < z := by
   by_toNat; exact Nat.lt_trans
-instance : Relation.Transitive (α:=Pos) (.<.) := ⟨Pos.lt_trans⟩
+instance : Logic.Transitive (α:=Pos) (.<.) := ⟨Pos.lt_trans⟩
 
 protected theorem lt_of_le_of_lt {x y z : Pos} : x ≤ y → y < z → x < z := by
   by_toNat; exact Nat.lt_of_le_of_lt
-instance : Relation.HTransitive (α:=Pos) (β:=Pos) (γ:=Pos) (.≤.) (.<.) (.<.) := ⟨Pos.lt_of_le_of_lt⟩
+instance : Logic.HTransitive (α:=Pos) (β:=Pos) (γ:=Pos) (.≤.) (.<.) (.<.) := ⟨Pos.lt_of_le_of_lt⟩
 
 protected theorem lt_of_lt_of_le {x y z : Pos} : x < y → y ≤ z → x < z := by
   by_toNat; exact Nat.lt_of_lt_of_le
-instance : Relation.HTransitive (α:=Pos) (β:=Pos) (γ:=Pos) (.<.) (.≤.) (.<.) := ⟨Pos.lt_of_lt_of_le⟩
+instance : Logic.HTransitive (α:=Pos) (β:=Pos) (γ:=Pos) (.<.) (.≤.) (.<.) := ⟨Pos.lt_of_lt_of_le⟩
 
 protected theorem le_of_eq {x y : Pos} : x = y → x ≤ y := by
   by_toNat; exact Nat.le_of_eq
@@ -554,12 +554,12 @@ theorem ofInd_toInd (n : Pos) : Pos.ofInd n.toInd = n := by
     rw [ofInd_succ]
     rw [ih]
 
-theorem asIndEquiv : Equiv Pos Pos.asInd where
+theorem asIndEquiv : Logic.Equiv Pos Pos.asInd where
   fwd := Pos.toInd
   rev := Pos.ofInd
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact ofInd_toInd ..
     · intro | rfl => exact toInd_ofInd ..
 

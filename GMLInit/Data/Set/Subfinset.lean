@@ -14,11 +14,11 @@ protected instance pure (x : α) : IsSubfinite (Set.pure x) := by
   have : Set.pure x = Set.empty.insertIf x True := by
     apply Set.ext
     intro x
-    constr
+    constructor
     · intro h
       cases h
       left
-      constr
+      constructor
       · rfl
       · trivial
     · intro

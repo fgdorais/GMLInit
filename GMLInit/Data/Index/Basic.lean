@@ -1,9 +1,7 @@
 import GMLInit.Data.Basic
-import GMLInit.Data.Equiv
 import GMLInit.Data.Ord
 import GMLInit.Meta.Basic
 import GMLInit.Meta.Decidable
-import GMLInit.Meta.Relation
 
 namespace Index
 
@@ -206,11 +204,11 @@ theorem toFin_ofFin {α} {xs : List α} (i : Fin xs.length) : (Index.ofFin i).to
   apply Fin.eq_of_val_eq
   apply toNat_ofFin
 
-def equivFin {α} (xs : List α) : Equiv (Index xs) (Fin xs.length) where
+def equivFin {α} (xs : List α) : Logic.Equiv (Index xs) (Fin xs.length) where
   fwd := Index.toFin
   rev := Index.ofFin
   fwd_eq_iff_rev_eq {_ _} := by
-    constr
+    constructor
     · intro | rfl => exact ofFin_toFin ..
     · intro | rfl => exact toFin_ofFin ..
 

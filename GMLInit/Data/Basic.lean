@@ -1,4 +1,5 @@
 import GMLInit.Prelude
+import GMLInit.Meta.Basic
 
 namespace Prod
 variable {α β : Type _}
@@ -7,7 +8,7 @@ protected theorem eq : {p q : α × β} → (fst : p.fst = q.fst) → (snd : p.s
 | (_, _), (_, _), rfl, rfl => rfl
 
 abbrev swap {α β} : α × β → β × α
-| (a, b) => (b, a)      
+| (a, b) => (b, a)
 
 end Prod
 

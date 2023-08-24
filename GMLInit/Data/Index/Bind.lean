@@ -33,21 +33,21 @@ theorem bind_unbind {xs : List α} (k : Index (xs.bind f)) : bind f (unbind f k)
     next h => rw [bind, append_inr, ih, ←h, append_unappend]
 
 theorem bind_eq_iff_eq_unbind {xs} (i : (i : Index xs) × Index (f i.val)) (j : Index (xs.bind f)) : bind f i = j ↔ i = unbind f j := by
-  constr
+  constructor
   · intro h; rw [←h, unbind_bind]
   · intro h; rw [h, bind_unbind]
 
 theorem unbind_eq_iff_eq_bind {xs} (i : Index (xs.bind f)) (j : (i : Index xs) × Index (f i.val)) : unbind f i = j ↔ i = bind f j := by
-  constr
+  constructor
   · intro h; rw [←h, bind_unbind]
   · intro h; rw [h, unbind_bind]
 
-def bindEquiv (xs : List α) : Equiv ((i : Index xs) × Index (f i.val)) (Index (xs.bind f)) where
+def bindEquiv (xs : List α) : Logic.Equiv ((i : Index xs) × Index (f i.val)) (Index (xs.bind f)) where
   fwd := bind f
   rev := unbind f
   fwd_eq_iff_rev_eq := by
     intros
-    constr
+    constructor
     · intro | rfl => exact unbind_bind ..
     · intro | rfl => exact bind_unbind ..
 

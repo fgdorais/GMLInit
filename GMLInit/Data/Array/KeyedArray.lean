@@ -26,7 +26,7 @@ theorem locate?_none (key : α) (i : Fin a.size) : a.locate? key = none → p (a
   intro h; rw [bne, Fin.find?_none i h]; rfl
 
 theorem locate?_some_iff [EquivBEq α] (key : α) (i : Fin a.size) : a.locate? key = some i ↔ p (a.get i) == key := by
-  constr
+  constructor
   · exact locate?_some a key i
   · intro h
     match hloc : a.locate? key with
@@ -156,7 +156,7 @@ def insert [EquivBEq α] (value : β) : KeyedArray β p where
         | isTrue heqi, isFalse hnej =>
           simp [heqi]
           rw [Bool.eq_iff_iff]
-          constr
+          constructor
           · intro h
             have h := BEq.symm h
             have hj' : j < a.size := by
@@ -175,7 +175,7 @@ def insert [EquivBEq α] (value : β) : KeyedArray β p where
         | isFalse hnei, isTrue heqj =>
           simp [heqj]
           rw [Bool.eq_iff_iff]
-          constr
+          constructor
           · intro h
             have hi' : i < a.size := by
               rw [hsz] at hi

@@ -1,14 +1,5 @@
-import GMLInit.Logic.Basic
 import GMLInit.Logic.Cast
-import GMLInit.Logic.Complemented
-import GMLInit.Logic.Congr
-import GMLInit.Logic.Connectives
-import GMLInit.Logic.Decidable
+import GMLInit.Logic.Equivalence
 import GMLInit.Logic.Function
 import GMLInit.Logic.HEq
-import GMLInit.Logic.ListConnectives
 import GMLInit.Logic.Ordering
-import GMLInit.Logic.Relation
-import GMLInit.Logic.Stable
-import GMLInit.Logic.WeaklyComplemented
-import GMLInit.Logic.WeaklyDecidable

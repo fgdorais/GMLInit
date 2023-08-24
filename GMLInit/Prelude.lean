@@ -1,9 +1,8 @@
+import Logic
 import Std
 
 instance (α) [Subsingleton α] : DecidableEq α
 | _, _ => isTrue (Subsingleton.allEq _ _)
-
-infix:50 " ≅ " => HEq
 
 class Inv (α : Type _) where
   inv : α → α

@@ -88,7 +88,7 @@ theorem sublist_eq_iff_eq_unsublist {xs : List α} (i : Index xs) (hi : p i.val)
       cases i with
       | head =>
         rw [sublist_pos_head hx]
-        constr
+        constructor
         · intro h
           rw [←h, unsublist_pos_head]
         · intro h
@@ -98,7 +98,7 @@ theorem sublist_eq_iff_eq_unsublist {xs : List α} (i : Index xs) (hi : p i.val)
           next => contradiction
       | tail i =>
         rw [sublist_pos_tail hx]
-        constr
+        constructor
         · intro h
           rw [←h, unsublist_pos_tail]
           apply congrArg
@@ -119,7 +119,7 @@ theorem sublist_eq_iff_eq_unsublist {xs : List α} (i : Index xs) (hi : p i.val)
       | head => absurd hx; exact hi
       | tail i =>
         rw [sublist_neg_tail hx]
-        constr
+        constructor
         · intro heq
           cases heq
           rw [unsublist_neg_tail hx]
@@ -177,14 +177,14 @@ theorem val_unsublist_eq_val_val {xs : List α} (i : Index (xs.sublist p)) : (i.
       apply congrArg
       rw [val_ndrec]
 
-def sublistEquiv (xs : List α) : Equiv { i : Index xs // p i.val } (Index (xs.sublist p)) where
+def sublistEquiv (xs : List α) : Logic.Equiv { i : Index xs // p i.val } (Index (xs.sublist p)) where
   fwd | ⟨i,hi⟩ => sublist p i hi
   rev i := ⟨unsublist p i, val_unsublist_eq_val_val p i ▸ i.val.property⟩
   fwd_eq_iff_rev_eq := by
     intros i j
     clean
     rw [sublist_eq_iff_eq_unsublist]
-    constr
+    constructor
     · intro h
       apply Subtype.eq
       rw [h]

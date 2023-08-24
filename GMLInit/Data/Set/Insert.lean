@@ -22,12 +22,12 @@ theorem mem_insertIf_of_mem (a : α) (s : Set α) {p : Prop} : x ∈ s → x ∈
 theorem insertIf_true_eq_insert (a : α) (s : Set α) : s.insertIf a True = s.insert a := by
   apply Set.ext
   intro x
-  constr
+  constructor
   · intro
     | Or.inl ⟨_,_⟩ => left; assumption
     | Or.inr _ => right; assumption
   · intro
-    | Or.inl _ => left; constr; assumption; trivial
+    | Or.inl _ => left; constructor; assumption; trivial
     | Or.inr _ => right; assumption
 
 theorem insert_idem (a : α) (s : Set α) : (s.insert a).insert a = s.insert a :=
@@ -120,58 +120,58 @@ theorem insert_seq (f : Set (α → β)) (a : α) (s : Set α) : Set.seq f (s.in
   unfold Set.seq
   apply Set.ext
   intro y
-  constr
+  constructor
   · intro ⟨f,hf,h⟩
     clean at h
     rw [insert_map] at h
     match h with
     | Or.inl h => cases h; left; exists f
-    | Or.inr ⟨x,hxs,h⟩ => cases h; right; exists f; constr; assumption; exists x
+    | Or.inr ⟨x,hxs,h⟩ => cases h; right; exists f; constructor; assumption; exists x
   · intro
-    | Or.inl ⟨f,hf,h⟩ => cases h; exists f; constr; assumption; exists a; constr; left; rfl; rfl
-    | Or.inr ⟨f,hf,x,hx,h⟩ => cases h; exists f; constr; assumption; exists x; constr; right; assumption; rfl
+    | Or.inl ⟨f,hf,h⟩ => cases h; exists f; constructor; assumption; exists a; constructor; left; rfl; rfl
+    | Or.inr ⟨f,hf,x,hx,h⟩ => cases h; exists f; constructor; assumption; exists x; constructor; right; assumption; rfl
 
 theorem insertIf_seq (f : Set (α → β)) (a : α) (p : Prop) (s : Set α) : Set.seq f (s.insertIf a p) = (f.map (λ f => f a) ∩ Set.const p) ∪ Set.seq f s := by
   unfold Set.seq
   apply Set.ext
   intro y
-  constr
+  constructor
   · intro ⟨f,hf,h⟩
     clean at h
     rw [insertIf_map] at h
     match h with
     | Or.inl ⟨h, hp⟩ =>
       left
-      constr
+      constructor
       · exists f
-        constr
+        constructor
         · exact hf
         · exact h.symm
       · exact hp
     | Or.inr ⟨x,hxs,h⟩ =>
       right
       exists f
-      constr
+      constructor
       · exact hf
       · exists x
   · intro
     | Or.inl ⟨⟨f,hf,h⟩,hp⟩ =>
       exists f
-      constr
+      constructor
       · exact hf
       · exists a
-        constr
+        constructor
         · left
-          constr
+          constructor
           · rfl
           · exact hp
         · exact h
     | Or.inr ⟨f,hf,x,hx,h⟩ =>
       exists f
-      constr
+      constructor
       · exact hf
       · exists x
-        constr
+        constructor
         · right
           exact hx
         · exact h

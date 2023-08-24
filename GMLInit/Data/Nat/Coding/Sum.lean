@@ -1,9 +1,9 @@
 import GMLInit.Data.Bool
-import GMLInit.Data.Equiv
 import GMLInit.Data.Nat.Basic
 import GMLInit.Data.Nat.Order
 
 namespace Nat
+open Logic
 
 protected def recTwo {motive : Nat → Sort _} (zero : motive 0) (one : motive 1) (step : (n : Nat) → motive n → motive (n+2)) : (n : Nat) → motive n
 | 0 => zero
@@ -136,7 +136,7 @@ def equivSum : Equiv (Sum Nat Nat) Nat where
       split
       next h =>
         cases h
-        constr
+        constructor
         · intro
           | rfl =>
             rw [half_inl_eq]
@@ -161,7 +161,7 @@ def equivSum : Equiv (Sum Nat Nat) Nat where
       next h => contradiction
       next h =>
         cases h
-        constr
+        constructor
         · intro | rfl => rw [if_pos (isOdd_inr _), half_inr_eq]
         · intro h
           split at h

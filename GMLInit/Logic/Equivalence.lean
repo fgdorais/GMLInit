@@ -1,9 +1,6 @@
-import GMLInit.Logic.Basic
-import GMLInit.Logic.Relation
 import GMLInit.Meta.Decidable
-import GMLInit.Meta.Relation
 
-namespace Relation
+namespace Logic.Relation
 variable {α} (r : α → α → Prop)
 
 class PartialEquivalence extends Symmetric r, Euclidean r : Prop
@@ -96,7 +93,7 @@ class TightApartness {α} (r : α → α → Prop) extends Apartness r : Prop wh
 namespace TightApartness
 
 theorem eq_iff_not_apart {α} {r : α → α → Prop} [TightApartness r] (x y : α) : x = y ↔ ¬ r x y := by
-  constr
+  constructor
   · intro | rfl => irreflexivity
   · exact TightApartness.tight
 

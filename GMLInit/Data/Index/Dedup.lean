@@ -1,14 +1,18 @@
 import GMLInit.Data.Index.Basic
 import GMLInit.Data.Index.Bind
 import GMLInit.Data.Index.Map
-import GMLInit.Logic.Decidable
-import GMLInit.Logic.ListConnectives
 
-namespace Any
+open Logic
+
+namespace Logic.Any
+
+theorem of_index : {ps : List Prop} → (i : Index ps) → i.val → Any ps
+| _::_, .head, h => Any.head h
+| _::_, .tail i, h => Any.tail <| of_index i h
 
 protected def get : {ps : List Prop} → [DecidableList ps] → Any ps → Index ps
-| _, .cons (isTrue _) _, _ => .head
-| _::ps, .cons (isFalse fh) inst, h =>
+| _, @DecidableList.instCons _ _ (.isTrue _) _, _ => .head
+| _::ps, @DecidableList.instCons _ _ (isFalse fh) inst, h =>
   have : Any ps :=
     match h with
     | .head hh => absurd hh fh
@@ -16,13 +20,13 @@ protected def get : {ps : List Prop} → [DecidableList ps] → Any ps → Index
   .tail (@Any.get ps inst this)
 
 theorem get_prop : {ps : List Prop} → [DecidableList ps] → (h : Any ps) → h.get.val
-| _, .cons (isTrue hh) _, _ => hh
-| _, .cons (isFalse fh) _, h =>
+| _, @DecidableList.instCons _ _ (isTrue hh) _, _ => hh
+| _, @DecidableList.instCons _ _ (isFalse fh) _, h =>
   get_prop $ match h with
     | .head hh => absurd hh fh
     | .tail ht => ht
 
-end Any
+end Logic.Any
 
 namespace List
 
@@ -155,7 +159,7 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
           rw [eqNdrec_symm] at hj
           rw [hj, val_ndrec, val_tail] at h
           absurd ha
-          apply Any.introIdx ((j.undedup s).map (s.r x))
+          apply Any.of_index ((j.undedup s).map (s.r x))
           rw [val_map, val_undedup]
           exact h
     | tail i =>
@@ -175,7 +179,7 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
           rw [eqNdrec_symm] at hj
           rw [hj, val_ndrec, val_head] at h
           absurd ha
-          apply Any.introIdx (i.map (s.r x))
+          apply Any.of_index (i.map (s.r x))
           rw [val_map]
           symmetry
           exact h
@@ -186,7 +190,7 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
           elim_casts
 
 theorem dedup_eq_iff_rel {xs : List α} (i : Index xs) (j : Index (xs.dedup s)) : i.dedup s = j ↔ s.r i.val j.val := by
-  constr
+  constructor
   · intro | rfl => exact val_dedup ..
   · exact dedup_eq_of_rel s
 

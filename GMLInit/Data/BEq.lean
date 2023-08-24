@@ -1,6 +1,5 @@
 import GMLInit.Data.Basic
 import GMLInit.Meta.Basic
-import GMLInit.Meta.Relation
 
 class EquivBEq (α) [BEq α] extends PartialEquivBEq α : Prop where
   protected refl (x : α) : (x == x) = true
@@ -70,8 +69,8 @@ theorem comp [PartialEquivBEq α] {x y : α} : (x != y) = true → ∀ z, (x != 
   | false, _ => left; rfl
   | _, false => right; rfl
 
-instance (α) [BEq α] [EquivBEq α] : Relation.Reflexive (α:=α) (.==.) := ⟨BEq.refl⟩
-instance (α) [BEq α] [PartialEquivBEq α] : Relation.Symmetric (α:=α) (.==.) := ⟨BEq.symm⟩
-instance (α) [BEq α] [PartialEquivBEq α] : Relation.Transitive (α:=α) (.==.) := ⟨BEq.trans⟩
+instance (α) [BEq α] [EquivBEq α] : Logic.Reflexive (α:=α) (.==.) := ⟨BEq.refl⟩
+instance (α) [BEq α] [PartialEquivBEq α] : Logic.Symmetric (α:=α) (.==.) := ⟨BEq.symm⟩
+instance (α) [BEq α] [PartialEquivBEq α] : Logic.Transitive (α:=α) (.==.) := ⟨BEq.trans⟩
 
 end BEq

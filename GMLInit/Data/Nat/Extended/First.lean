@@ -43,7 +43,7 @@ theorem first.exists_le_of_leNat (x : Nat) : (first p).leNat x → ∃ y, y ≤ 
         · exact hy
 
 @[simp] theorem first.leNat_iff_exists_le (x) : (first p).leNat x ↔ ∃ y, y ≤ x ∧ p y := by
-  constr
+  constructor
   · exact first.exists_le_of_leNat x
   · intro ⟨y, hle, hy⟩
     apply mono hle

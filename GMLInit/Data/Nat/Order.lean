@@ -1,8 +1,6 @@
 import GMLInit.Data.Nat.Basic
 import GMLInit.Data.Nat.IsPos
-import GMLInit.Logic.Connectives
 import GMLInit.Logic.Ordering
-import GMLInit.Logic.Relation
 
 namespace Nat
 
@@ -73,17 +71,17 @@ protected theorem eq_zero_iff_le_zero (x : Nat) : x = 0 ↔ x ≤ 0 :=
 
 open Relation
 
-local instance : Reflexive (α:=Nat) (.≤.) := ⟨Nat.le_refl⟩
-local instance : Transitive (α:=Nat) (.≤.) := ⟨Nat.le_trans⟩
-local instance : Antisymmetric (α:=Nat) (.≤.) := ⟨Nat.le_antisymm⟩
-local instance : Total (α:=Nat) (.≤.) := ⟨Nat.le_total⟩
+local instance : Logic.Reflexive (α:=Nat) (.≤.) := ⟨Nat.le_refl⟩
+local instance : Logic.Transitive (α:=Nat) (.≤.) := ⟨Nat.le_trans⟩
+local instance : Logic.Antisymmetric (α:=Nat) (.≤.) := ⟨Nat.le_antisymm⟩
+local instance : Logic.Total (α:=Nat) (.≤.) := ⟨Nat.le_total⟩
 instance : TotalOrder (α:=Nat) (.≤.) := TotalOrder.infer _
-local instance : Irreflexive (α:=Nat) (.<.) := ⟨Nat.lt_irrefl⟩
-local instance : Transitive (α:=Nat) (.<.) := ⟨Nat.lt_trans⟩
-local instance : Connex (α:=Nat) (.<.) := ⟨Nat.lt_connex⟩
-local instance : Comparison (α:=Nat) (.<.) := ⟨Nat.lt_compare⟩
+local instance : Logic.Irreflexive (α:=Nat) (.<.) := ⟨Nat.lt_irrefl⟩
+local instance : Logic.Transitive (α:=Nat) (.<.) := ⟨Nat.lt_trans⟩
+local instance : Logic.Connex (α:=Nat) (.<.) := ⟨Nat.lt_connex⟩
+local instance : Logic.Comparison (α:=Nat) (.<.) := ⟨Nat.lt_compare⟩
 instance : LinearOrder (α:=Nat) (.<.) := LinearOrder.infer _
-instance : HTransitive (α:=Nat) (β:=Nat) (γ:=Nat) (.≤.) (.<.) (.<.) := ⟨Nat.lt_of_le_of_lt⟩
-instance : HTransitive (α:=Nat) (β:=Nat) (γ:=Nat) (.<.) (.≤.) (.<.) := ⟨Nat.lt_of_lt_of_le⟩
+instance : Logic.HTransitive (α:=Nat) (β:=Nat) (γ:=Nat) (.≤.) (.<.) (.<.) := ⟨Nat.lt_of_le_of_lt⟩
+instance : Logic.HTransitive (α:=Nat) (β:=Nat) (γ:=Nat) (.<.) (.≤.) (.<.) := ⟨Nat.lt_of_lt_of_le⟩
 
 end Nat
