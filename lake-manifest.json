@@ -12,7 +12,7 @@
   {"git":
    {"url": "https://github.com/fgdorais/logic4",
     "subDir?": null,
-    "rev": "372e7b08809cc5ea9af3f468f4622eb0980add5b",
+    "rev": "b36afd94f95bce535d553c967e0de4ae87052ad5",
     "opts": {},
     "name": "Logic",
     "inputRev?": "main",
