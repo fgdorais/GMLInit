@@ -1,4 +1,4 @@
-{"version": 5,
+{"version": 6,
  "packagesDir": "lake-packages",
  "packages":
  [{"git":
@@ -16,4 +16,5 @@
     "opts": {},
     "name": "Logic",
     "inputRev?": "main",
-    "inherited": false}}]}
+    "inherited": false}}],
+ "name": "GMLInit"}
