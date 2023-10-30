@@ -78,8 +78,6 @@ lemma any_eq_false_iff_all_false {α} (p : α → Bool) (xs : List α) : xs.any 
 
 theorem take_cons {α} (a : α) (as : List α) (n : Nat) : take (n+1) (a :: as) = a :: take n as := rfl
 
-theorem take_zero {α} (as : List α) : take 0 as = [] := rfl
-
 theorem take_all {α} (as : List α) : take as.length as = as := by
   induction as with
   | nil => rfl
@@ -103,8 +101,6 @@ theorem take_drop (as : List α) (m n) : take m (drop n as) = drop n (take (m + 
 /- drop -/
 
 theorem drop_cons {α} (a : α) (as : List α) (n : Nat) : drop (n+1) (a :: as) = drop n as := rfl
-
-theorem drop_zero {α} (as : List α) : drop 0 as = as := rfl
 
 theorem drop_all {α} (as : List α) : as.drop as.length = [] := by
   induction as with
@@ -136,7 +132,7 @@ theorem drop_get {α} (as : List α) (n : Nat) (hn : n < as.length) : drop n as 
       rw [drop_cons]
       rw [drop]
       rw [getElem_eq_get]
-      rw [get_cons_zero]
+      rw [get]
       rw [drop]
     | n+1 =>
       rw [drop_cons]

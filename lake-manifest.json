@@ -2,19 +2,19 @@
  "packagesDir": "lake-packages",
  "packages":
  [{"git":
-   {"url": "https://github.com/fgdorais/std4",
-    "subDir?": null,
-    "rev": "c2eed77b249fb0644241912f8a2bc4468e85d863",
-    "opts": {},
-    "name": "std",
-    "inputRev?": "nat-all",
-    "inherited": false}},
-  {"git":
    {"url": "https://github.com/fgdorais/logic4",
     "subDir?": null,
     "rev": "9289e8cf063c54ea66effd2d0436865b71454f8e",
     "opts": {},
     "name": "Logic",
     "inputRev?": "main",
+    "inherited": false}},
+  {"git":
+   {"url": "https://github.com/fgdorais/std4",
+    "subDir?": null,
+    "rev": "a6498172abde4f45b19fd83539b19699c79d1a2e",
+    "opts": {},
+    "name": "std",
+    "inputRev?": "nat-all",
     "inherited": false}}],
  "name": "GMLInit"}

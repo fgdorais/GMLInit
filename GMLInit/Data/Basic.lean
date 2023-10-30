@@ -22,14 +22,6 @@ protected theorem eta (p : Sigma β) : p = ⟨p.fst, p.snd⟩ := Sigma.eq rfl HE
 
 end Sigma
 
-namespace Sum
-
-@[inline] def swap {α β} : Sum α β → Sum β α
-| inl a => inr a
-| inr b => inl b
-
-end Sum
-
 namespace Ordering
 
 def opp : Ordering → Ordering

@@ -664,6 +664,7 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
             congr 1
             transitivity (Fin.mk k (Nat.lt_of_succ_lt_succ (this ▸ hk))).val
             · apply Fin.val_eq_of_eq
+              simp only [Nat.add_eq, Nat.add_zero, Fin.eta]
               rw [←ih]
               rfl
             · rfl
@@ -678,6 +679,7 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
           clean at h
           transitivity (Fin.mk k (this ▸ hk)).val
           · apply Fin.val_eq_of_eq
+            simp only [Nat.add_eq, Nat.add_zero, Fin.eta]
             rw [←ih]
             cases h
             rfl
@@ -717,7 +719,7 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
             transitivity (⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, hp⟩ : { i // p (succ i) }).val.val
             · apply congrArg Fin.val
               apply congrArg Subtype.val
-              rw [ih]
+              simp only [Nat.add_eq, Nat.add_zero, ih]
               have h := Fin.val_eq_of_eq h
               simp only [encodeSubtype, dif_pos h0, val_ndrec] at h
               cases h
@@ -732,7 +734,7 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
           transitivity (⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, hp⟩ : { i // p (succ i) }).val.val
           · apply congrArg Fin.val
             apply congrArg Subtype.val
-            rw [ih]
+            simp only [Nat.add_eq, Nat.add_zero, ih]
             apply Fin.eq
             have h := Fin.val_eq_of_eq h
             simp only [encodeSubtype, dif_neg h0, val_ndrec] at h
