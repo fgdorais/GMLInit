@@ -90,11 +90,9 @@ protected theorem mul_lt_mul_right {x y z : Nat} : x < y → (h : z > 0 := by na
 
 -- assert theorem mul_lt_mul_of_lt_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ < y₂ → x₁ * y₁ < x₂ * y₂
 
-@[deprecated Nat.mul_lt_mul_of_le_of_lt]
-protected theorem mul_lt_mul_of_le_of_lt' {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → (h : x₂ > 0 := by nat_is_pos) → x₁ * y₁ < x₂ * y₂ := Nat.mul_lt_mul_of_le_of_lt
+-- protected theorem mul_lt_mul_of_le_of_lt' {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → (h : x₂ > 0 := by nat_is_pos) → x₁ * y₁ < x₂ * y₂ := Nat.mul_lt_mul_of_le_of_lt
 
-@[deprecated Nat.mul_lt_mul_of_lt_of_le]
-protected theorem mul_lt_mul_of_lt_of_le' {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ ≤ y₂ → (h : y₂ > 0 := by nat_is_pos) → x₁ * y₁ < x₂ * y₂ := Nat.mul_lt_mul_of_lt_of_le
+-- protected theorem mul_lt_mul_of_lt_of_le' {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ ≤ y₂ → (h : y₂ > 0 := by nat_is_pos) → x₁ * y₁ < x₂ * y₂ := Nat.mul_lt_mul_of_lt_of_le
 
 protected theorem le_of_mul_le_mul_of_pos_left {x y z : Nat} : x > 0 → x * y ≤ x * z → y ≤ z := by
   intro hx hxyz
@@ -116,11 +114,9 @@ protected theorem le_of_mul_le_mul_of_pos_right {x y z : Nat} : x > 0 → y * x 
   | isFalse h =>
     exact Nat.le_of_not_gt h
 
-@[deprecated Nat.le_of_mul_le_mul_of_pos_left]
-protected theorem le_of_mul_le_mul_left' (x : Nat) {y z : Nat} : (h : x > 0 := by nat_is_pos) → x * y ≤ x * z → y ≤ z := Nat.le_of_mul_le_mul_of_pos_left
+-- protected theorem le_of_mul_le_mul_left' (x : Nat) {y z : Nat} : (h : x > 0 := by nat_is_pos) → x * y ≤ x * z → y ≤ z := Nat.le_of_mul_le_mul_of_pos_left
 
-@[deprecated Nat.le_of_mul_le_mul_of_pos_right]
-protected theorem le_of_mul_le_mul_right' (x : Nat) {y z : Nat} : (h : x > 0 := by nat_is_pos) → y * x ≤ z * x → y ≤ z := Nat.le_of_mul_le_mul_of_pos_right
+-- protected theorem le_of_mul_le_mul_right' (x : Nat) {y z : Nat} : (h : x > 0 := by nat_is_pos) → y * x ≤ z * x → y ≤ z := Nat.le_of_mul_le_mul_of_pos_right
 
 protected theorem lt_of_mul_lt_mul_left (x : Nat) {y z : Nat} : x * y < x * z → y < z := by
   intro h

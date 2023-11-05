@@ -42,11 +42,9 @@ protected theorem le_iff_sub_eq_zero (x y : Nat) : x - y = 0 ↔ x ≤ y := Nat.
 
 -- assert theorem sub_eq_zero_of_le {x y : Nat} : x ≤ y → x - y = 0
 
-@[deprecated Nat.sub_pos_iff_lt]
-protected theorem gt_iff_sub_pos (x y : Nat) : x > y ↔ x - y > 0 := Nat.sub_pos_iff_lt.symm
+-- assert theorem sub_pos_iff_lt (x y : Nat) : x > y ↔ x - y > 0 := sorry
 
-@[deprecated Nat.lt_of_sub_pos]
-protected theorem gt_of_sub_pos {x y : Nat} : x - y > 0 → x > y := Nat.lt_of_sub_pos
+-- assert theorem lt_of_sub_pos {x y : Nat} : x - y > 0 → x > y := (Nat.sub_pos_iff_lt _ _).2
 
 @[deprecated Nat.sub_pos_of_lt]
 protected theorem sub_pos_of_gt {x y : Nat} : x > y → x - y > 0 := Nat.sub_pos_of_lt
@@ -81,7 +79,6 @@ protected theorem sub_lt_iff_lt_add_of_pos (x y z : Nat) (hz : z > 0) : x - y < 
   | succ_succ x y H =>
     rw [Nat.succ_sub_succ, Nat.succ_add, Nat.succ_eq, Nat.succ_lt_succ_iff]
     apply H
-
 
 protected theorem sub_lt_of_pos_of_lt_add {x y z : Nat} (hpos : y > 0) : x < y + z → x - z < y := by
   intro h
@@ -132,8 +129,8 @@ protected theorem sub_le_sub_of_ge_right {x y : Nat} (h : x ≥ y) (z : Nat) : z
 protected theorem sub_le_sub_of_le_of_ge {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ ≥ y₂ → x₁ - y₁ ≤ x₂ - y₂ := by
   intro hx hy
   transitivity (x₂ - y₁)
-  · exact Nat.sub_le_sub_right hx ..
-  · exact Nat.sub_le_sub_left hy ..
+  · exact Nat.sub_le_sub_right hx _
+  · exact Nat.sub_le_sub_left hy _
 
 protected theorem sub_lt_sub_of_lt_left {x y z : Nat} : x < y → z < y → x - z < y - z := by
   intro hx hz

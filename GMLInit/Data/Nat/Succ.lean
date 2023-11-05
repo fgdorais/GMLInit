@@ -6,10 +6,8 @@ namespace Nat
 
 attribute [local eliminator] Nat.recDiagAux
 
-@[deprecated Nat.zero_sub]
 protected theorem pred_zero' : 0 - 1 = 0 := Nat.zero_sub _
 
-@[deprecated Nat.add_one_sub_one]
 protected theorem pred_succ' (x : Nat) : (x + 1) - 1 = x := rfl
 
 protected theorem succ_pred' (x : Nat) (h : x > 0 := by nat_is_pos) : (x - 1) + 1 = x := by

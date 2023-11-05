@@ -78,7 +78,7 @@ local instance : Logic.Total (α:=Nat) (.≤.) := ⟨Nat.le_total⟩
 instance : TotalOrder (α:=Nat) (.≤.) := TotalOrder.infer _
 local instance : Logic.Irreflexive (α:=Nat) (.<.) := ⟨Nat.lt_irrefl⟩
 local instance : Logic.Transitive (α:=Nat) (.<.) := ⟨Nat.lt_trans⟩
-local instance : Logic.Connex (α:=Nat) (.<.) := ⟨Nat.lt_connex⟩
+local instance : Logic.Connex (α:=Nat) (.<.) := ⟨Nat.lt_or_gt_of_ne⟩
 local instance : Logic.Comparison (α:=Nat) (.<.) := ⟨Nat.lt_compare⟩
 instance : LinearOrder (α:=Nat) (.<.) := LinearOrder.infer _
 instance : Logic.HTransitive (α:=Nat) (β:=Nat) (γ:=Nat) (.≤.) (.<.) (.<.) := ⟨Nat.lt_of_le_of_lt⟩

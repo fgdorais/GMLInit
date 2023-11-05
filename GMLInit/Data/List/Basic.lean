@@ -89,7 +89,7 @@ theorem take_all {α} (as : List α) : take as.length as = as := by
 theorem take_take (as : List α) (m n) : take m (take n as) = take (min m n) as := by
   induction m, n using Nat.recDiag generalizing as with try trivial
   | succ_succ _ _ ih =>
-    cases as with simp [Nat.min_add_add_right]
+    cases as with simp [Nat.add_min_add_right]
     | cons _ _ => exact ih ..
 
 theorem take_drop (as : List α) (m n) : take m (drop n as) = drop n (take (m + n) as) := by

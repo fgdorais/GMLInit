@@ -23,8 +23,7 @@ protected theorem one_add' (x : Nat) : 1 + x = x + 1 := Nat.one_add ..
 
 -- assert theorem add_right_comm (x y z : Nat) : (x + y) + z = (x + z) + y := rfl
 
-@[deprecated Nat.add_add_add_comm]
-protected theorem add_cross_comm (x₁ x₂ y₁ y₂ : Nat) : (x₁ + x₂) + (y₁ + y₂) = (x₁ + y₁) + (x₂ + y₂) := Nat.add_add_add_comm ..
+protected alias add_cross_comm := Nat.add_add_add_comm
 
 @[deprecated Nat.add_left_cancel]
 protected theorem add_left_cancel' (x : Nat) {y z : Nat} : x + y = x + z → y = z := Nat.add_left_cancel

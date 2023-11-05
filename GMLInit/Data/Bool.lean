@@ -16,9 +16,6 @@ instance : LinearOrd Bool where
   le_trans {x y z} _ _ _ := by bool_tt using contradiction x y z
   eq_strict {x y} _ := by bool_tt using first | rfl | contradiction x y
 
-instance : LE Bool := leOfOrd
-instance : LT Bool := ltOfOrd
-
 -- assert eq_iff_iff : x = y ↔ (x ↔ y)
 
 -- assert not_not : !(!x) = x
