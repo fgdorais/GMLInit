@@ -89,26 +89,17 @@ def equivOption (n : Nat) : Equiv (Fin (n+1)) (Option (Fin n)) where
       unfold decodeOption at h
       unfold encodeOptionNone
       simp at h ⊢
-      split at h
-      next =>
-        contradiction
-      next =>
-        antisymmetry using LE.le
-        · apply Nat.le_of_not_gt
-          assumption
-        · apply Nat.le_of_lt_succ
-          assumption
+      antisymmetry using LE.le
+      · apply Nat.le_of_not_gt
+        assumption
+      · apply Nat.le_of_lt_succ
+        assumption
     · intro h
       unfold decodeOption
       unfold encodeOptionNone at h
       simp at h ⊢
       cases h
-      split
-      next =>
-        apply Nat.lt_irrefl n
-        assumption
-      next =>
-        rfl
+      apply Nat.lt_irrefl n
 
 def encodeSumLeft : Fin m → Fin (m + n)
 | ⟨i, hi⟩ => ⟨i, Nat.lt_of_lt_of_le hi (Nat.le_add_right m n)⟩

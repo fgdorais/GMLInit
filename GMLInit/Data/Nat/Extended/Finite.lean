@@ -21,6 +21,7 @@ private def wf (isFinite : Finite e) : WellFounded (Finite.rel e) := by
       rw [Nat.succ_le, ←Nat.not_le]
       intro h
       simp only [mono h hn] at hm
+      contradiction
     match Nat.le.dest hlt with
     | ⟨k, hk⟩ =>
       cases hk

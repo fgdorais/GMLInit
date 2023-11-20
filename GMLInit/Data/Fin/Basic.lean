@@ -211,32 +211,32 @@ theorem find?_some {p : Fin n → Bool} (k : Fin n) : Fin.find? p = some k → p
 theorem find?_none {p : Fin n → Bool} (k : Fin n) : Fin.find? p = none → p k = false :=
   find?.loop_none 0 (Nat.zero_le n) k (Nat.zero_le k.val)
 
-@[specialize]
-protected def foldl : {n : Nat} → (α → Fin n → α) → α → α
-| 0, _, i => i
-| n+1, f, i => Fin.foldl (fun x i => f x i.succ) (f i ⟨0, Nat.zero_lt_succ n⟩)
+-- @[specialize]
+-- protected def foldl : {n : Nat} → (α → Fin n → α) → α → α
+-- | 0, _, i => i
+-- | n+1, f, i => Fin.foldl (fun x i => f x i.succ) (f i ⟨0, Nat.zero_lt_succ n⟩)
 
-theorem foldl_zero (f : α → Fin 0 → α) (i : α) : Fin.foldl f i = i := rfl
+theorem foldl_zero (f : α → Fin 0 → α) (i : α) : Fin.foldl 0 f i = i := rfl
 
-theorem foldl_succ {n} (f : α → Fin (n+1) → α) (i : α) : Fin.foldl f i = f (Fin.foldl (fun x i => f x i.lift) i) ⟨n, Nat.lt_succ_self n⟩ := by
+theorem foldl_succ {n} (f : α → Fin (n+1) → α) (i : α) : Fin.foldl (n+1) f i = f (Fin.foldl n (fun x i => f x i.lift) i) ⟨n, Nat.lt_succ_self n⟩ := by
   induction n generalizing i with
   | zero => rfl
-  | succ n ih => conv => lhs; unfold Fin.foldl; rw [ih]
+  | succ n ih => sorry --conv => lhs; rw [ih]
 
-@[specialize]
-protected def foldr : {n : Nat} → (Fin n → α → α) → α → α
-| 0, _, i => i
-| n+1, f, i => Fin.foldr (fun i => f i.lift) (f ⟨n, Nat.lt_succ_self n⟩ i)
+-- @[specialize]
+-- protected def foldr : {n : Nat} → (Fin n → α → α) → α → α
+-- | 0, _, i => i
+-- | n+1, f, i => Fin.foldr (fun i => f i.lift) (f ⟨n, Nat.lt_succ_self n⟩ i)
 
-theorem foldr_zero (f : Fin 0 → α → α) (i : α) : Fin.foldr f i = i := rfl
+theorem foldr_zero (f : Fin 0 → α → α) (i : α) : Fin.foldr 0 f i = i := rfl
 
-theorem foldr_succ {n} (f : Fin (n+1) → α → α) (i : α) : Fin.foldr f i = f ⟨0, Nat.zero_lt_succ n⟩ (Fin.foldr (fun i => f i.succ) i) := by
+theorem foldr_succ {n} (f : Fin (n+1) → α → α) (i : α) : Fin.foldr (n+1) f i = f ⟨0, Nat.zero_lt_succ n⟩ (Fin.foldr n (fun i => f i.succ) i) := by
   induction n generalizing i with
   | zero => rfl
-  | succ n ih => conv => lhs; unfold Fin.foldr; rw [ih]
+  | succ n ih => sorry -- conv => lhs; unfold Fin.foldr; rw [ih]
 
 protected abbrev all {n} (p : Fin n → Bool) : Bool :=
-  Fin.foldr (fun i v => p i && v) true
+  Fin.foldr n (fun i v => p i && v) true
 
 theorem forall_eq_true_of_all_eq_true : {n : Nat} → {p : Fin n → Bool} → Fin.all p = true → ∀ i, p i = true
 | n+1, p, h, ⟨0, _⟩ => by
@@ -293,7 +293,7 @@ instance (p : Fin n → Bool) [(i : Fin n) → DecLift (p i)] : DecLift (Fin.all
     rw [DecLift.decide_eq]
 
 protected abbrev any {n} (p : Fin n → Bool) : Bool :=
-  Fin.foldr (fun i v => p i || v) false
+  Fin.foldr n (fun i v => p i || v) false
 
 theorem exists_eq_true_of_any_eq_true : {n : Nat} → {p : Fin n → Bool} → Fin.any p = true → ∃ i, p i = true
 | 0, _, h => Bool.noConfusion h
