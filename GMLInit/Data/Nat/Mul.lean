@@ -88,65 +88,22 @@ protected theorem mul_lt_mul_left {x y z : Nat} : x < y → (h : z > 0 := by nat
 @[deprecated Nat.mul_lt_mul_of_pos_right]
 protected theorem mul_lt_mul_right {x y z : Nat} : x < y → (h : z > 0 := by nat_is_pos) → x * z < y * z := Nat.mul_lt_mul_of_pos_right
 
-protected theorem mul_lt_mul_of_le_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → (h : x₂ > 0) → x₁ * y₁ < x₂ * y₂ := Nat.mul_lt_mul'
+-- assert theorem mul_lt_mul_of_le_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → (h : x₂ > 0) → x₁ * y₁ < x₂ * y₂
 
-protected theorem mul_lt_mul_of_lt_of_le {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ ≤ y₂ → (h : y₂ > 0) → x₁ * y₁ < x₂ * y₂ := by
-  intros; rw [Nat.mul_comm x₁, Nat.mul_comm x₂]
-  apply Nat.mul_lt_mul_of_le_of_lt <;> assumption
+-- assert theorem mul_lt_mul_of_lt_of_le {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ ≤ y₂ → (h : y₂ > 0) → x₁ * y₁ < x₂ * y₂
 
-protected theorem mul_lt_mul_of_lt_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ < y₂ → x₁ * y₁ < x₂ * y₂ := by
-  intro h₁ h₂
-  apply Nat.mul_lt_mul_of_le_of_lt
-  · exact Nat.le_of_lt h₁
-  · exact h₂
-  · apply Nat.zero_lt_of_lt h₁
+-- assert theorem mul_lt_mul_of_lt_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ < y₂ → x₁ * y₁ < x₂ * y₂
 
-protected theorem le_of_mul_le_mul_of_pos_left {x y z : Nat} : x > 0 → x * y ≤ x * z → y ≤ z := by
-  intro hx hxyz
-  by_cases y > z with
-  | isTrue h =>
-    absurd hxyz
-    apply Nat.not_le_of_gt
-    exact Nat.mul_lt_mul_of_pos_left h hx
-  | isFalse h =>
-    exact Nat.le_of_not_gt h
+-- assert theorem le_of_mul_le_mul_of_pos_left {x y z : Nat} : x > 0 → x * y ≤ x * z → y ≤ z
 
-protected theorem le_of_mul_le_mul_of_pos_right {x y z : Nat} : x > 0 → y * x ≤ z * x → y ≤ z := by
-  intro hx hxyz
-  by_cases y > z with
-  | isTrue h =>
-    absurd hxyz
-    apply Nat.not_le_of_gt
-    exact Nat.mul_lt_mul_of_pos_right h hx
-  | isFalse h =>
-    exact Nat.le_of_not_gt h
+-- assert theorem le_of_mul_le_mul_of_pos_right {x y z : Nat} : x > 0 → y * x ≤ z * x → y ≤ z
 
--- protected theorem le_of_mul_le_mul_left' (x : Nat) {y z : Nat} : (h : x > 0 := by nat_is_pos) → x * y ≤ x * z → y ≤ z := Nat.le_of_mul_le_mul_of_pos_left
+-- assert theorem le_of_mul_le_mul_left' (x : Nat) {y z : Nat} : (h : x > 0 := by nat_is_pos) → x * y ≤ x * z → y ≤ z := Nat.le_of_mul_le_mul_of_pos_left
 
--- protected theorem le_of_mul_le_mul_right' (x : Nat) {y z : Nat} : (h : x > 0 := by nat_is_pos) → y * x ≤ z * x → y ≤ z := Nat.le_of_mul_le_mul_of_pos_right
+-- assert theorem le_of_mul_le_mul_right' (x : Nat) {y z : Nat} : (h : x > 0 := by nat_is_pos) → y * x ≤ z * x → y ≤ z := Nat.le_of_mul_le_mul_of_pos_right
 
-protected theorem lt_of_mul_lt_mul_left (x : Nat) {y z : Nat} : x * y < x * z → y < z := by
-  intro h
-  by_cases y ≥ z with
-  | isTrue ht =>
-    absurd h
-    apply Nat.not_lt_of_ge
-    apply Nat.mul_le_mul_left
-    exact ht
-  | isFalse h =>
-    apply Nat.lt_of_not_ge
-    exact h
+-- assert theorem lt_of_mul_lt_mul_left (x : Nat) {y z : Nat} : x * y < x * z → y < z
 
-protected theorem lt_of_mul_lt_mul_right (x : Nat) {y z : Nat} : y * x < z * x → y < z := by
-  intro h
-  by_cases y ≥ z with
-  | isTrue ht =>
-    absurd h
-    apply Nat.not_lt_of_ge
-    apply Nat.mul_le_mul_right
-    exact ht
-  | isFalse h =>
-    apply Nat.lt_of_not_ge
-    exact h
+-- assert theorem lt_of_mul_lt_mul_right (x : Nat) {y z : Nat} : y * x < z * x → y < z
 
 end Nat

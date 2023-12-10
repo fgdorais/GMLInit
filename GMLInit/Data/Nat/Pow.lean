@@ -57,27 +57,11 @@ protected theorem le_pow_right_of_pos {x y : Nat} : y > 0 → x ≤ x ^ y := by
 
 protected theorem le_pow_right (x y : Nat) : (h : y > 0 := by nat_is_pos) → x ≤ x ^ y := Nat.le_pow_right_of_pos
 
-protected theorem pow_le_pow_left {x y : Nat} (h : x ≤ y) (z : Nat) : x ^ z ≤ y ^ z :=
-  Nat.pow_le_pow_of_le_left h z
+-- assert theorem pow_le_pow_left {x y : Nat} (h : x ≤ y) (z : Nat) : x ^ z ≤ y ^ z
 
-protected theorem pow_le_pow_of_pos_left {x y : Nat} (h : x ≤ y) {z : Nat} : z > 0 → z ^ x ≤ z ^ y :=
-  λ hz => Nat.pow_le_pow_of_le_right hz h
+-- assert theorem pow_le_pow_of_pos_left {x y : Nat} (h : x ≤ y) {z : Nat} : z > 0 → z ^ x ≤ z ^ y
 
-protected theorem pow_lt_pow_of_pos_right {x y : Nat} (h : x < y) {z : Nat} : z > 0 → x ^ z < y ^ z := by
-  cases z with
-  | zero => intro; contradiction
-  | succ z =>
-    intro
-    rw [Nat.pow_succ, Nat.pow_succ]
-    apply Nat.mul_lt_mul_of_le_of_lt
-    · apply Nat.pow_le_pow_left
-      apply Nat.le_of_lt
-      exact h
-    · exact h
-    · apply Nat.pos_pow_of_pos
-      transitivity x using LE.le, LT.lt
-      · apply Nat.zero_le
-      · exact h
+-- assert theorem pow_lt_pow_of_pos_right {x y : Nat} (h : x < y) {z : Nat} : z > 0 → x ^ z < y ^ z
 
 protected theorem pow_lt_pow_of_gt_one_left {x y : Nat} (h : x < y) {z : Nat} : z > 1 → z ^ x < z ^ y := by
   induction x, y with
