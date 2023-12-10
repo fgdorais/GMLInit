@@ -1,6 +1,4 @@
 import GMLInit.Data.Basic
-import GMLInit.Data.Index.Basic
-import GMLInit.Data.Index.Map
 import GMLInit.Data.Nat
 
 namespace Fin
@@ -52,7 +50,7 @@ protected inductive IndView : Nat → Type
 | _+1, ⟨0, _⟩ => IndView.zero
 | _+1, ⟨i+1, hi⟩ => IndView.succ (Fin.toIndView ⟨i, Nat.lt_of_succ_lt_succ hi⟩)
 
-theorem toIndView_eq_iff_toFin_eq {n : Nat} {{i : Fin n}} {{j : Fin.IndView n}} : i.toIndView = j ↔ j.toFin = i := by
+theorem toIndView_eq_iff_toFin_eq {n : Nat} {i : Fin n} {j : Fin.IndView n} : i.toIndView = j ↔ j.toFin = i := by
   match n, i, j with
   | n+1, ⟨0, _⟩, IndView.zero =>
     constructor
@@ -87,7 +85,7 @@ theorem toIndView_toFin {n : Nat} (i : Fin.IndView n) : i.toFin.toIndView = i :=
 theorem toFin_toIndView {n : Nat} (i : Fin n) : i.toIndView.toFin = i :=
   toIndView_eq_iff_toFin_eq.mp rfl
 
-def equivIndView (n : Nat) : Logic.Equiv (Fin n) (Fin.IndView n) where
+def equivIndView (n : Nat) : Equiv (Fin n) (Fin.IndView n) where
   fwd := Fin.toIndView
   rev := IndView.toFin
   fwd_eq_iff_rev_eq := toIndView_eq_iff_toFin_eq
@@ -114,29 +112,29 @@ protected def iota : (n : Nat) → List (Fin n)
 | 0 => []
 | n+1 => Fin.zero :: (Fin.iota n).map Fin.succ
 
-def iotaFind : {n : Nat} → Fin n → Index (Fin.iota n)
-| _+1, ⟨0,_⟩ => Index.head
-| _+1, ⟨i+1,hi⟩ => Index.tail ((iotaFind ⟨i, Nat.lt_of_succ_lt_succ hi⟩).map Fin.succ)
+def iotaFind : {n : Nat} → Fin n → List.Index (Fin.iota n)
+| _+1, ⟨0,_⟩ => .head
+| _+1, ⟨i+1,hi⟩ => .tail ((iotaFind ⟨i, Nat.lt_of_succ_lt_succ hi⟩).map Fin.succ)
 
-theorem iotaFind_zero {n : Nat} : iotaFind (Fin.zero : Fin (n+1)) = Index.head := by rfl
+theorem iotaFind_zero {n : Nat} : iotaFind (Fin.zero : Fin (n+1)) = .head := by rfl
 
-theorem iotaFind_succ {n : Nat} (i : Fin n) : iotaFind (Fin.succ i) = Index.tail (Index.map Fin.succ (iotaFind i)) := by cases i; rfl
+theorem iotaFind_succ {n : Nat} (i : Fin n) : iotaFind (Fin.succ i) = .tail (List.Index.map Fin.succ (iotaFind i)) := by cases i; rfl
 
-theorem iotaFind_val {n : Nat} (i : Index (Fin.iota n)) : i.val.iotaFind = i := by
+theorem iotaFind_val {n : Nat} (i : List.Index (Fin.iota n)) : i.val.iotaFind = i := by
   induction n with
   | zero => contradiction
   | succ n H =>
     match i with
     | .head => rfl
-    | .tail (i : Index ((Fin.iota n).map Fin.succ)) =>
+    | .tail (i : List.Index ((Fin.iota n).map Fin.succ)) =>
       calc
-      _ = iotaFind (Index.val (Index.tail i : Index (Fin.iota (n+1)))) := rfl
-      _ = iotaFind (Index.val i) := by rw [Index.val_tail]
-      _ = iotaFind (Index.val (Index.map Fin.succ (Index.unmap Fin.succ i))) := by rw [Index.map_unmap]
-      _ = iotaFind (Fin.succ (Index.val (Index.unmap Fin.succ i))) := by rw [Index.val_map]
-      _ = Index.tail (Index.map Fin.succ (iotaFind (Index.val (Index.unmap Fin.succ i)))) := by rw [iotaFind_succ]
-      _ = Index.tail (Index.map Fin.succ (Index.unmap Fin.succ i)) := by rw [H]
-      _ = Index.tail i := by rw [Index.map_unmap]
+      _ = iotaFind (List.Index.val (.tail i : List.Index (Fin.iota (n+1)))) := rfl
+      _ = iotaFind (List.Index.val i) := by rw [List.Index.val_tail]
+      _ = iotaFind (List.Index.val (List.Index.map Fin.succ (List.Index.unmap Fin.succ i))) := by rw [List.Index.map_unmap]
+      _ = iotaFind (Fin.succ (List.Index.val (List.Index.unmap Fin.succ i))) := by rw [List.Index.val_map]
+      _ = .tail (List.Index.map Fin.succ (iotaFind (List.Index.val (List.Index.unmap Fin.succ i)))) := by rw [iotaFind_succ]
+      _ = .tail (List.Index.map Fin.succ (List.Index.unmap Fin.succ i)) := by rw [H]
+      _ = .tail i := by rw [List.Index.map_unmap]
 
 theorem val_iotaFind {n : Nat} (i : Fin n) : i.iotaFind.val = i := by
   induction n with
@@ -146,7 +144,7 @@ theorem val_iotaFind {n : Nat} (i : Fin n) : i.iotaFind.val = i := by
     | ⟨0,_⟩ => rfl
     | ⟨i+1,hi⟩ =>
       apply Fin.eq
-      open Index in rw [iotaFind, val_tail, val_map, H, Fin.succ]
+      open List.Index in rw [iotaFind, val_tail, val_map, H, Fin.succ]
 
 protected def find? (p : Fin n → Bool) : Option (Fin n) :=
   let rec loop (i : Nat) (hi : i ≤ n) : Option (Fin n) :=

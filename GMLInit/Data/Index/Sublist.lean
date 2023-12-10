@@ -1,6 +1,4 @@
 import GMLInit.Data.Index.Basic
-import GMLInit.Data.Index.Bind
-import GMLInit.Data.Index.Map
 
 namespace List
 variable {α} (p : α → Prop) [DecidablePred p]
@@ -13,10 +11,8 @@ theorem sublist_pos {α} {p : α → Prop} [DecidablePred p] {x : α} {xs : List
 
 theorem sublist_neg {α} {p : α → Prop} [DecidablePred p] {x : α} {xs : List α} (h : ¬ p x) : (x :: xs).sublist p = xs.sublist p := dif_neg h
 
-end List
-
 namespace Index
-variable {α} (p : α → Prop) [DecidablePred p]
+variable (p : α → Prop) [DecidablePred p]
 
 def sublist : {xs : List α} → (i : Index xs) → p i.val → Index (xs.sublist p)
 | x :: xs, i, hi =>
@@ -32,7 +28,7 @@ def sublist : {xs : List α} → (i : Index xs) → p i.val → Index (xs.sublis
     | tail i => this ▸ sublist i hi
 
 section
-variable {p}
+variable {p : α → Prop} [DecidablePred p]
 
 theorem sublist_pos_head {x : α} {xs : List α} (h : p x) : (head:Index (x::xs)).sublist p h = ((List.sublist_pos h).symm ▸ head) := dif_pos h
 
@@ -54,7 +50,7 @@ def unsublist : {xs : List α} → (i : Index (xs.sublist p)) → Index xs
     tail (unsublist (this ▸ i))
 
 section
-variable {p}
+variable {p : α → Prop} [DecidablePred p]
 
 theorem unsublist_pos_head {x : α} {xs : List α} (h : p x) : ((List.sublist_pos h) ▸ (head : Index (⟨x,h⟩ :: xs.sublist p)) : Index ((x :: xs).sublist p)).unsublist p = head := by
   unfold unsublist
@@ -136,7 +132,7 @@ theorem unsublist_sublist {xs : List α} (i : Index xs) (hi : p i.val) : (i.subl
   | head =>
     rw [sublist_pos_head]
     rw [unsublist_pos_head]
-  | @tail x xs i ih =>
+  | @tail xs x i ih =>
     by_cases p x with
     | isTrue hh =>
       rw [sublist_pos_tail hh]
@@ -177,7 +173,7 @@ theorem val_unsublist_eq_val_val {xs : List α} (i : Index (xs.sublist p)) : (i.
       apply congrArg
       rw [val_ndrec]
 
-def sublistEquiv (xs : List α) : Logic.Equiv { i : Index xs // p i.val } (Index (xs.sublist p)) where
+def sublistEquiv (xs : List α) : Equiv { i : Index xs // p i.val } (Index (xs.sublist p)) where
   fwd | ⟨i,hi⟩ => sublist p i hi
   rev i := ⟨unsublist p i, val_unsublist_eq_val_val p i ▸ i.val.property⟩
   fwd_eq_iff_rev_eq := by

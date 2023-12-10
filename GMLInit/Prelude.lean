@@ -1,5 +1,6 @@
-import Logic
 import Std
+import Extra
+import Logic
 
 instance (α) [Subsingleton α] : DecidableEq α
 | _, _ => isTrue (Subsingleton.allEq _ _)

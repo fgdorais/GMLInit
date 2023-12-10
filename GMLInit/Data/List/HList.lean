@@ -8,6 +8,7 @@ inductive HList.{u} : List (Sort u) → Type u
 | cons {α αs} : α → HList αs → HList (α :: αs)
 
 namespace HList
+open List
 
 scoped infixr:67 " :: " => HList.cons
 scoped syntax (name := hlist) "[" term,* "]"  : term
@@ -74,7 +75,7 @@ protected def eval : {αs : List (Sort _)} → HList αs → (i : Index αs) →
 | _::_, a::_, .head => a
 | _::_, _::as, .tail i => HList.eval as i
 
-def equiv (αs : List (Sort _)) : Logic.Equiv (HList αs) ((i : Index αs) → i.val) where
+def equiv (αs : List (Sort _)) : Equiv (HList αs) ((i : Index αs) → i.val) where
   fwd := HList.eval
   rev := HList.mk
   fwd_eq_iff_rev_eq := by

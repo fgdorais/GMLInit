@@ -88,11 +88,18 @@ protected theorem mul_lt_mul_left {x y z : Nat} : x < y → (h : z > 0 := by nat
 @[deprecated Nat.mul_lt_mul_of_pos_right]
 protected theorem mul_lt_mul_right {x y z : Nat} : x < y → (h : z > 0 := by nat_is_pos) → x * z < y * z := Nat.mul_lt_mul_of_pos_right
 
--- assert theorem mul_lt_mul_of_lt_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ < y₂ → x₁ * y₁ < x₂ * y₂
+protected theorem mul_lt_mul_of_le_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → (h : x₂ > 0) → x₁ * y₁ < x₂ * y₂ := Nat.mul_lt_mul'
 
--- protected theorem mul_lt_mul_of_le_of_lt' {x₁ x₂ y₁ y₂ : Nat} : x₁ ≤ x₂ → y₁ < y₂ → (h : x₂ > 0 := by nat_is_pos) → x₁ * y₁ < x₂ * y₂ := Nat.mul_lt_mul_of_le_of_lt
+protected theorem mul_lt_mul_of_lt_of_le {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ ≤ y₂ → (h : y₂ > 0) → x₁ * y₁ < x₂ * y₂ := by
+  intros; rw [Nat.mul_comm x₁, Nat.mul_comm x₂]
+  apply Nat.mul_lt_mul_of_le_of_lt <;> assumption
 
--- protected theorem mul_lt_mul_of_lt_of_le' {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ ≤ y₂ → (h : y₂ > 0 := by nat_is_pos) → x₁ * y₁ < x₂ * y₂ := Nat.mul_lt_mul_of_lt_of_le
+protected theorem mul_lt_mul_of_lt_of_lt {x₁ x₂ y₁ y₂ : Nat} : x₁ < x₂ → y₁ < y₂ → x₁ * y₁ < x₂ * y₂ := by
+  intro h₁ h₂
+  apply Nat.mul_lt_mul_of_le_of_lt
+  · exact Nat.le_of_lt h₁
+  · exact h₂
+  · apply Nat.zero_lt_of_lt h₁
 
 protected theorem le_of_mul_le_mul_of_pos_left {x y z : Nat} : x > 0 → x * y ≤ x * z → y ≤ z := by
   intro hx hxyz

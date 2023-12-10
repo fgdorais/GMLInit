@@ -77,10 +77,10 @@ theorem toList1_eq_iff_toIndView_eq {{xs : List1.IndView α}} {{ys : List1 α}} 
 @[simp] theorem toList1_toIndView (xs : List1 α) : xs.toIndView.toList1 = xs :=
   toList1_eq_iff_toIndView_eq.mpr rfl
 
-def equivIndView (α : Type _) : Logic.Equiv (List1 α) (List1.IndView α) where
+def equivIndView (α : Type _) : Equiv (List1 α) (List1.IndView α) where
   fwd := List1.toIndView
   rev := IndView.toList1
-  fwd_eq_iff_rev_eq xs ys := (toList1_eq_iff_toIndView_eq (xs:=ys) (ys:=xs)).symm
+  fwd_eq_iff_rev_eq {xs ys} := (toList1_eq_iff_toIndView_eq (xs:=ys) (ys:=xs)).symm
 
 theorem IndView.sizeOf_toList1 (xs : List1.IndView α) : sizeOf xs.toList1 = 2 + sizeOf xs := by
   induction xs with

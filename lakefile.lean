@@ -8,6 +8,8 @@ package GMLInit {
 @[default_target]
 lean_lib GMLInit {}
 
-require std from git "https://github.com/fgdorais/std4" @ "nat-all"
+require std from git "https://github.com/leanprover/std4" @ "main"
 
-require Logic from git "https://github.com/fgdorais/logic4" @ "main"
+require extra from git "https://github.com/fgdorais/extra4" @ "main"
+
+require logic from git "https://github.com/fgdorais/logic4" @ "main"

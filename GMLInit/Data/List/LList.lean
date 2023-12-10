@@ -96,7 +96,7 @@ theorem eval_cons_succ {α n} (a : α) (as : LList α n) (i : Fin n) : (a :: as)
   apply Fin.eq
   rfl
 
-def equiv (α n) : Logic.Equiv (LList α n) (Fin n → α) where
+def equiv (α n) : Equiv (LList α n) (Fin n → α) where
   fwd := LList.eval
   rev := LList.mk
   fwd_eq_iff_rev_eq := by

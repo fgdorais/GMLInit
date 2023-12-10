@@ -42,24 +42,6 @@ theorem eq_opp_iff_opp_eq (x y) : opp x = y ↔ x = opp y := by
 
 end Ordering
 
-inductive Index.{u} {α : Type u} : List α → Type u where
-| head {a : α} {as : List α} : Index (a :: as)
-| tail {a : α} {as : List α} : Index as → Index (a :: as)
-deriving Repr
-
-instance Index.instDecidableEq {α} : {xs : List α} → DecidableEq (Index xs)
-| _::_, head, head => isTrue rfl
-| _::_, head, tail _ => isFalse Index.noConfusion
-| _::_, tail _, head => isFalse Index.noConfusion
-| _::_, tail i, tail j =>
-  match instDecidableEq i j with
-  | isTrue rfl => isTrue rfl
-  | isFalse h => isFalse fun | rfl => h rfl
-
-@[reducible] def Index.val {α} : {as : List α} → Index as → α
-| a::_, head => a
-| _::_, tail i => val i
-
 structure Cached {α} (a : α) where
   value : α
   value_eq : value = a

@@ -39,6 +39,7 @@ theorem get_pop (as : Array α) (i : Nat) (hi : i < as.pop.size) :
   rw [get, get]
   unfold pop
   rw [List.get_dropLast]
+  rw [Fin.castLE_mk]
 
 /- swap -/
 
@@ -429,32 +430,6 @@ theorem sum_step (ns : Array Nat) (start stop : Nat) (hstart : start < stop) (hs
   rw [ns.foldl_assoc (.+.) ns[start] 0 (start+1) stop (Nat.succ_le_of_lt hstart) hstop]
 
 end sum
-
-section join
-
-local instance : Lean.IsAssociative (α:=Array α) (.++.) where
-  assoc := append_assoc
-
-def join (as : Array (Array α)) (start := 0) (stop := as.size) : Array α :=
-  as.foldl (.++.) #[] start stop
-
-def join_stop (as : Array (Array α)) (stop : Nat) (hstop : stop ≤ as.size) :
-  as.join stop stop = #[] := by
-  simp only [join]
-  rw [foldl_stop]
-  exact hstop
-
-def join_step (as : Array (Array α)) (start stop : Nat) (hstart : start < stop) (hstop : stop ≤ as.size) :
-  have : start < as.size := Nat.lt_of_lt_of_le hstart hstop
-  as.join start stop = as[start] ++ as.join (start+1) stop := by
-  have : start < as.size := Nat.lt_of_lt_of_le hstart hstop
-  simp only [join]
-  rw [foldl_step] <;> try assumption
-  transitivity (foldl (.++.) (as[start] ++ #[]) as (start+1) stop)
-  · rw [nil_append, append_nil]
-  · rw [foldl_assoc] <;> assumption
-
-end join
 
 @[deprecated Array.ofFn]
 protected def ofFun (f : Fin n → α) : Array α := ofFn f

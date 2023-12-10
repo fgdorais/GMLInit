@@ -180,22 +180,4 @@ theorem replicate_add {α} (a : α) : (m n : Nat) → replicate n a ++ replicate
 | _, 0 => rfl
 | _, _+1 => congrArg (a :: .) (replicate_add ..)
 
-/- dropLast -/
-
-theorem length_dropLast (as : List α) : as.dropLast.length = as.length - 1 := by
-  cases as <;> simp
-
-private theorem get_dropLast.aux {as : List α} {i : Nat} : i < as.dropLast.length → i < as.length :=
-  fun h => Nat.lt_of_lt_of_le h (length_dropLast as ▸ Nat.pred_le as.length)
-
-theorem get_dropLast (as : List α) (i : Fin as.dropLast.length) :
-  as.dropLast.get i = as.get ⟨i.val, get_dropLast.aux i.isLt⟩ := by
-  induction as with
-  | nil => exact nomatch i
-  | cons a as ih =>
-    match as, i with
-    | [], i => exact nomatch i
-    | _ :: _, ⟨0, _⟩ => simp [dropLast]
-    | _ :: _, ⟨i+1, hi⟩ => simp [dropLast, ih]
-
 end List

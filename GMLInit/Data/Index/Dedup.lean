@@ -1,16 +1,12 @@
 import GMLInit.Data.Index.Basic
-import GMLInit.Data.Index.Bind
-import GMLInit.Data.Index.Map
-
-open Logic
 
 namespace Logic.Any
 
-theorem of_index : {ps : List Prop} → (i : Index ps) → i.val → Any ps
+theorem of_index : {ps : List Prop} → (i : List.Index ps) → i.val → Any ps
 | _::_, .head, h => Any.head h
 | _::_, .tail i, h => Any.tail <| of_index i h
 
-protected def get : {ps : List Prop} → [DecidableList ps] → Any ps → Index ps
+protected def get : {ps : List Prop} → [DecidableList ps] → Any ps → List.Index ps
 | _, @DecidableList.instCons _ _ (.isTrue _) _, _ => .head
 | _::ps, @DecidableList.instCons _ _ (isFalse fh) inst, h =>
   have : Any ps :=
@@ -33,18 +29,16 @@ namespace List
 def dedup {α} (s : Setoid α) [DecidableRel s.r] : List α → List α
 | [] => []
 | x :: xs =>
-  if Any (xs.map (s.r x))
+  if Logic.Any (xs.map (s.r x))
   then dedup s xs
   else x :: dedup s xs
-
-end List
 
 namespace Index
 variable {α} (s : Setoid α) [DecidableRel s.r] {xs : List α}
 
 def dedup : {xs : List α} → Index xs → Index (xs.dedup s)
 | x :: xs, head =>
-  if h : Any (xs.map (s.r x))
+  if h : Logic.Any (xs.map (s.r x))
   then
     have : (x :: xs).dedup s = xs.dedup s := if_pos h
     this ▸ dedup (h.get.unmap _)
@@ -52,7 +46,7 @@ def dedup : {xs : List α} → Index xs → Index (xs.dedup s)
     have : (x :: xs).dedup s = x :: xs.dedup s := if_neg h
     this ▸ head
 | x :: xs, tail i =>
-  if h : Any (xs.map (s.r x))
+  if h : Logic.Any (xs.map (s.r x))
   then
     have : (x :: xs).dedup s = xs.dedup s := if_pos h
     this ▸ dedup i
@@ -72,7 +66,7 @@ theorem val_dedup (i : Index xs) : s.r i.val (i.dedup s).val := by
         rw [val_ndrec]
         transitivity (h.get.unmap (s.r x)).val using s.r
         · rw [val_head, ←val_unmap (s.r x)]
-          exact Any.get_prop ..
+          exact Logic.Any.get_prop ..
         · exact ih ..
       next => rw [val_ndrec]; reflexivity using s.r
     | tail i =>
@@ -83,7 +77,7 @@ theorem val_dedup (i : Index xs) : s.r i.val (i.dedup s).val := by
 
 def undedup : {xs : List α} → Index (xs.dedup s) → Index xs
 | x :: xs, i =>
-  if h : Any (xs.map (s.r x))
+  if h : Logic.Any (xs.map (s.r x))
   then
     have : (x :: xs).dedup s = xs.dedup s := if_pos h
     tail (undedup (this ▸ i))
@@ -147,7 +141,7 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
         transitivity x
         · symmetry
           rw [←val_unmap (s.r x)]
-          exact Any.get_prop ..
+          exact Logic.Any.get_prop ..
         · exact h
       next ha =>
         have : (x :: xs).dedup s = x :: xs.dedup s := if_neg ha
@@ -159,7 +153,7 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
           rw [eqNdrec_symm] at hj
           rw [hj, val_ndrec, val_tail] at h
           absurd ha
-          apply Any.of_index ((j.undedup s).map (s.r x))
+          apply Logic.Any.of_index ((j.undedup s).map (s.r x))
           rw [val_map, val_undedup]
           exact h
     | tail i =>
@@ -179,7 +173,7 @@ theorem dedup_eq_of_rel {xs : List α} {i : Index xs} {j : Index (xs.dedup s)} (
           rw [eqNdrec_symm] at hj
           rw [hj, val_ndrec, val_head] at h
           absurd ha
-          apply Any.of_index (i.map (s.r x))
+          apply Logic.Any.of_index (i.map (s.r x))
           rw [val_map]
           symmetry
           exact h
