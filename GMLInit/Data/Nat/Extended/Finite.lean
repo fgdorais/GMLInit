@@ -43,7 +43,7 @@ end Finite
 
 private def toNatAux {e : ENat} (isFinite : Finite e) (x : Nat) : Nat :=
   if h : e.leNat x = true then x else toNatAux isFinite (x+1)
-termination_by' ⟨Finite.rel e, Finite.wf e isFinite⟩
+termination_by _ => (Finite.wf e isFinite).wrap x
 decreasing_by trivial
 
 private theorem toNatAux_eq {e : ENat} (isFinite : Finite e) (x : Nat) : toNatAux isFinite x = if e.leNat x then x else toNatAux isFinite (x+1) :=
@@ -54,7 +54,7 @@ private theorem leNat_toNatAux {e : ENat} (isFinite : Finite e) (x : Nat) : e.le
   split
   next h => exact h
   next => apply leNat_toNatAux
-termination_by' ⟨Finite.rel e, Finite.wf e isFinite⟩
+termination_by _ => (Finite.wf e isFinite).wrap x
 decreasing_by trivial
 
 private theorem toNatAux_le {e : ENat} {y : Nat} (hy : e.leNat y) {x} (hle : x ≤ y) : toNatAux ⟨y,hy⟩ x ≤ y := by
@@ -66,7 +66,7 @@ private theorem toNatAux_le {e : ENat} {y : Nat} (hy : e.leNat y) {x} (hle : x �
     apply Nat.succ_le_of_lt
     apply Nat.lt_of_le_of_ne hle
     intro | rfl => contradiction
-termination_by' invImage PSigma.fst ⟨Finite.rel e, Finite.wf e ⟨y,hy⟩⟩
+termination_by _ => (Finite.wf e ⟨y,hy⟩).wrap x
 decreasing_by trivial
 
 def toNat (e : ENat) (isFinite : Finite e) : Nat := toNatAux isFinite 0
