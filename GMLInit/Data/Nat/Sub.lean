@@ -104,9 +104,6 @@ protected theorem lt_sub_iff_add_lt (x y z : Nat) : x < y - z ↔ x + z < y := b
   | zero_left z => rw [Nat.zero_sub]; constructor <;> (intro; contradiction)
   | succ_succ y z H => rw [Nat.succ_sub_succ, Nat.add_succ, Nat.succ_eq, Nat.succ_lt_succ_iff]; exact H
 
-theorem add_lt_of_lt_sub' {x y z : Nat} : x < y - z → x + z < y :=
-  (Nat.lt_sub_iff_add_lt _ _ _).mp
-
 theorem lt_sub_of_add_lt' {x y z : Nat} : x + y < z → x < z - y :=
   (Nat.lt_sub_iff_add_lt _ _ _).mpr
 

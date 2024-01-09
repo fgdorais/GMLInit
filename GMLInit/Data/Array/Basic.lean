@@ -363,47 +363,6 @@ theorem data_append_aux {as bs : Array α} (start stop : Nat) (hstart : start �
     rw [List.append_assoc]
     rw [List.singleton_append]
 termination_by data_append_aux => stop - start
-
-theorem size_append (as bs : Array α) : (as ++ bs).size = as.size + bs.size :=
-  size_append_aux 0 bs.size (Nat.zero_le _) (Nat.le_refl _)
-
-theorem get_append_left {as bs : Array α} (i : Nat) (hi : i < as.size) :
-  have : i < (as ++ bs).size := size_append as bs ▸ Nat.lt_add_right _ hi
-  (as ++ bs)[i] = as[i] :=
-  get_append_aux_lo 0 bs.size i (Nat.zero_le _) (Nat.le_refl _) hi _
-
-theorem get_append_right {as bs : Array α} (i : Nat) (hi : i < bs.size) :
-  have : as.size + i < (as ++ bs).size := size_append as bs ▸ Nat.add_lt_add_left hi as.size
-  (as ++ bs)[as.size + i] = bs[i] := by
-  simp only [HAppend.hAppend, Append.append, Array.append]
-  rw [get_append_aux_hi 0 bs.size i (Nat.zero_le _) (Nat.le_refl _) hi _ _]
-  congr
-  rw [Nat.zero_add]
-  rw [Nat.zero_add]
-  exact hi
-
-theorem data_append {as bs : Array α} : (as ++ bs).data = as.data ++ bs.data := by
-  simp only [HAppend.hAppend, Append.append, Array.append]
-  rw [data_append_aux 0 bs.size (Nat.zero_le _) (Nat.le_refl _)]
-  rw [List.extract_all]; rfl
-
-theorem nil_append (as : Array α) : #[] ++ as = as := by
-  apply Array.ext'
-  repeat rw [data_append]
-  rw [data_nil]
-  exact List.nil_append ..
-
-theorem append_nil (as : Array α) : as ++ #[] = as := by
-  apply Array.ext'
-  repeat rw [data_append]
-  rw [data_nil]
-  exact List.append_nil ..
-
-theorem append_assoc (as bs cs : Array α) : (as ++ bs) ++ cs = as ++ (bs ++ cs) := by
-  apply Array.ext'
-  repeat rw [data_append]
-  exact List.append_assoc ..
-
 end append
 
 section sum
