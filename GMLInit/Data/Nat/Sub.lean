@@ -1,19 +1,11 @@
 import GMLInit.Data.Nat.Basic
-import GMLInit.Data.Nat.IsPos
 import GMLInit.Data.Nat.Order
-import GMLInit.Data.Nat.Add
 
 namespace Nat
 
 attribute [local eliminator] Nat.recDiagAux
 
--- assert theorem sub_zero (x : Nat) : x - 0 = x
-
 protected theorem sub_succ' (x y : Nat) : x - (y + 1) = (x - y) - 1 := Nat.sub_succ ..
-
--- assert theorem zero_sub (x : Nat) : 0 - x = 0
-
--- assert theorem sub_self (x : Nat) : x - x = 0
 
 protected theorem succ_sub_succ' (x y : Nat) : (x + 1) - (y + 1) = x - y := Nat.succ_sub_succ ..
 
@@ -22,12 +14,6 @@ protected theorem add_sub_add (x y z : Nat) : (x + z) - (y + z) = x - y := Nat.a
 
 @[deprecated Nat.sub_sub]
 protected theorem sub_assoc (x y z : Nat) : (x - y) - z = x - (y + z) := Nat.sub_sub ..
-
--- assert theorem sub_right_comm (x y z : Nat) : (x - y) - z = (x - z) - y
-
--- assert theorem add_sub_cancel_left (x y : Nat) : (x + y) - x = y
-
--- assert theorem add_sub_cancel_right (x y : Nat) : (x + y) - y = x
 
 protected theorem add_sub_comm (x y : Nat) : x + (y - x) = y + (x - y) := by
   rw [Nat.add_comm x, Nat.add_comm y, Nat.sub_add_eq_max, Nat.sub_add_eq_max, Nat.max_comm]
@@ -38,14 +24,6 @@ protected theorem sub_sub_comm (x y : Nat) : x - (x - y) = y - (y - x) := by
 @[deprecated Nat.sub_eq_zero_iff_le]
 protected theorem le_iff_sub_eq_zero (x y : Nat) : x - y = 0 ↔ x ≤ y := Nat.sub_eq_zero_iff_le
 
--- assert theorem le_of_sub_eq_zero {x y : Nat} : x - y = 0 → x ≤ y
-
--- assert theorem sub_eq_zero_of_le {x y : Nat} : x ≤ y → x - y = 0
-
--- assert theorem sub_pos_iff_lt (x y : Nat) : x > y ↔ x - y > 0 := sorry
-
--- assert theorem lt_of_sub_pos {x y : Nat} : x - y > 0 → x > y := (Nat.sub_pos_iff_lt _ _).2
-
 @[deprecated Nat.sub_pos_of_lt]
 protected theorem sub_pos_of_gt {x y : Nat} : x > y → x - y > 0 := Nat.sub_pos_of_lt
 
@@ -53,15 +31,11 @@ protected theorem sub_le_of_le_add' {x y z : Nat} : x ≤ y + z → x - y ≤ z 
 
 protected theorem le_add_of_sub_le' {x y z : Nat} : x - y ≤ z → x ≤ y + z := Nat.sub_le_iff_le_add'.1
 
-
 @[deprecated Nat.le_sub_iff_add_le]
 protected theorem le_sub_iff_add_le_of_ge (x y z : Nat) (h : y ≥ z) : x ≤ y - z ↔ x + z ≤ y := Nat.le_sub_iff_add_le h
 
--- assert theorem le_sub_of_add_le {x y z : Nat} : x + y ≤ z → x ≤ z - y
-
 @[deprecated Nat.add_le_of_le_sub]
 protected theorem add_le_of_ge_of_le_sub {x y z : Nat} : y ≥ z → x ≤ y - z → x + z ≤ y := Nat.add_le_of_le_sub
-
 
 protected theorem sub_lt_iff_lt_add_of_pos (x y z : Nat) (hz : z > 0) : x - y < z ↔ x < y + z := by
   induction x, y with
@@ -117,8 +91,6 @@ protected theorem sub_lt_of_pos_of_pos_right {x y : Nat} : x > 0 → y > 0 → x
   · exact Nat.lt_add_of_pos_left hy
   · exact hx
 
--- assert theorem sub_le_sub_left {x y : Nat} (h : x ≤ y) (z : Nat) : x - z ≤ y - z
-
 @[deprecated Nat.sub_le_sub_left]
 protected theorem sub_le_sub_of_ge_right {x y : Nat} (h : x ≥ y) (z : Nat) : z - x ≤ z - y :=
   Nat.sub_le_sub_left h _
@@ -145,5 +117,3 @@ protected theorem sub_lt_sub_of_gt_of_lt_right {x y z : Nat} (hx : x > y) (hz : 
       exact Nat.le_add_right ..
     · rw [Nat.add_comm]
       exact Nat.add_lt_add_left hx ..
-
-end Nat

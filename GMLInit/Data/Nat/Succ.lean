@@ -1,6 +1,5 @@
 import GMLInit.Data.Nat.Basic
 import GMLInit.Data.Nat.IsPos
-import GMLInit.Data.Nat.Order
 
 namespace Nat
 
@@ -97,5 +96,3 @@ protected theorem pred_lt_or_eq_zero_iff_lt_succ (x y : Nat) : x - 1 < y ∨ x =
     · intro h
       left
       exact Nat.lt_of_succ_lt_succ h
-
-end Nat

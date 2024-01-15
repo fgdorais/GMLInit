@@ -1,6 +1,5 @@
-import GMLInit.Data.Bool
 import GMLInit.Data.Nat.Basic
-import GMLInit.Data.Nat.Order
+import GMLInit.Data.Nat.IsPos
 
 namespace Nat
 open Logic
