@@ -1,7 +1,5 @@
 import GMLInit.Meta.Prelude
 
-theorem eqRec_eq_cast {α} {a b : α} {motive : (b : α) → a = b → Sort _} (t : motive a rfl) (h : a = b) : Eq.rec t h = cast (show motive a rfl = motive b h by cases h; rfl) t := by cases h; rfl
-
 theorem eqNdrec_eq_cast {α} {a b : α} {motive : α → Sort _} (t : motive a) (h : a = b) : Eq.ndrec t h = cast (h ▸ rfl) t := by cases h; rfl
 
 theorem eqNdrec_symm {α} {motive : α → Sort _} {a b : α} (h : a = b) (x : motive a) (y : motive b) : Eq.ndrec x h = y ↔ x = Eq.ndrec y h.symm := by cases h; exact Iff.rfl

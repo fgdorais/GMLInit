@@ -209,30 +209,6 @@ theorem find?_some {p : Fin n → Bool} (k : Fin n) : Fin.find? p = some k → p
 theorem find?_none {p : Fin n → Bool} (k : Fin n) : Fin.find? p = none → p k = false :=
   find?.loop_none 0 (Nat.zero_le n) k (Nat.zero_le k.val)
 
--- @[specialize]
--- protected def foldl : {n : Nat} → (α → Fin n → α) → α → α
--- | 0, _, i => i
--- | n+1, f, i => Fin.foldl (fun x i => f x i.succ) (f i ⟨0, Nat.zero_lt_succ n⟩)
-
-theorem foldl_zero (f : α → Fin 0 → α) (i : α) : Fin.foldl 0 f i = i := rfl
-
-theorem foldl_succ {n} (f : α → Fin (n+1) → α) (i : α) : Fin.foldl (n+1) f i = f (Fin.foldl n (fun x i => f x i.lift) i) ⟨n, Nat.lt_succ_self n⟩ := by
-  induction n generalizing i with
-  | zero => rfl
-  | succ n ih => sorry --conv => lhs; rw [ih]
-
--- @[specialize]
--- protected def foldr : {n : Nat} → (Fin n → α → α) → α → α
--- | 0, _, i => i
--- | n+1, f, i => Fin.foldr (fun i => f i.lift) (f ⟨n, Nat.lt_succ_self n⟩ i)
-
-theorem foldr_zero (f : Fin 0 → α → α) (i : α) : Fin.foldr 0 f i = i := rfl
-
-theorem foldr_succ {n} (f : Fin (n+1) → α → α) (i : α) : Fin.foldr (n+1) f i = f ⟨0, Nat.zero_lt_succ n⟩ (Fin.foldr n (fun i => f i.succ) i) := by
-  induction n generalizing i with
-  | zero => rfl
-  | succ n ih => sorry -- conv => lhs; unfold Fin.foldr; rw [ih]
-
 protected abbrev all {n} (p : Fin n → Bool) : Bool :=
   Fin.foldr n (fun i v => p i && v) true
 
