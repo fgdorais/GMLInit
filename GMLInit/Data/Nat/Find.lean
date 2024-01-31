@@ -6,7 +6,7 @@ section
 variable (p : Nat → Bool) (h : ∃ n, p n)
 open ENat
 
-def bfind : Nat := toNat (first p) (first.isFinite_of_exists h)
+def bfind : Nat := toNat (first p) (first_isFinite_of_exists h)
 
 variable {p} {h}
 
@@ -15,7 +15,7 @@ theorem not_prop_of_lt_bfind {x} : (x < bfind p h) → ¬ p x := by
   unfold bfind at hlt
   apply Nat.not_le.2 hlt
   apply toNat_le_of_leNat
-  apply first.leNat_of
+  apply first_leNat_of
   exact h
 
 theorem bfind_le_of_prop {x} : p x → bfind p h ≤ x := by
@@ -31,7 +31,7 @@ theorem bfind_prop : p (bfind p h) := by
   have : (first p).leNat (bfind p h) := by
     unfold bfind
     rw [leNat_toNat]
-  match first.exists_le_of_leNat _ this with
+  match exists_le_first_of_first_leNat this with
   | ⟨x, hle, hx⟩ =>
     have heq : x = bfind p h := by
       antisymmetry using (.≤.:Nat→Nat→Prop)
