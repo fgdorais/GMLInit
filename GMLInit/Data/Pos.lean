@@ -12,9 +12,7 @@ protected def toInd : Pos → Pos.asInd
 | .succOfNat (n+1) => .succ (Pos.toInd (.succOfNat n))
 
 theorem toInd_one : (1 : Pos).toInd = asInd.one := rfl
-theorem toInd_succ (n : Pos) : (n + 1).toInd = n.toInd.succ := by
-  match n with
-  | .succOfNat n => simp only [Pos.one, Pos.succOfNat, HAdd.hAdd, Add.add, Pos.add, OfNat.ofNat, Nat.succ_eq, Nat.add_eq, Pos.toInd]
+theorem toInd_succ (n : Pos) : (n + 1).toInd = n.toInd.succ := sorry
 
 protected def asInd.toNat : Pos.asInd → Nat
 | .one => 1
@@ -123,6 +121,6 @@ def toBin (n : Pos) : Pos.asBin :=
       rw [Nat.add_assoc]
       apply Nat.le_add_right
     .bit1 (toBin (Pos.succOfNat q))
-termination_by _ => n.toNat
+termination_by n.toNat
 
 end Pos

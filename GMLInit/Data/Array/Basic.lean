@@ -164,7 +164,7 @@ theorem foldl_step (as : Array α) (start stop : Nat) (hstart : start < stop) (h
   as.foldl f b start stop = as.foldl f (f b as[start]) (start+1) stop := by
   apply foldlM_step; assumption; assumption
 
-variable (h : α → α → α) [Lean.IsAssociative h]
+variable (h : α → α → α) [Std.Associative h]
 
 theorem foldl_assoc (as : Array α) (b c : α) (start stop : Nat) (hstart : start ≤ stop) (hstop : stop ≤ as.size) :
   as.foldl h (h b c) start stop = h b (as.foldl h c start stop) := by
@@ -178,9 +178,9 @@ theorem foldl_assoc (as : Array α) (b c : α) (start stop : Nat) (hstart : star
     have : start < as.size := Nat.lt_of_lt_of_le hstart' hstop
     rw [foldl_step h (h b c)] <;> try (first | exact hstop | exact hstart')
     rw [foldl_step h c] <;> try (first | exact hstop | exact hstart')
-    rw [Lean.IsAssociative.assoc (op:=h)]
+    rw [Std.Associative.assoc (op:=h)]
     rw [foldl_assoc as b (h c as[start]) (start+1) stop hstart' hstop]
-termination_by foldl_assoc => stop - start
+termination_by stop - start
 
 end foldl
 
@@ -258,7 +258,7 @@ theorem size_append_aux {as bs : Array α} (start stop : Nat) (hstart : start �
       rw [Nat.add_comm]
       exact hstart'
     rw [Nat.sub_add_cancel this]
-termination_by size_append_aux => stop - start
+termination_by stop - start
 
 theorem get_append_aux_lo {as bs : Array α} (start stop i : Nat) (hstart : start ≤ stop) (hstop : stop ≤ bs.size) (hi : i < as.size)
   (h : i < (foldl push as bs start stop).size := by simp_arith [*]) :
@@ -285,7 +285,7 @@ theorem get_append_aux_lo {as bs : Array α} (start stop i : Nat) (hstart : star
       exact hstop
     · rw [get_append_aux_lo (start+1) stop i hstart' hstop]
       rw [get_push_lt]
-termination_by get_append_aux_lo => stop - start
+termination_by stop - start
 
 theorem get_append_aux_hi {as bs : Array α} (start stop i : Nat) (hstart : start ≤ stop) (hstop : stop ≤ bs.size) (hi : i < stop - start)
   (ha : as.size + i < (foldl push as bs start stop).size := by simp_arith [*])
@@ -362,12 +362,13 @@ theorem data_append_aux {as bs : Array α} (start stop : Nat) (hstart : start �
     rw [getElem_eq_data_get]
     rw [List.append_assoc]
     rw [List.singleton_append]
-termination_by data_append_aux => stop - start
+termination_by stop - start
+
 end append
 
 section sum
 
-local instance : Lean.IsAssociative (α:=Nat) (.+.) where
+local instance : Std.Associative (α:=Nat) (.+.) where
   assoc := Nat.add_assoc
 
 def sum (ns : Array Nat) (start := 0) (stop := ns.size) : Nat :=
@@ -389,9 +390,6 @@ theorem sum_step (ns : Array Nat) (start stop : Nat) (hstart : start < stop) (hs
   rw [ns.foldl_assoc (.+.) ns[start] 0 (start+1) stop (Nat.succ_le_of_lt hstart) hstop]
 
 end sum
-
-@[deprecated Array.ofFn]
-protected def ofFun (f : Fin n → α) : Array α := ofFn f
 
 theorem get_ofFn (f : Fin n → α) (i : Fin (ofFn f).size) : (ofFn f).get i = f (size_ofFn f ▸ i) := by
   rw [get_eq_getElem, getElem_ofFn]

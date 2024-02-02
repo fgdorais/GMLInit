@@ -43,7 +43,7 @@ end IsFinite
 
 private def toNatAux {e : ENat} (isFinite : IsFinite e) (x : Nat) : Nat :=
   if h : e.leNat x = true then x else toNatAux isFinite (x+1)
-termination_by _ => (IsFinite.wf e isFinite).wrap x
+termination_by (IsFinite.wf e isFinite).wrap x
 decreasing_by trivial
 
 private theorem toNatAux_eq {e : ENat} (isFinite : IsFinite e) (x : Nat) : toNatAux isFinite x = if e.leNat x then x else toNatAux isFinite (x+1) :=
@@ -54,7 +54,7 @@ private theorem leNat_toNatAux {e : ENat} (isFinite : IsFinite e) (x : Nat) : e.
   split
   · assumption
   · apply leNat_toNatAux
-termination_by _ => (IsFinite.wf e isFinite).wrap x
+termination_by (IsFinite.wf e isFinite).wrap x
 decreasing_by trivial
 
 private theorem toNatAux_le {e : ENat} (hy : e.leNat y) {x} (hle : x ≤ y) : toNatAux ⟨y,hy⟩ x ≤ y := by
@@ -65,7 +65,7 @@ private theorem toNatAux_le {e : ENat} (hy : e.leNat y) {x} (hle : x ≤ y) : to
     apply Nat.succ_le_of_lt
     apply Nat.lt_of_le_of_ne hle
     intro | rfl => contradiction
-termination_by _ => (IsFinite.wf e ⟨y,hy⟩).wrap x
+termination_by (IsFinite.wf e ⟨y,hy⟩).wrap x
 decreasing_by trivial
 
 def toNat (e : ENat) (isFinite : IsFinite e) : Nat := toNatAux isFinite 0
