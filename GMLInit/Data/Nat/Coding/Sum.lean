@@ -37,6 +37,8 @@ theorem isEven_or_isOdd (n : Nat) : n.isEven ∨ n.isOdd := by
   rw [←Bool.or_eq_true]
   exact Bool.or_not_self ..
 
+
+
 theorem not_isOdd_eq_isEven (n : Nat) : (!n.isOdd) = n.isEven := by
   rw [Bool.not_not]
 

@@ -43,9 +43,3 @@ protected theorem lt_mul_of_gt_one_right {x y : Nat} (h : x > 0 := by nat_is_pos
     apply Nat.mul_pos
     · exact h
     · exact Nat.lt_of_succ_lt_succ hy
-
-@[deprecated Nat.mul_lt_mul_of_pos_left]
-protected theorem mul_lt_mul_left {x y z : Nat} : x < y → (h : z > 0 := by nat_is_pos) → z * x < z * y := Nat.mul_lt_mul_of_pos_left
-
-@[deprecated Nat.mul_lt_mul_of_pos_right]
-protected theorem mul_lt_mul_right {x y z : Nat} : x < y → (h : z > 0 := by nat_is_pos) → x * z < y * z := Nat.mul_lt_mul_of_pos_right

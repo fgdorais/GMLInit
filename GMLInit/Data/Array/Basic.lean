@@ -88,15 +88,6 @@ theorem get_swap_other (as : Array α) {i j : Fin as.size} (k : Nat) (hk : k < (
   rw [get_set_of_ne as hik]
   exact hjk
 
-theorem get_swap (as : Array α) (i j : Fin as.size) (k : Nat) (hk : k < (as.swap i j).size) :
-  (as.swap i j)[k]'(hk) = if j.val = k then as[i] else if i.val = k then as[j] else as[k]'(get_swap.aux as i j hk) := by
-  split
-  next hkj => cases hkj; rw [get_swap_snd]; rfl
-  next hkj =>
-    split
-    next hki => cases hki; rw [get_swap_fst]; rfl
-    next hki => rw [get_swap_other as k hk hki hkj]
-
 /- del -/
 
 def del (as : Array α) (k : Fin as.size) : Array α :=
@@ -116,8 +107,8 @@ theorem get_del.aux2 (as : Array α) (k : Fin as.size) {i : Nat} : i < (as.del k
   fun h => Nat.lt_of_lt_of_le (as.size_del k ▸ h : i < as.size-1) (Nat.pred_le as.size)
 
 theorem get_del (as : Array α) (k : Fin as.size) (i : Nat) (hi : i < (as.del k).size) :
-  (as.del k)[i] = if k.val = i then as[as.size-1]'(get_del.aux1 as k) else as[i]'(get_del.aux2 as k hi) := by
-  have hi' : as.size - 1 ≠ i := Ne.symm <| Nat.ne_of_lt <| size_del as k ▸ hi
+  (as.del k)[i] = if i = k.val then as[as.size-1]'(get_del.aux1 as k) else as[i]'(get_del.aux2 as k hi) := by
+  have hi' : i ≠ as.size - 1 := Nat.ne_of_lt <| size_del as k ▸ hi
   simp only [del]
   rw [get_pop]
   rw [get_swap]

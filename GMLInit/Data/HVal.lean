@@ -18,8 +18,8 @@ theorem HVal.val_heq_val_of_eq : {a b : HVal} → a = b → a.val ≅ b.val
 theorem HVal.eq_iff_val_heq_val (a b : HVal) : a = b ↔ a.val ≅ b.val :=
   ⟨HVal.val_heq_val_of_eq, HVal.eq_of_val_heq_val⟩
 
-theorem HVal.proof_irrel : (a b : HVal.{0}) → a = b
+protected theorem HVal.proof_irrel : (a b : HVal.{0}) → a = b
 | @mk a ha, @mk b hb =>
-  have h : a = b := propext ⟨λ _ => hb, λ _ => ha⟩
+  have h : a = b := propext ⟨fun _ => hb, fun _ => ha⟩
   match a, b, h with
-  | _, _, rfl => proofIrrel ha hb ▸ rfl
+  | _, _, rfl => proof_irrel ha hb ▸ rfl
