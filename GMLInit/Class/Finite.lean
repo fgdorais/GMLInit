@@ -1,6 +1,6 @@
-import GMLInit.Class.DecLift
 import GMLInit.Data.Array
 import GMLInit.Data.Fin
+import GMLInit.Class.DecLift
 
 instance {α} (β : α → Type _) [DecidableEq α] [(x : α) → DecidableEq (β x)] : DecidableEq ((x : α) × β x)
 | a₁, a₂ =>
@@ -221,6 +221,3 @@ instance (s : Setoid α) [DecidableRel s.r] [Finite α] : Finite (Quotient s) :=
       rw [Equiv.rev_fwd, Equiv.rev_fwd] at h
       exact h
   Finite.ofEquiv <| Equiv.comp e₁.inv e₂
-
-end Finite
-

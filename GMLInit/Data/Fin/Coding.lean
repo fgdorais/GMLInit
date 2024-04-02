@@ -339,33 +339,30 @@ def equivFun (n m : Nat) : Equiv (Fin (n ^ m)) (Fin m → Fin n) where
   rev := encodeFun
   fwd_eq_iff_rev_eq {k x} := specFun k x
 
-def sum : {n : Nat} → (Fin n → Nat) → Nat
-| 0, _ => 0
-| n+1, f => f ⟨0, Nat.zero_lt_succ n⟩ + sum fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩
-
 def encodeSigma (f : Fin n → Nat) (x : (i : Fin n) × Fin (f i)) : Fin (sum f) :=
   match n, f, x with
   | _+1, _, ⟨⟨0, _⟩, ⟨j, hj⟩⟩ =>
-    ⟨j, Nat.lt_of_lt_of_le hj (Nat.le_add_right ..)⟩
-  | n+1, f, ⟨⟨i+1, hi⟩, ⟨j, hj⟩⟩ =>
-    match encodeSigma (fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, ⟨j, hj⟩⟩ with
-    | ⟨k, hk⟩ => ⟨f ⟨0, Nat.zero_lt_succ n⟩ + k, Nat.add_lt_add_left hk ..⟩
+    ⟨j, Nat.lt_of_lt_of_le hj (sum_succ .. ▸ Nat.le_add_right ..)⟩
+  | _+1, f, ⟨⟨i+1, hi⟩, ⟨j, hj⟩⟩ =>
+    match encodeSigma ((f ∘ succ)) ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, ⟨j, hj⟩⟩ with
+    | ⟨k, hk⟩ => ⟨f 0 + k, sum_succ .. ▸ Nat.add_lt_add_left hk ..⟩
 
 def decodeSigma (f : Fin n → Nat) (k : Fin (sum f)) : (i : Fin n) × Fin (f i) :=
   match n, f, k with
   | n+1, f, ⟨k, hk⟩ =>
-    if hk0 : k < f ⟨0, Nat.zero_lt_succ n⟩ then
-      ⟨⟨0, Nat.zero_lt_succ n⟩, ⟨k, hk0⟩⟩
+    if hk0 : k < f 0 then
+      ⟨0, ⟨k, hk0⟩⟩
     else
-      have hpos : 0 < sum fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := by
+      have hpos : 0 < sum (f ∘ succ) := by
         apply Nat.pos_of_nonzero
         intro hz
-        rw [sum, hz, Nat.add_zero] at hk
+        rw [sum_succ, hz] at hk
         contradiction
-      have hkf : k - f ⟨0, Nat.zero_lt_succ n⟩ < sum fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := by
+      have hkf : k - f 0 < sum (f ∘ succ) := by
         rw [Nat.sub_lt_iff_lt_add_of_pos _ _ _ hpos]
+        rw [sum_succ] at hk
         exact hk
-      match decodeSigma (fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨k - f ⟨0, Nat.zero_lt_succ n⟩, hkf⟩ with
+      match decodeSigma ((f ∘ succ)) ⟨k - f 0, hkf⟩ with
       | ⟨⟨i, hi⟩, j⟩ => ⟨⟨i+1, Nat.succ_lt_succ hi⟩, j⟩
 
 theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin (f i)) : decodeSigma f k = x ↔ encodeSigma f x = k := by
@@ -395,15 +392,16 @@ theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin 
         next => cases h
         next hge =>
           have hge := Nat.ge_of_not_lt hge
-          have hpos : 0 < sum fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := by
+          have hpos : 0 < sum (f ∘ succ) := by
             apply Nat.pos_of_nonzero
             intro hz
-            rw [Fin.sum, hz, Nat.add_zero] at hk
+            rw [Fin.sum_succ, hz] at hk
             contradiction
-          have hk' : k - f ⟨0, Nat.zero_lt_succ n⟩ < sum fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := by
+          have hk' : k - f 0 < sum (f ∘ succ) := by
             rw [Nat.sub_lt_iff_lt_add_of_pos _ _ _ hpos]
+            rw [sum_succ] at hk
             exact hk
-          have : encodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, ⟨j, hj⟩⟩ = ⟨k - f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩ := by
+          have : encodeSigma (f ∘ succ) ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, ⟨j, hj⟩⟩ = ⟨k - f 0, hk'⟩ := by
             rw [←ih]
             injection h with h1 h2
             cases h1
@@ -411,7 +409,7 @@ theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin 
             · rfl
             · exact h2
           simp [encodeSigma]
-          transitivity (f ⟨0, Nat.zero_lt_succ n⟩ + (encodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, ⟨j, hj⟩⟩).val)
+          transitivity (f 0 + (encodeSigma (f ∘ succ) ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, ⟨j, hj⟩⟩).val)
           · rfl
           · rw [this]
             rw [Nat.add_comm, Nat.sub_add_cancel]
@@ -427,15 +425,16 @@ theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin 
           exact Nat.le_add_right ..
         next hge =>
           have hge := Nat.ge_of_not_lt hge
-          have hpos : 0 < sum fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := by
+          have hpos : 0 < sum (f ∘ succ) := by
             apply Nat.pos_of_nonzero
             intro hz
-            rw [Fin.sum, hz] at hk
+            rw [sum_succ, hz] at hk
             contradiction
-          have hk' : k - f ⟨0, Nat.zero_lt_succ n⟩ < sum fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := by
+          have hk' : k - f 0 < sum (f ∘ succ) := by
             rw [Nat.sub_lt_iff_lt_add_of_pos _ _ _ hpos]
+            rw [sum_succ] at hk
             exact hk
-          have : decodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨k - f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩ = ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, ⟨j,hj⟩⟩ := by
+          have : decodeSigma (f ∘ succ) ⟨k - f 0, hk'⟩ = ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, ⟨j,hj⟩⟩ := by
             rw [ih]
             cases h
             apply Fin.eq
@@ -444,14 +443,14 @@ theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin 
             rfl
           congr 1
           · apply Fin.eq
-            transitivity ((decodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨k - f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩).1.1+1)
+            transitivity ((decodeSigma (f ∘ succ) ⟨k - f 0, hk'⟩).1.1+1)
             · rfl
             · rw [this]
-          · have t' : (decodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨k - f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩).fst.val = i := by
+          · have t' : (decodeSigma (f ∘ succ) ⟨k - f 0, hk'⟩).fst.val = i := by
               rw [this]
             cases t'
             apply heq_of_eq
-            transitivity ((decodeSigma (fun ⟨i,hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨k - f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩).2)
+            transitivity ((decodeSigma (f ∘ succ) ⟨k - f 0, hk'⟩).2) using (.=.)
             · apply Fin.eq
               rfl
             · apply Fin.eq
@@ -463,35 +462,32 @@ def equivSigma (f : Fin n → Nat) : Equiv (Fin (sum f)) ((i : Fin n) × Fin (f 
   rev := encodeSigma f
   fwd_eq_iff_rev_eq {k x} := specSigma f k x
 
-def prod : {n : Nat} → (Fin n → Nat) → Nat
-| 0, _ => 1
-| n+1, f => f ⟨0, Nat.zero_lt_succ n⟩ * prod fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩
-
 def encodePi (f : Fin n → Nat) (x : (i : Fin n) → Fin (f i)) : Fin (prod f) :=
   match n, f, x with
   | 0, _, _ => ⟨0, Nat.zero_lt_one⟩
-  | n+1, f, x =>
-    match encodePi (fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) (fun ⟨i, hi⟩ => x ⟨i+1, Nat.succ_lt_succ hi⟩) with
-    | ⟨k, hk⟩ => Fin.mk (f ⟨0, Nat.zero_lt_succ n⟩ * k + (x ⟨0, Nat.zero_lt_succ n⟩).val) $ calc
-      _ < f ⟨0, Nat.zero_lt_succ n⟩ * k + f ⟨0, Nat.zero_lt_succ n⟩ := Nat.add_lt_add_left (x ⟨0, Nat.zero_lt_succ n⟩).isLt ..
-      _ = f ⟨0, Nat.zero_lt_succ n⟩ * (k + 1) := Nat.mul_succ ..
-      _ ≤ f ⟨0, Nat.zero_lt_succ n⟩ * prod fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := Nat.mul_le_mul_left _ (Nat.succ_le_of_lt hk)
+  | _+1, f, x =>
+    match encodePi ((f ∘ succ)) (fun ⟨i, hi⟩ => x ⟨i+1, Nat.succ_lt_succ hi⟩) with
+    | ⟨k, hk⟩ => Fin.mk (f 0 * k + (x 0).val) $ calc
+      _ < f 0 * k + f 0 := Nat.add_lt_add_left (x 0).isLt ..
+      _ = f 0 * (k + 1) := Nat.mul_succ ..
+      _ ≤ f 0 * prod (f ∘ succ) := Nat.mul_le_mul_left _ (Nat.succ_le_of_lt hk)
+      _ = prod f := Eq.symm <| prod_succ ..
 
 def decodePi (f : Fin n → Nat) (k : Fin (prod f)) : (i : Fin n) → Fin (f i) :=
   match n, f, k with
   | 0, _, _ => (nomatch .)
   | n+1, f, ⟨k, hk⟩ =>
-    have hf : f ⟨0, Nat.zero_lt_succ n⟩ > 0 := by
+    have hf : f 0 > 0 := by
       apply Nat.pos_of_nonzero
       intro h
-      rw [prod, h, Nat.zero_mul] at hk
+      rw [prod_succ, h, Nat.zero_mul] at hk
       contradiction
-    have hk' : k / f ⟨0, Nat.zero_lt_succ n⟩ < prod fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩ := by
-      rw [Nat.div_lt_iff_lt_mul hf, Nat.mul_comm]
+    have hk' : k / f 0 < prod (f ∘ succ) := by
+      rw [Nat.div_lt_iff_lt_mul hf, Nat.mul_comm, ←prod_succ]
       exact hk
-    match decodePi (fun ⟨i, hi⟩ => f ⟨i+1, Nat.succ_lt_succ hi⟩) ⟨k / f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩ with
+    match decodePi ((f ∘ succ)) ⟨k / f 0, hk'⟩ with
     | x => fun
-      | ⟨0, _⟩ => ⟨k % f ⟨0, Nat.zero_lt_succ n⟩, Nat.mod_lt k hf⟩
+      | ⟨0, _⟩ => ⟨k % f 0, Nat.mod_lt k hf⟩
       | ⟨i+1, hi⟩ => x ⟨i, Nat.lt_of_succ_lt_succ hi⟩
 
 theorem specPi (f : Fin n → Nat) (k : Fin (prod f)) (x : (i : Fin n) → Fin (f i)) :
@@ -512,19 +508,19 @@ theorem specPi (f : Fin n → Nat) (k : Fin (prod f)) (x : (i : Fin n) → Fin (
         | ⟨k, hk⟩ =>
           apply Fin.eq
           simp only [encodePi]
-          transitivity (f ⟨0, Nat.zero_lt_succ n⟩ * (k / f ⟨0, Nat.zero_lt_succ n⟩) + k % f ⟨0, Nat.zero_lt_succ n⟩)
+          transitivity (f 0 * (k / f 0) + k % f 0)
           · congr 1
             · congr 1
-              have hpos : f ⟨0, Nat.zero_lt_succ n⟩ > 0 := by
+              have hpos : f 0 > 0 := by
                 apply Nat.pos_of_nonzero
                 intro hz
-                rw [Fin.prod, hz, Nat.zero_mul] at hk
+                rw [prod_succ, hz, Nat.zero_mul] at hk
                 contradiction
-              have hk' : k / f ⟨0, Nat.zero_lt_succ n⟩ < Fin.prod fun k => f (succ k) := by
+              have hk' : k / f 0 < Fin.prod (f ∘ succ) := by
                 rw [Nat.div_lt_iff_lt_mul hpos]
-                rw [Nat.mul_comm]
+                rw [Nat.mul_comm, ←prod_succ]
                 exact hk
-              have : encodePi (fun i => f (succ i)) (fun i => x (succ i)) = ⟨k / f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩ := by
+              have : encodePi (fun i => f (succ i)) (fun i => x (succ i)) = ⟨k / f 0, hk'⟩ := by
                 rw [←ih]
                 funext i
                 rw [←h]
@@ -548,33 +544,34 @@ theorem specPi (f : Fin n → Nat) (k : Fin (prod f)) (x : (i : Fin n) → Fin (
           rw [Nat.add_comm]
           rw [Nat.add_mul_mod_self_left]
           rw [Nat.mod_eq_of_lt]
-          exact (x ⟨0, Nat.zero_lt_succ n⟩).isLt
+          rfl
+          exact (x 0).isLt
         next i hi =>
           match k with
           | ⟨k, hk⟩ =>
             simp only [encodePi] at h
             apply Fin.eq
-            have hpos : f ⟨0, Nat.zero_lt_succ n⟩ > 0 := by
+            have hpos : f 0 > 0 := by
               apply Nat.pos_of_nonzero
               intro hz
-              rw [Fin.prod, hz, Nat.zero_mul] at hk
+              rw [prod_succ, hz, Nat.zero_mul] at hk
               contradiction
-            have hk' : k / f ⟨0, Nat.zero_lt_succ n⟩ < Fin.prod fun k => f (succ k) := by
+            have hk' : k / f 0 < Fin.prod (f ∘ succ) := by
               rw [Nat.div_lt_iff_lt_mul hpos]
-              rw [Nat.mul_comm]
+              rw [Nat.mul_comm, ←prod_succ]
               exact hk
-            have : decodePi (fun i => f (succ i)) ⟨k / f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩ = fun i => x (succ i) := by
+            have : decodePi (fun i => f (succ i)) ⟨k / f 0, hk'⟩ = fun i => x (succ i) := by
               rw [ih]
               cases h
               apply Fin.eq
               clean
               rw [Nat.add_comm]
               rw [Nat.add_mul_div_left _ _ hpos]
-              rw [Nat.div_eq_of_lt (x ⟨0, Nat.zero_lt_succ n⟩).isLt]
+              rw [Nat.div_eq_of_lt (x 0).isLt]
               rw [Nat.zero_add]
               rfl
             clean
-            transitivity (decodePi (fun i => f (succ i)) ⟨k / f ⟨0, Nat.zero_lt_succ n⟩, hk'⟩ ⟨i, Nat.lt_of_succ_lt_succ hi⟩).val
+            transitivity (decodePi (fun i => f (succ i)) ⟨k / f 0, hk'⟩ ⟨i, Nat.lt_of_succ_lt_succ hi⟩).val
             · rfl
             · rw [this]
               rfl
@@ -589,35 +586,35 @@ def count (p : Fin n → Prop) [DecidablePred p] : Nat :=
 
 def encodeSubtype (p : Fin n → Prop) [inst : DecidablePred p] (i : { i // p i }) : Fin (count p) :=
   match n, p, inst, i with
-  | n+1, p, inst, ⟨⟨0, _⟩, hp⟩ =>
-    have : count p > 0 := by simp_arith only [count, sum, if_pos hp]
+  | n+1, p, inst, ⟨0, hp⟩ =>
+    have : count p > 0 := by simp_arith only [count, sum_succ, if_pos hp]
     ⟨0, this⟩
   | n+1, p, inst, ⟨⟨i+1, hi⟩, hp⟩ =>
     match encodeSubtype (fun i => p (succ i)) ⟨⟨i, Nat.lt_of_succ_lt_succ hi⟩, hp⟩ with
     | ⟨k, hk⟩ =>
-      if h0 : p ⟨0, Nat.zero_lt_succ n⟩ then
-        have : count p = count (fun i => p (succ i)) + 1 := by
-          simp_arith only [count, sum, if_pos h0]; rfl
+      if h0 : p 0 then
+        have : count p = count (p ∘ succ) + 1 := by
+          simp_arith only [count, sum_succ, Function.comp_def, if_pos h0]
         this ▸ ⟨k+1, Nat.succ_lt_succ hk⟩
       else
-        have : count p = count (fun i => p (succ i)) := by
-          simp_arith only [count, sum, if_neg h0]; rfl
+        have : count p = count (p ∘ succ) := by
+          simp_arith only [count, sum_succ, if_neg h0, Function.comp_def]
         this ▸ ⟨k, hk⟩
 
 def decodeSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (count p)) : { i // p i } :=
   match n, p, inst, k with
   | n+1, p, inst, ⟨k, hk⟩ =>
-    if h0 : p ⟨0, Nat.zero_lt_succ n⟩ then
+    if h0 : p 0 then
       have : count p = count (fun i => p (succ i)) + 1 := by
-        simp_arith only [count, sum, if_pos h0]; rfl
+        simp_arith only [count, sum_succ, if_pos h0]; rfl
       match k with
-      | 0 => ⟨⟨0, Nat.zero_lt_succ n⟩, h0⟩
+      | 0 => ⟨0, h0⟩
       | k + 1 =>
         match decodeSubtype (fun i => p (succ i)) ⟨k, Nat.lt_of_add_lt_add_right (this ▸ hk)⟩ with
         | ⟨⟨i, hi⟩, hp⟩ => ⟨⟨i+1, Nat.succ_lt_succ hi⟩, hp⟩
     else
       have : count p = count (fun i => p (succ i)) := by
-        simp_arith only [count, sum, if_neg h0]; rfl
+        simp_arith only [count, sum_succ, if_neg h0]; rfl
       match decodeSubtype (fun i => p (succ i)) ⟨k, this ▸ hk⟩ with
       | ⟨⟨i, hi⟩, hp⟩ => ⟨⟨i+1, Nat.succ_lt_succ hi⟩, hp⟩
 
@@ -635,7 +632,7 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
       split at h
       next h0 =>
         have : count p = count (fun i => p (succ i)) + 1 := by
-          simp_arith only [count, sum, if_pos h0]; rfl
+          simp_arith only [count, sum_succ, if_pos h0]; rfl
         split at h
         next =>
           cases h
@@ -661,7 +658,7 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
             · rfl
       next h0 =>
         have : count p = count (fun i => p (succ i)) := by
-          simp_arith only [count, sum, if_neg h0]; rfl
+          simp_arith only [count, sum_succ, if_neg h0]; rfl
         match k, i with
         | ⟨_, _⟩, ⟨⟨0, _⟩, _⟩ => contradiction
         | ⟨k, hk⟩, ⟨⟨i+1, hi⟩, hp⟩ =>
@@ -680,7 +677,7 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
       split
       next h0 =>
         have : count p = count (fun i => p (succ i)) + 1 := by
-          simp_arith only [count, sum, if_pos h0]; rfl
+          simp_arith only [count, sum_succ, if_pos h0]; rfl
         split
         next heq _ =>
           match k, i with

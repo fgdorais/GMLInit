@@ -39,7 +39,6 @@ theorem get_pop (as : Array α) (i : Nat) (hi : i < as.pop.size) :
   rw [get, get]
   unfold pop
   rw [List.get_dropLast]
-  rw [Fin.castLE_mk]
 
 /- swap -/
 

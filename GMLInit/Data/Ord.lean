@@ -1,5 +1,5 @@
 import GMLInit.Data.Basic
-import GMLInit.Meta.Decidable
+import GMLInit.Meta.Basic
 
 open Ordering (lt eq gt)
 

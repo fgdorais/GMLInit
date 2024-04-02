@@ -1,3 +1,4 @@
+import GMLInit.Prelude
 
 theorem decide_and (p q : Prop) [decp : Decidable p] [decq : Decidable q] : decide (p ∧ q) = (decide p && decide q) :=
   match decp, decq with
@@ -80,6 +81,24 @@ instance [DecLift b₁] [DecLift b₂] : DecLift (b₁ == b₂) where
   toProp := DecLift.toProp b₁ ↔ DecLift.toProp b₂
   instDecidable := inferInstance
   decide_eq := by rw [decide_iff, DecLift.decide_eq, DecLift.decide_eq]
+
+instance (p : Fin n → Bool) [(i : Fin n) → DecLift (p i)] : DecLift (Fin.all p) where
+  toProp := ∀ i, DecLift.toProp (p i)
+  instDecidable := inferInstance
+  decide_eq := by
+    rw [Fin.decide_forall_eq_all]
+    congr
+    funext
+    rw [DecLift.decide_eq]
+
+instance (p : Fin n → Bool) [(i : Fin n) → DecLift (p i)] : DecLift (Fin.any p) where
+  toProp := ∃ i, DecLift.toProp (p i)
+  instDecidable := inferInstance
+  decide_eq := by
+    rw [Fin.decide_exists_eq_any]
+    congr
+    funext
+    rw [DecLift.decide_eq]
 
 theorem dec_lift_eq_true_of [DecLift b] : DecLift.toProp b → b = true := by
   intro h

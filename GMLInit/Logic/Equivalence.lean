@@ -1,4 +1,4 @@
-import GMLInit.Meta.Decidable
+import GMLInit.Meta.Basic
 
 namespace Logic.Relation
 variable {α} (r : α → α → Prop)
