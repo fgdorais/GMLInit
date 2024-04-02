@@ -1,4 +1,5 @@
 import GMLInit.Prelude
+import GMLInit.Class.Finite
 
 theorem decide_and (p q : Prop) [decp : Decidable p] [decq : Decidable q] : decide (p ∧ q) = (decide p && decide q) :=
   match decp, decq with
@@ -99,6 +100,16 @@ instance (p : Fin n → Bool) [(i : Fin n) → DecLift (p i)] : DecLift (Fin.any
     congr
     funext
     rw [DecLift.decide_eq]
+
+instance {α} (p : α → Bool) [Finite α] [(x : α) → DecLift (p x)] : DecLift (Finite.all p) where
+  toProp := ∀ x, DecLift.toProp (p x)
+  instDecidable := inferInstance
+  decide_eq := by rw [Finite.decide_forall]; congr; funext x; rw [DecLift.decide_eq]
+
+instance {α} (p : α → Bool) [Finite α] [(x : α) → DecLift (p x)] : DecLift (Finite.any p) where
+  toProp := ∃ x, DecLift.toProp (p x)
+  instDecidable := inferInstance
+  decide_eq := by rw [Finite.decide_exists]; congr; funext x; rw [DecLift.decide_eq]
 
 theorem dec_lift_eq_true_of [DecLift b] : DecLift.toProp b → b = true := by
   intro h

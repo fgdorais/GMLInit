@@ -13,7 +13,7 @@
   {"url": "https://github.com/fgdorais/extra4",
    "type": "git",
    "subDir": null,
-   "rev": "33ed3765f7c8ff69e4356252787c04fc8813dcf3",
+   "rev": "595de9d57b4ce8e590229b6c8c374afe0cccde35",
    "name": "extra",
    "manifestFile": "lake-manifest.json",
    "inputRev": "main",

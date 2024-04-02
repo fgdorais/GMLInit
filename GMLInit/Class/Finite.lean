@@ -1,6 +1,5 @@
 import GMLInit.Data.Array
 import GMLInit.Data.Fin
-import GMLInit.Class.DecLift
 
 instance {α} (β : α → Type _) [DecidableEq α] [(x : α) → DecidableEq (β x)] : DecidableEq ((x : α) × β x)
 | a₁, a₂ =>
@@ -94,11 +93,6 @@ theorem decide_forall (p : α → Prop) [DecidablePred p] : decide (∀ x, p x) 
     apply of_decide_eq_true
     apply forall_eq_true_of_all_eq_true h
 
-instance {α} (p : α → Bool) [Finite α] [(x : α) → DecLift (p x)] : DecLift (Finite.all p) where
-  toProp := ∀ x, DecLift.toProp (p x)
-  instDecidable := inferInstance
-  decide_eq := by rw [decide_forall]; congr; funext x; rw [DecLift.decide_eq]
-
 protected abbrev any {α} [Finite α] (p : α → Bool) : Bool :=
   Fin.any fun i => p (Finite.get α i)
 
@@ -138,11 +132,6 @@ theorem decide_exists (p : α → Prop) [DecidablePred p] : decide (∃ x, p x) 
     absurd forall_eq_false_of_any_eq_false h x
     rw [decide_eq_true hx]
     trivial
-
-instance {α} (p : α → Bool) [Finite α] [(x : α) → DecLift (p x)] : DecLift (Finite.any p) where
-  toProp := ∃ x, DecLift.toProp (p x)
-  instDecidable := inferInstance
-  decide_eq := by rw [decide_exists]; congr; funext x; rw [DecLift.decide_eq]
 
 instance : Finite Empty := Finite.ofEquiv Fin.equivEmpty.inv
 
