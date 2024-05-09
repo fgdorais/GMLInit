@@ -3,7 +3,7 @@ import GMLInit.Data.Nat
 
 namespace Int
 
-attribute [local eliminator] Nat.recDiag
+attribute [local induction_eliminator] Nat.recDiag
 
 alias add_cross_comm := Int.add_add_add_comm
 

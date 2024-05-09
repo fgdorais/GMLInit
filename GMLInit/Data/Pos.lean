@@ -47,7 +47,7 @@ theorem ofInd_toInd (n : Pos) : Pos.ofInd n.toInd = n := by
     rw [ofInd_succ]
     rw [ih]
 
-theorem asIndEquiv : Equiv Pos Pos.asInd where
+def asIndEquiv : Equiv Pos Pos.asInd where
   fwd := Pos.toInd
   rev := Pos.ofInd
   fwd_eq_iff_rev_eq := by

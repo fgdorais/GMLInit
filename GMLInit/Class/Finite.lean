@@ -1,16 +1,6 @@
 import GMLInit.Data.Array
 import GMLInit.Data.Fin
 
-instance {α} (β : α → Type _) [DecidableEq α] [(x : α) → DecidableEq (β x)] : DecidableEq ((x : α) × β x)
-| a₁, a₂ =>
-  match a₁, a₂, inferInstanceAs (Decidable (a₁.fst = a₂.fst)) with
-  | ⟨_,y₁⟩, ⟨_,y₂⟩, isTrue rfl =>
-    if h : y₁ = y₂ then
-      isTrue <| Sigma.eq rfl (heq_of_eq h)
-    else
-      isFalse fun | rfl => h rfl
-  | ⟨_,_⟩, ⟨_,_⟩, isFalse hne => isFalse fun | rfl => hne rfl
-
 class Finite (α : Type _) extends Array α where
   find : α → Fin toArray.size
   find_eq_iff_get_eq (x : α) (i : Fin toArray.size) : find x = i ↔ toArray.get i = x

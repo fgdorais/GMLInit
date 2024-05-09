@@ -3,8 +3,6 @@ import GMLInit.Meta.Basic
 
 namespace Nat
 
-attribute [eliminator] Nat.recAux
-
 section clean
 
 attribute [clean] Nat.zero_eq Nat.add_eq Nat.sub_eq Nat.mul_eq Nat.div_eq Nat.mod_eq Nat.pow_eq Nat.add_zero Nat.mul_zero Nat.pow_zero

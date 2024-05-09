@@ -25,15 +25,15 @@ scoped macro_rules (kind := llist)
 protected theorem cons_hcongr {α β} {n m} {a : α} {b : β} {as : LList α n} {bs : LList β m} : α = β → n = m → a ≅ b → as ≅ bs → LList.cons a as ≅ LList.cons b bs
 | rfl, rfl, HEq.rfl, HEq.rfl => HEq.rfl
 
-@[eliminator] protected def rec {α} {motive : (n : Nat) → LList α n → Sort _} (nil : motive 0 LList.nil) (cons : {n : Nat} → (a : α) → (as : LList α n) → motive n as → motive (n+1) (LList.cons a as))
+protected def rec {α} {motive : (n : Nat) → LList α n → Sort _} (nil : motive 0 LList.nil) (cons : {n : Nat} → (a : α) → (as : LList α n) → motive n as → motive (n+1) (LList.cons a as))
 : {n : Nat} → (as : LList α n) → motive n as
 | 0, .nil => nil
 | _+1, .cons a as => cons a as (LList.rec nil cons as)
 
-protected def recOn {α n} (as : LList α n) {motive : (n : Nat) → LList α n → Sort _} (nil : motive 0 HList.nil) (cons : {n : Nat} → (a : α) → (as : LList α n) → motive n as → motive (n+1) (LList.cons a as))
+@[induction_eliminator] protected def recOn {α n} (as : LList α n) {motive : (n : Nat) → LList α n → Sort _} (nil : motive 0 LList.nil) (cons : {n : Nat} → (a : α) → (as : LList α n) → motive n as → motive (n+1) (LList.cons a as))
 : motive n as := LList.rec nil cons as
 
-protected def casesOn {α n} (as : LList α n) {motive : (n : Nat) → LList α n → Sort _} (nil : motive 0 HList.nil) (cons : {n : Nat} → (a : α) → (as : LList α n) → motive (n+1) (LList.cons a as))
+@[cases_eliminator] protected def casesOn {α n} (as : LList α n) {motive : (n : Nat) → LList α n → Sort _} (nil : motive 0 LList.nil) (cons : {n : Nat} → (a : α) → (as : LList α n) → motive (n+1) (LList.cons a as))
 : motive n as := LList.rec nil (fun a as _ => cons a as) as
 
 protected def append {α n} (as : LList α n) (bs : LList α m) : LList α (m + n) :=
@@ -92,9 +92,6 @@ theorem eval_cons_zero {α n} (a : α) (as : LList α n) : (a :: as).eval Fin.ze
 
 theorem eval_cons_succ {α n} (a : α) (as : LList α n) (i : Fin n) : (a :: as).eval (Fin.succ i) = as.eval i := by
   simp only [Fin.succ, LList.eval]
-  apply congrArg
-  apply Fin.eq
-  rfl
 
 def equiv (α n) : Equiv (LList α n) (Fin n → α) where
   fwd := LList.eval

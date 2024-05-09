@@ -3,6 +3,7 @@ import GMLInit.Data.Ord
 import GMLInit.Data.Nat
 import GMLInit.Data.Int
 
+open Batteries
 open Logic
 open Ordering (lt eq gt)
 

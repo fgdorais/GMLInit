@@ -3,7 +3,7 @@ import GMLInit.Data.Nat.IsPos
 
 namespace Nat
 
-attribute [local eliminator] Nat.recDiagAux
+attribute [local induction_eliminator] Nat.recDiagAux
 
 protected theorem pred_zero' : 0 - 1 = 0 := Nat.zero_sub _
 
@@ -69,7 +69,7 @@ theorem pred_le_iff_le_succ' (x y : Nat) : x - 1 ≤ y ↔ x ≤ y + 1 := Nat.pr
 protected theorem succ_lt_iff_lt_pred (x y : Nat) : x + 1 < y ↔ x < y - 1 := Nat.lt_pred_iff_succ_lt.symm
 
 protected theorem succ_le_or_eq_zero_iff_le_pred (x y : Nat) : x + 1 ≤ y ∨ x = 0 ↔ x ≤ y - 1 := by
-  cases x, y with
+  induction x, y with
   | zero_left x => simp
   | zero_right y => simp
   | succ_succ x y =>
@@ -82,7 +82,7 @@ protected theorem succ_le_or_eq_zero_iff_le_pred (x y : Nat) : x + 1 ≤ y ∨ x
       exact Nat.succ_le_succ h
 
 protected theorem pred_lt_or_eq_zero_iff_lt_succ (x y : Nat) : x - 1 < y ∨ x = 0 ↔ x < y + 1 := by
-  cases x, y with
+  induction x, y with
   | zero_left x => simp [Nat.zero_lt_succ]
   | zero_right y =>
     constructor

@@ -6,7 +6,7 @@ namespace List.Index
 
 theorem val_ndrec {xs ys : List α} (i : Index xs) : (h : xs = ys) → val (h ▸ i : Index ys) = i.val | rfl => rfl
 
-instance instLinearOrd : (xs : List α) → LinearOrd (Index xs)
+instance instLinearOrd : (xs : List α) → Batteries.LinearOrd (Index xs)
 | [] => {
   symm := (nomatch .)
   le_trans := (nomatch .)

@@ -1,0 +1,21 @@
+name = "GMLInit"
+moreLeanArgs = ["-Dlinter.unusedVariables=false"]
+defaultTargets = ["GMLInit"]
+
+[[require]]
+name = "batteries"
+git = "https://github.com/leanprover-community/batteries"
+rev = "main"
+
+[[require]]
+name = "extra"
+git = "https://github.com/fgdorais/extra4"
+rev = "main"
+
+[[require]]
+name = "logic"
+git = "https://github.com/fgdorais/logic4"
+rev = "main"
+
+[[lean_lib]]
+name = "GMLInit"

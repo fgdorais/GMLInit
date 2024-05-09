@@ -3,7 +3,7 @@ import GMLInit.Data.Nat.Order
 
 namespace Nat
 
-attribute [local eliminator] Nat.recDiagAux
+attribute [local induction_eliminator] Nat.recDiagAux
 
 protected theorem sub_succ' (x y : Nat) : x - (y + 1) = (x - y) - 1 := Nat.sub_succ ..
 

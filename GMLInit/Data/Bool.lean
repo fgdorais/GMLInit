@@ -11,7 +11,7 @@ macro_rules
 | `(tactic| bool_tt using $tac) => `(tactic| $tac)
 | `(tactic| bool_tt $[using $tac]? $x:term $xs:term*) => `(tactic| cases ($x : Bool) <;> bool_tt $[using $tac]? $xs*)
 
-instance : LinearOrd Bool where
+instance : Batteries.LinearOrd Bool where
   symm (x y) := by bool_tt x y
   le_trans {x y z} _ _ _ := by bool_tt using contradiction x y z
   eq_strict {x y} _ := by bool_tt using first | rfl | contradiction x y
@@ -77,7 +77,7 @@ protected abbrev bgt := x && !y
 protected abbrev ble := !x || y
 protected abbrev blt := !x && y
 
-theorem beq_eq_decide_eq : Bool.beq x y = decide (x = y) := by bool_tt x y
+-- assert beq_eq_decide_eq : Bool.beq x y = decide (x = y) := by bool_tt x y
 theorem bne_eq_decide_ne : Bool.bne x y = decide (x ≠ y) := by bool_tt x y
 theorem bge_eq_decide_ge : Bool.bge x y = decide (x ≥ y) := by bool_tt x y
 theorem bgt_eq_decide_gt : Bool.bgt x y = decide (x > y) := by bool_tt x y

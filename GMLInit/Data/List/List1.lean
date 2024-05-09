@@ -87,7 +87,7 @@ theorem IndView.sizeOf_toList1 (xs : List1.IndView α) : sizeOf xs.toList1 = 2 +
   | pure x => rw [toList1]; rfl
   | cons x xs ih => rw [toList1, List1.sizeOf_cons, ←sizeOf_toList, ih, Nat.add_left_comm]; rfl
 
-@[eliminator] def List1.recInd.{u,v} {α : Type v} {motive : List1 α → Sort u}
+@[induction_eliminator] def List1.recInd.{u,v} {α : Type v} {motive : List1 α → Sort u}
   (pure : (x : α) → motive (List1.pure x))
   (cons : (x : α) → (xs : List1 α) → motive xs → motive (List1.cons x xs.toList))
   (xs : List1 α) : motive xs :=

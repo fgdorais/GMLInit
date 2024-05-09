@@ -90,8 +90,7 @@ def equivOption (n : Nat) : Equiv (Fin (n+1)) (Option (Fin n)) where
       unfold encodeOptionNone
       simp at h ⊢
       antisymmetry using LE.le
-      · apply Nat.le_of_not_gt
-        assumption
+      · assumption
       · apply Nat.le_of_lt_succ
         assumption
     · intro h
@@ -99,7 +98,7 @@ def equivOption (n : Nat) : Equiv (Fin (n+1)) (Option (Fin n)) where
       unfold encodeOptionNone at h
       simp at h ⊢
       cases h
-      apply Nat.lt_irrefl n
+      apply Nat.le_refl n
 
 def encodeSumLeft : Fin m → Fin (m + n)
 | ⟨i, hi⟩ => ⟨i, Nat.lt_of_lt_of_le hi (Nat.le_add_right m n)⟩
@@ -323,14 +322,12 @@ theorem specFun (k : Fin (n ^ m)) (x : Fin m → Fin n) :
             rw [Nat.add_mul_div_left (H := hnpos)]
             rw [Nat.div_eq_of_lt (x 0).isLt]
             rw [Nat.zero_add]
-            rfl
           transitivity ((decodeFun (encodeFun fun k => x (succ k))) ⟨i, Nat.lt_of_succ_lt_succ hi⟩)
           · congr
             rw [←h]
             rw [Nat.add_mul_div_left (H := hnpos)]
             rw [Nat.div_eq_of_lt (x 0).isLt]
             rw [Nat.zero_add]
-            rfl
           · rw [ih1]
             rfl
 
@@ -440,7 +437,6 @@ theorem specSigma (f : Fin n → Nat) (k : Fin (sum f)) (x : (i : Fin n) × Fin 
             apply Fin.eq
             clean
             rw [Nat.add_sub_cancel_left]
-            rfl
           congr 1
           · apply Fin.eq
             transitivity ((decodeSigma (f ∘ succ) ⟨k - f 0, hk'⟩).1.1+1)
@@ -648,13 +644,13 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
           match k with
           | ⟨0, _⟩ => contradiction
           | ⟨k+1, hk⟩ =>
-            cases heq
+            injection heq with hkk
             congr 1
             transitivity (Fin.mk k (Nat.lt_of_succ_lt_succ (this ▸ hk))).val
             · apply Fin.val_eq_of_eq
               simp only [Nat.add_eq, Nat.add_zero, Fin.eta]
               rw [←ih]
-              rfl
+              congr
             · rfl
       next h0 =>
         have : count p = count (fun i => p (succ i)) := by
@@ -667,7 +663,6 @@ theorem specSubtype (p : Fin n → Prop) [inst : DecidablePred p] (k : Fin (coun
           clean at h
           transitivity (Fin.mk k (this ▸ hk)).val
           · apply Fin.val_eq_of_eq
-            simp only [Nat.add_eq, Nat.add_zero, Fin.eta]
             rw [←ih]
             cases h
             rfl

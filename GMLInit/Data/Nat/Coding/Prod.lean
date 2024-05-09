@@ -121,7 +121,6 @@ theorem split_eq (n : Nat) : tri (split n).fst + (split n).snd = n := by
       split
       next h =>
         dsimp only [Nat.add_eq] at h ⊢
-        rw [Nat.add_zero n] at h ⊢
         rw [dif_pos h]
       next h =>
         have h : ¬((split n).snd.val < (split n).fst) := h

@@ -4,7 +4,7 @@ import GMLInit.Data.Nat.Order
 
 namespace Nat
 
-attribute [local eliminator] Nat.recDiagAux
+attribute [local induction_eliminator] Nat.recDiagAux
 
 protected theorem zero_pow_succ (x : Nat) : 0 ^ (x + 1) = 0 :=
   calc
@@ -22,7 +22,7 @@ protected theorem pow_assoc (x y z : Nat) : (x ^ y) ^ z = x ^ (y * z) := by
   | succ z H => rw [Nat.pow_succ, Nat.mul_succ, Nat.pow_add, H]
 
 protected theorem le_pow_right_of_pos {x y : Nat} : y > 0 → x ≤ x ^ y := by
-  cases x, y with
+  induction x, y with
   | zero_right x => intro; contradiction
   | zero_left y => intro; apply Nat.zero_le
   | succ_succ x y =>

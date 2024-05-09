@@ -30,7 +30,7 @@ private abbrev isEvenImpl (n : Nat) : Bool := (n % 2) == 0
   | zero => rfl
   | one => rfl
   | step n ih =>
-    unfold Nat.isEven Nat.add
+    unfold Nat.isEven
     rw [isEvenImpl, Nat.add_mod_right, ih]
 
 theorem isEven_or_isOdd (n : Nat) : n.isEven ∨ n.isOdd := by
@@ -56,7 +56,7 @@ abbrev halfImpl (n : Nat) : Nat := n / 2
   | zero => rfl
   | one => rfl
   | step n ih =>
-    unfold Nat.half Nat.add
+    unfold Nat.half
     rw [halfImpl, Nat.add_div_right, ih]
     nat_is_pos
 
@@ -101,7 +101,7 @@ theorem inl_half_eq_of_isEven {n : Nat} : isEven n → (half n).inl = n := by
   | step n ih =>
     intro h
     unfold Nat.inl at ih ⊢
-    unfold Nat.half Nat.add
+    unfold Nat.half
     rw [Nat.mul_succ, ih h]
 
 theorem inr_half_eq_of_isOdd {n : Nat} : isOdd n → (half n).inr = n := by
@@ -111,7 +111,7 @@ theorem inr_half_eq_of_isOdd {n : Nat} : isOdd n → (half n).inr = n := by
   | step n ih =>
     intro h
     unfold Nat.inr at ih ⊢
-    unfold Nat.half Nat.add
+    unfold Nat.half
     rw [Nat.mul_succ, Nat.add_succ, Nat.add_succ, ih h]
 
 theorem inl_half_eq_or_inr_half_eq (n : Nat) : (half n).inl = n ∨ (half n).inr = n := by
