@@ -11,6 +11,7 @@ protected def toInd : Pos → Pos.asInd
 | .succOfNat 0 => .one
 | .succOfNat (n+1) => .succ (Pos.toInd (.succOfNat n))
 
+unseal Pos.toInd in
 theorem toInd_one : (1 : Pos).toInd = asInd.one := rfl
 theorem toInd_succ (n : Pos) : (n + 1).toInd = n.toInd.succ := sorry
 

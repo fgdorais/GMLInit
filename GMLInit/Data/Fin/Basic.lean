@@ -213,7 +213,8 @@ theorem find?_none {p : Fin n → Bool} (k : Fin n) : Fin.find? p = none → p k
 def sum [Add α] [OfNat α (nat_lit 0)] (f : Fin n → α) : α :=
   foldr n (fun i s => f i + s) 0
 
-theorem sum_zero [Add α] [OfNat α (nat_lit 0)] (f : Fin 0 → α) : sum f = 0 := rfl
+theorem sum_zero [Add α] [OfNat α (nat_lit 0)] (f : Fin 0 → α) : sum f = 0 := by
+  simp [sum]
 
 theorem sum_succ [Add α] [OfNat α (nat_lit 0)] (f : Fin (n+1) → α) : sum f = f 0 + sum (f ∘ succ) := by
   simp [sum, foldr_succ]
@@ -221,7 +222,8 @@ theorem sum_succ [Add α] [OfNat α (nat_lit 0)] (f : Fin (n+1) → α) : sum f 
 def prod [Mul α] [OfNat α (nat_lit 1)] (f : Fin n → α) : α :=
   foldr n (fun i p => f i * p) 1
 
-theorem prod_zero [Mul α] [OfNat α (nat_lit 1)] (f : Fin 0 → α) : prod f = 1 := rfl
+theorem prod_zero [Mul α] [OfNat α (nat_lit 1)] (f : Fin 0 → α) : prod f = 1 := by
+  simp [prod]
 
 theorem prod_succ [Mul α] [OfNat α (nat_lit 1)] (f : Fin (n+1) → α) : prod f = f 0 * prod (f ∘ succ) := by
   simp [prod, foldr_succ]

@@ -46,6 +46,7 @@ private def toNatAux {e : ENat} (isFinite : IsFinite e) (x : Nat) : Nat :=
 termination_by (IsFinite.wf e isFinite).wrap x
 decreasing_by trivial
 
+unseal toNatAux in
 private theorem toNatAux_eq {e : ENat} (isFinite : IsFinite e) (x : Nat) : toNatAux isFinite x = if e.leNat x then x else toNatAux isFinite (x+1) :=
   WellFounded.fix_eq _ _ _
 

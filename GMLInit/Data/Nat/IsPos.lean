@@ -17,6 +17,9 @@ instance (n : Nat) : IsPos (Nat.succ n) where
 instance : IsPos 1 where
   is_pos := Nat.succ_pos 0
 
+instance : IsPos 2 where
+  is_pos := Nat.succ_pos 1
+
 instance (m n : Nat) [IsPos m] : IsPos (m + n) where
   is_pos := Nat.lt_of_lt_of_le (is_pos m) (Nat.le_add_right m n)
 
